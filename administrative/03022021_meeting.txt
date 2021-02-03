@@ -1,2 +1,40 @@
 03.02.2021:
-	
+	MVP (Minimum viable product):
+		- Start page:
+			- Logo
+			- About us
+			- Information about what the service is.
+			- Sign in button
+			- Sign up
+			- Create event button
+		- My page
+			- Log in
+			- Name, id, password, mail
+			- Show upcoming events
+			- create event
+		- Event
+			- Create
+			- Edit event
+			- iD, Name, description, timeslot, location
+			- Send invite
+			- Accept/reject request
+				- Accept:
+				- Add and respond with available timeslots.
+				- Use callendar (upload) to generate available timeslots.
+					- choose which of the generated timeslots to include in responce.
+			- Accept/reject invite
+
+	Internal teams:
+		- Vetle & Elias:
+			- Setup database
+			- Start page
+				- Sign in
+			- Sign up
+		- Alex & Marte:
+			- My page
+				- Send requests
+				- Send invite
+		- Iris & Theodor:
+			- Event
+			- Create event	
+		
