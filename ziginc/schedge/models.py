@@ -4,7 +4,7 @@ from django.db import models
 
 
 class Event(models.Model):
-    titel = models.CharField(max_length=100)
+    title = models.CharField(max_length=100)
     startDate = models.DateField()
     enddate = models.DateField()
     startTime = models.TimeField()
