@@ -1,0 +1,11 @@
+{ % for event in events %}
+    <ul>
+        <li> {{event.title}}</li>
+        <li> {{event.description}}</li>
+        <li> {{event.startDate}} - {{event.endDate}}</li>
+        <li> {{event.startTime}} - {{event.endTime}}</li>
+        <li> {{event.duration}}</li>
+        <li> {{event.location}}</li>
+    </ul>
+    <br>
+{ % endfor % }
