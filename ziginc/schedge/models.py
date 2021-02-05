@@ -5,11 +5,11 @@ from django.db import models
 
 class Event(models.Model):
     title = models.CharField(max_length=100)
-    startDate = models.DateField()
-    enddate = models.DateField()
-    startTime = models.TimeField()
-    endTime = models.TimeField()
-    duration = models.DurationField()
+    # startDate = models.DateField()
+    # endDate = models.DateField()
+    # startTime = models.TimeField()
+    # endTime = models.TimeField()
+    duration = models.CharField(max_length=50)
     description = models.CharField(max_length=500)
     location = models.CharField(max_length=100)
     # hostID = models.ForeignKey()
