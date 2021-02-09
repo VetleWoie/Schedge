@@ -1,0 +1,38 @@
+Meeting for Marte and Alex.
+
+Discuss implementation plans to be executed during next work session (which will be thursday 11.02.2021).
+- Archive:
+	-Move past events to archive DB so they are not considered when querying for new/upcoming events.
+- My events:
+	- User ID = HOST:
+		- Test cases:
+			- Get 'my events' if userID matches.
+		-  (Future: include status - number of answers, edit event, terminate requests to conclude numer/which participents.)
+
+- Upcoming:
+	- Host:
+		- Upcoming events that userID is hosting.
+	- Participant:
+		- Upcoming events that userID is a participant of. (Has accepted invitation)
+	
+	- Test cases:
+		- Get 'upcoming events' where userID is either host or participant.
+
+- Event:
+	- Include GroupID
+- Group:
+	- Create 'group' table to include participants with:
+		- userID
+		- groupID
+		- eventID
+		- hostID (?)
+		- If a participant is in several groups a new entry of userID with the different groupID is created.
+
+TODO:
+	- add userID to event model.
+	- Testcase ^
+	- Create group model
+	- Upcoming events - query host
+	- Upcoming events - query participant.
+
+
