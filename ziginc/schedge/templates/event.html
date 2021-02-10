@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/event.css' %}"/>
+    <title>Event</title>
+</head>
+<body>
+    {% if event.image.url != "/media/default.jpg" %}
+    <img src="{{event.image.url}}" width=200px/>
+    {% endif %}
+    <h1> {{ event.title }} </h1><br>
+        <table class="event">
+            <tr>
+                <td>Title</td>
+                <td>{{ event.title }}</td>
+            </tr>
+            <tr>
+                <td>Location</td>
+                <td>{{ event.location }}</td>
+            </tr>
+            <tr>
+                <td>Time</td>
+                <td>{{ event.time }}</td>
+            </tr>
+            <tr>
+                <td>Date</td>
+                <td>{{ event.date }}</td>
+            </tr>
+            <tr>
+                <td>Description</td>
+                <td>{{ event.description }}</td>
+            </tr>
+            
+        </table><br>
+</body>
+</html>

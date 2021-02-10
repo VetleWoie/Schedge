@@ -1,0 +1,21 @@
+table {
+    text-align: left;
+}
+
+td {
+    padding-left: 20px;
+}
+
+.event {
+    background-color: #57b38d;
+}
+
+/* .bgimage { */
+  /* Full height */
+  /* height: 100%; */
+
+  /* Center and scale the image nicely */
+  /* background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+} */

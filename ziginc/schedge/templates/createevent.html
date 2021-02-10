@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/createevent.css' %}"/>
+    <title>Create Event</title>
+</head>
+<body>
+    <div class="wrap">
+
+        <form action="/createevent/" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <h1>CREATE AN EVENT</h1>
+            <table class="createevent">
+                
+                <tr>
+                <td>Title</td>
+                <td>{{ form.title }}</td>
+            </tr>
+            <tr>
+                <td>Location</td>
+                <td>{{ form.location }}</td>
+            </tr>
+            <tr>
+                <td>Start Time</td>
+                <td>{{ form.starttime }}</td>
+            </tr>
+            <tr>
+                <td>End Time</td>
+                <td>{{ form.endtime }}</td>
+            </tr>
+            <tr>
+                <td>Start Date</td>
+                <td class="datepicker">{{ form.startdate }}</td>
+            </tr>
+            <tr>
+                <td>End Date</td>
+                <td class="datepicker">{{ form.enddate }}</td>
+            </tr>
+            <tr>
+                <td>Duration</td>
+                <td>{{ form.duration }}</td>
+            </tr>
+            <tr>
+                <td>Description</td>
+                <td>{{ form.description }}</td>
+            </tr>
+            <tr>
+                <td>Image</td>
+                <td>{{ form.image }}</td>
+            </tr>
+            
+        </table>
+        <input type="submit" value="Submit" class="btn wrap">
+    </form>    
+</div>
+</body>
+</html>
