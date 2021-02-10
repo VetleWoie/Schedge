@@ -2,7 +2,7 @@ from django import forms
 from itertools import product
 import datetime as dt
 
-from .models import Event
+from .models import Event, TimeSlot
 
 class DateInput(forms.DateInput):
     input_type = 'date'
@@ -43,4 +43,15 @@ class EventForm(forms.ModelForm):
             
             # 'duration': DateInput(attrs={'class':'timepicker'})
 
+        }
+
+
+class TimeSlotForm(forms.ModelForm):
+    class Meta:
+        model = TimeSlot
+        fields = ['time', 'date']
+
+        widgets = {
+            'time': TimeInput(),
+            'date': DateInput()
         }

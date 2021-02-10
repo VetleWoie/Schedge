@@ -23,18 +23,53 @@
                 <td>{{ event.location }}</td>
             </tr>
             <tr>
-                <td>Time</td>
-                <td>{{ event.time }}</td>
+                <td>Start Time</td>
+                <td>{{ event.starttime }}</td>
             </tr>
             <tr>
-                <td>Date</td>
-                <td>{{ event.date }}</td>
+                <td>End Time</td>
+                <td>{{ event.endtime }}</td>
+            </tr>
+            <tr>
+                <td>Start Date</td>
+                <td>{{ event.startdate }}</td>
+            </tr>
+            <tr>
+                <td>End Date</td>
+                <td>{{ event.enddate }}</td>
+            </tr>
+            <tr>
+                <td>Duration</td>
+                <td>{{ event.duration }}</td>
             </tr>
             <tr>
                 <td>Description</td>
                 <td>{{ event.description }}</td>
             </tr>
-            
         </table><br>
-</body>
+        <form action="/event/{{ event.id }}/" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Submit">
+        </form>
+        {% for timeslot in timeslots %}
+            <table>
+                <tr>
+                    <td>Time</td>
+                    <td>{{timeslot.time}}</td>
+                </tr>
+                <tr>
+                    <td>Date</td>
+                    <td>{{timeslot.date}}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <form action="/event/{{event.id}}/delete/{{timeslot.id}}" method="POST" enctype="multipart/form-data">
+                            <input type="submit" value="🗑">
+                        </form>
+                    </td>
+                </tr>
+            </table>
+        {% endfor %}
+    </body>
 </html>
