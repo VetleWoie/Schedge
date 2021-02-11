@@ -17,9 +17,9 @@
         </div>
     </div>
 
-    <div class="box_myevents">
-        <div class="title_myevents">m&nbsp;y &nbsp;&nbsp;e&nbsp;v&nbsp;e&nbsp;n&nbsp;t&nbsp;s</div>
-        {% if events %}
+    <div id="box_myevents">
+        <div class="title_main">m&nbsp;y&nbsp;&nbsp;e&nbsp;v&nbsp;e&nbsp;n&nbsp;t&nbsp;s</div>
+        {% if hostUndecided %}
         {% for event in events %}
         <div class="box">
             <ul>
@@ -34,6 +34,26 @@
         {% endfor %}
         {% else %}
         <div class="nothing">you have no events of your own to determine</div>
+        {% endif %}
+    </div>
+    <div id="box_upcoming">
+        <div class="title_main">u&nbsp;p&nbsp;c&nbsp;o&nbsp;m&nbsp;i&nbsp;n&nbsp;g&nbsp;&nbsp;e&nbsp;v&nbsp;e&nbsp;n&nbsp;t&nbsp;s&nbsp;</div>
+        <div class="title_sub">host</div>
+        {% if upcomingHost %}
+        {% for hostEvent in upcomingHost %}
+            hei
+        {% endfor %}
+        {% else %}
+        <div class="nothing">you are not a host for any upcoming events</div>
+        {% endif %}
+        
+        <div class="title_sub">participant</div>
+        {% if upcomingParticipant %}
+        {% for partEvent in upcomingParticipant %}
+            hei
+        {% endfor %}
+        {% else %}
+        <div class="nothing">you are not a participant of any upcoming events</div>
         {% endif %}
     </div>
 

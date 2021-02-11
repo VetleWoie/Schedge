@@ -98,7 +98,7 @@ body {
     margin-bottom: 40px;
     box-shadow: 2.5px 3px 2.5px #2F323A;
     padding: 10px;
-    width: 80%;
+    width: 70%;
     font-family: sans-serif;
     background-color: white;
     border-radius: 50px;
@@ -136,19 +136,37 @@ li {
     /* text-shadow: 2px 2px 15px red; */
 }
 
-.box_myevents {
-    margin-top: 50px;
+#box_myevents {
+    margin-top: 30px;
     float: left;
     width: 50%;
 }
 
-.title_myevents {
+#box_upcoming {
+    margin-top: 30px;
+    float: right;
+    width: 50%;
+}
+
+.title_main {
     text-align: center;
     margin-bottom: 50px;
-    font-size: 50px;
+    font-size: 40px;
     font-weight: bolder;
     text-transform: uppercase;
     margin-top: 100px;
+    text-shadow: 2px 2px white;
+    color: #2F323A;
+}
+.title_sub {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 20px;
+    font-weight: bolder;
+    text-transform: uppercase;
+    margin-top: 20px;
+    text-shadow: 2px 2px white;
+    color: #2F323A;
 }
 
 .nothing {
@@ -156,4 +174,6 @@ li {
     color: 848484;
     font-style: italic;
     font-size: 15px;
+    margin-bottom: 40px;
+    margin-top: -10px;
 }
