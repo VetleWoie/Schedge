@@ -4,8 +4,8 @@ from .models import Event
 import datetime #Only used to get som eevents into the dummy database. Remove before deployment.
 
 # Create your views here.
-
+Simulated_user = 1
 def mypage(request):
-    events = Event.objects.all()
-    context = {'events':events}
+    hostUndecided = Event.objects.filter(hostID=Simulated_user)
+    context = {'hostUndecided':hostUndecided}
     return render(request, 'mypage.html', context)
