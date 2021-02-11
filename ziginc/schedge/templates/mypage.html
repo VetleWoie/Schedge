@@ -17,22 +17,25 @@
         </div>
     </div>
 
-    {% if events %}
     <div class="box_myevents">
-    <div class="title_myevents">m&nbsp;y &nbsp;&nbsp;e&nbsp;v&nbsp;e&nbsp;n&nbsp;t&nbsp;s</div>
-    {% for event in events %}
-    <div class="box">
-        <ul>
-            <li class="title"> {{event.title}}</li>
-            <li> {{event.duration}} hours</li>
-            <li> {{event.description}}</li>
-            <li> {{event.location}}</li>
-        </ul>
+        <div class="title_myevents">m&nbsp;y &nbsp;&nbsp;e&nbsp;v&nbsp;e&nbsp;n&nbsp;t&nbsp;s</div>
+        {% if events %}
+        {% for event in events %}
+        <div class="box">
+            <ul>
+                <li class="title"> {{event.title}}</li>
+                <li> {{event.duration}} hours</li>
+                <li> {{event.description}}</li>
+                <li> {{event.location}}</li>
+            </ul>
+        </div>
+
+        
+        {% endfor %}
+        {% else %}
+        <div class="nothing">you have no events of your own to determine</div>
+        {% endif %}
     </div>
 
-    </div>
-    
-    {% endfor %}
-    {% endif %}
 </body>
 </html>
