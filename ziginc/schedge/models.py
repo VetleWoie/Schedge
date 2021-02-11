@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.deletion import CASCADE
 
 # Create your models here.
 
@@ -21,7 +22,7 @@ class Event(models.Model):
     duration = models.CharField(max_length=50)
     description = models.CharField(max_length=500)
     location = models.CharField(max_length=100)
-    hostID = models.ForeignKey(User.userID)
+    hostID = models.IntegerField()
     status = models.CharField(max_length=10, choices=STATUS_OPTIONS)
     # groupID = models.ForeignKey()
 
