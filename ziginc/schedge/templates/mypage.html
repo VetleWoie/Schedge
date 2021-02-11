@@ -9,6 +9,14 @@
     <title>My Page</title>
 </head>
 <body>
+    <div class="header">
+        <a href="#default" class="name">schedge</a>
+        <div class="header-right">
+            <a href="#createevent" class="event_btn">&nbsp;+ CREATE EVENT </a>
+            <a href="#signout" class="sign_out">Sign out</a>
+        </div>
+    </div>
+
     {% if events %}
     <div class="my_events_title glow">My events</div>
     {% for event in events %}
