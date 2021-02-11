@@ -18,7 +18,8 @@
     </div>
 
     {% if events %}
-    <div class="my_events_title glow">My events</div>
+    <div class="box_myevents">
+    <div class="title_myevents">m&nbsp;y &nbsp;&nbsp;e&nbsp;v&nbsp;e&nbsp;n&nbsp;t&nbsp;s</div>
     {% for event in events %}
     <div class="box">
         <ul>
@@ -27,6 +28,8 @@
             <li> {{event.description}}</li>
             <li> {{event.location}}</li>
         </ul>
+    </div>
+
     </div>
     
     {% endfor %}
