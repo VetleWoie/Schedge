@@ -4,17 +4,18 @@ body {
     font-family: sans-serif;
     margin: 0;
     padding: 0;
+    background-color: #E3E5EA;
 }
 
 .header {
     overflow: hidden;
     border-bottom: 3px solid #2F323A;
-    padding: 30px 0px;
+    padding: 20px 0px;
     /* padding-bottom: 20px; */
     background-color: #2F323A;
     width: 100%;
-    padding-top: 50px;
-    padding-bottom: 50px;
+    padding-top: 30px;
+    /* padding-bottom: 20px; */
 }
 
 .header a {
@@ -31,7 +32,7 @@ body {
     font-size: 40px;
     letter-spacing: 10px;
     margin-left: 60px;
-    padding-top: 10px;
+    padding-top: 0px;
     color: #F36000;
     text-shadow: 2px 1.5px 0px white;
 }
@@ -47,13 +48,14 @@ body {
     margin-right: 40px;
     font-size: 20px;
     letter-spacing: 2.5px;
-    background-color: #97ABB1;
+    background-color: #E3E5EA;
     border-radius: 50px;
-    padding: 10px 20px;
+    padding: 10px 10px;
     padding-right: 25px;
-    margin-top: 10px;
+    /* margin-top: 10px; */
     font-weight: 900;
-    color: white;
+    color: black;
+    text-shadow: 2px 2px white;
 }
 
 .event_btn:hover {
@@ -74,7 +76,7 @@ body {
 
 .sign_out {
     font-size: 20px;
-    margin-top: 15px;
+    margin-top: 5px;
     padding-top: 5px;
     margin-right: 20px;
     border-bottom: 1px solid transparent;
@@ -91,19 +93,26 @@ body {
 
 
 .box {
-    border: 1px solid black;
+    border: 1px solid white;
     margin: auto;
-    margin-bottom: 20px;
+    margin-bottom: 40px;
+    box-shadow: 2.5px 3px 2.5px #2F323A;
     padding: 10px;
-    width: 50%;
+    width: 20%;
     font-family: sans-serif;
-    background-color: #D2F8FA;
+    background-color: white;
+    border-radius: 50px;
+    /* transition: scale 0.4s ease; */
     
 }
 
 .box:hover {
-    box-shadow: 1px 1px 0px gray;
+    transition: all 0.5s ease-in-out;
+    
     cursor: pointer;
+    transform: scale(1.05);
+
+
 }
 
 li {
@@ -117,6 +126,7 @@ li {
     margin-bottom: 20px;
     padding-right: 20px;
     font-weight: bolder;
+    letter-spacing: 2px;
 }
 
 .my_events_title {
@@ -126,20 +136,15 @@ li {
     /* text-shadow: 2px 2px 15px red; */
 }
 
-.glow {
-    /* font-size: 80px; */
-    /* color: #fff; */
-    text-align: center;
-    -webkit-animation: glow 1s ease-in-out infinite alternate;
-    -moz-animation: glow 1s ease-in-out infinite alternate;
-    animation: glow 1s ease-in-out infinite alternate;
-    }
+.box_myevents {
+    margin-top: 50px;
+}
 
-    @-webkit-keyframes glow {
-    from {
-        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #15E5F1, 0 0 40px #15E5F1, 0 0 50px #15E5F1, 0 0 60px #15E5F1, 0 0 70px #15E5F1;
-    }
-    to {
-        text-shadow: 0 0 20px #fff, 0 0 30px #7FEEF4, 0 0 40px #7FEEF4, 0 0 50px #7FEEF4, 0 0 60px #7FEEF4, 0 0 70px #7FEEF4, 0 0 80px #7FEEF4;
-    }
-    }
+.title_myevents {
+    text-align: center;
+    margin-bottom: 50px;
+    font-size: 50px;
+    font-weight: bolder;
+    text-transform: uppercase;
+    margin-top: 100px;
+}
