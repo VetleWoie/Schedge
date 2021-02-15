@@ -6,6 +6,10 @@ import datetime #Only used to get som eevents into the dummy database. Remove be
 # Create your views here.
 Simulated_user = 1
 def mypage(request):
-    hostUndecided = Event.objects.filter(hostID=Simulated_user)
-    context = {'hostUndecided':hostUndecided}
+    hostUndecided = Event.objects.filter(hostID=Simulated_user, status='U')
+    hostDecided = Event.objects.filter(hostID=Simulated_user, status='C')
+    upcomingParticipant = Event.objects.filter(status='C').exclude(hostID=Simulated_user)
+    context = {'hostUndecided':hostUndecided,
+                'upcomingHost':hostDecided,
+                'upcomingParticipant':upcomingParticipant}
     return render(request, 'mypage.html', context)

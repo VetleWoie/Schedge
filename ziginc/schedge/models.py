@@ -8,6 +8,12 @@ class User(models.Model):
     userID = models.IntegerField(unique=True)
     name = models.CharField(max_length=100)
 
+class GroupEvent(models.Model):
+    # One user can be included in several groups.
+    userID = models.IntegerField()
+    # GroupID == eventid to see who is in the same group (going to the same event)
+    groupID = models.IntegerField()
+
 
 class Event(models.Model):
     STATUS_OPTIONS = (
