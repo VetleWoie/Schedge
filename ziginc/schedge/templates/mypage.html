@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     {% load static %}
     <meta charset="UTF-8">
@@ -8,6 +9,7 @@
     <link rel="stylesheet" href="{% static 'css/mypage.css' %}">
     <title>My Page</title>
 </head>
+
 <body>
     <div class="header">
         <a href="#default" class="name">schedge</a>
@@ -30,27 +32,43 @@
             </ul>
         </div>
 
-        
+
         {% endfor %}
         {% else %}
         <div class="nothing">you have no events of your own to determine</div>
         {% endif %}
     </div>
     <div id="box_upcoming">
-        <div class="title_main">u&nbsp;p&nbsp;c&nbsp;o&nbsp;m&nbsp;i&nbsp;n&nbsp;g&nbsp;&nbsp;e&nbsp;v&nbsp;e&nbsp;n&nbsp;t&nbsp;s&nbsp;</div>
+        <div class="title_main">
+            u&nbsp;p&nbsp;c&nbsp;o&nbsp;m&nbsp;i&nbsp;n&nbsp;g&nbsp;&nbsp;e&nbsp;v&nbsp;e&nbsp;n&nbsp;t&nbsp;s&nbsp;
+        </div>
         <div class="title_sub">host</div>
         {% if upcomingHost %}
-        {% for hostEvent in upcomingHost %}
-            hei
+        {% for event in upcomingHost %}
+        <div class="box">
+            <ul>
+                <li class="title"> {{event.title}}</li>
+                <li> {{event.duration}} hours</li>
+                <li> {{event.description}}</li>
+                <li> {{event.location}}</li>
+            </ul>
+        </div>
         {% endfor %}
         {% else %}
         <div class="nothing">you are not a host for any upcoming events</div>
         {% endif %}
-        
+
         <div class="title_sub">participant</div>
         {% if upcomingParticipant %}
         {% for partEvent in upcomingParticipant %}
-            hei
+        <div class="box">
+            <ul>
+                <li class="title"> {{event.title}}</li>
+                <li> {{event.duration}} hours</li>
+                <li> {{event.description}}</li>
+                <li> {{event.location}}</li>
+            </ul>
+        </div>
         {% endfor %}
         {% else %}
         <div class="nothing">you do not participate in any upcoming events</div>
@@ -58,4 +76,5 @@
     </div>
 
 </body>
+
 </html>
