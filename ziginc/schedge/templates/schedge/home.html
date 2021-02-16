@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+</head>
+<div id="topHdr">
+    <div id="Logo">Logo</div>
+    <div id="signButton">
+        <form action="{% url 'signIn' %}" method="get">
+            <input type="submit" value="Sign in" />
+        </form>
+        <form action="{% url 'signUp' %}" method="get">
+            <input type="submit" value="Sign up" />
+        </form>
+    </div>
+    <div>
+        <form action="{% url 'signUp' %}" method="get">
+            <input type="submit" value="Sign up" />
+        </form>
+    </div>
+</div>
+
+<h1 id="wlcmMsg">Welcome msg</h1>
+<body>
+    Welcome to the Home Page (this is a template) <break/>
+    
+    <form action="{% url 'createEvent' %}" method="get">
+        <input type="submit" value="Create event!" />
+    </form>
+</body>
+
+</html>
