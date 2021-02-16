@@ -7,5 +7,5 @@ from .views import SignUpView
 urlpatterns = [
     path('signup/' ,SignUpView.as_view(),name='signup'),    
     path("createEvent", views.createEvent, name="createEvent"),
-    path('/', include('django.contrib.auth.urls')),
+    path('', include('django.contrib.auth.urls')),
 ]
