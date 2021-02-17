@@ -10,8 +10,7 @@ class Event(models.Model):
     title = models.CharField(max_length=100)
     location = models.CharField(max_length=100)
     description = models.TextField(blank=True, max_length=500)
-    # time = models.TimeField()
-    # date = models.DateField()
+
     starttime = models.TimeField(default=django.utils.timezone.now)
     endtime = models.TimeField(default=django.utils.timezone.now)
 
@@ -27,3 +26,6 @@ class TimeSlot(models.Model):
     time = models.TimeField()
     date = models.DateField()
     # creator = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        
