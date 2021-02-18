@@ -5,14 +5,14 @@ from django.db.models.deletion import CASCADE
 
 
 class User(models.Model):
-    userID = models.IntegerField(unique=True)
+    userID = models.IntegerField(primary_key=True, unique=True)
     name = models.CharField(max_length=100)
 
 class GroupEvent(models.Model):
     # One user can be included in several groups.
-    userID = models.IntegerField()
-    # GroupID == eventid to see who is in the same group (going to the same event)
-    groupID = models.IntegerField()
+    userID = models.ForeignKey('User', on_delete=models.CASCADE)
+    #TODO: null=True needs to be removed before shippable product.    
+    event = models.ForeignKey('Event', on_delete=models.CASCADE, null=True)
 
 
 class Event(models.Model):
@@ -30,5 +30,8 @@ class Event(models.Model):
     location = models.CharField(max_length=100)
     hostID = models.IntegerField()
     status = models.CharField(max_length=10, choices=STATUS_OPTIONS)
-    # groupID = models.ForeignKey()
+    
+    # def addparticipant(self, userID):
+
+
 

@@ -71,7 +71,6 @@
         <div class="title_sub">participant</div>
         {% if upcomingParticipant %}
         {% for event in upcomingParticipant %}
-        {% if forloop.counter is not 1 and event.hostID is not 8%}
         <div class="box extra_bottom">
             <div class="title"> {{event.title}}</div>
             <table class="info_table extra_right">
@@ -87,7 +86,6 @@
 
             </table>
         </div>
-        {%endif%}
         {% endfor %}
         {% else %}
         <div class="nothing">you do not participate in any upcoming events</div>
@@ -101,7 +99,6 @@
         </div>
         {% if upcomingParticipant %}
         {% for event in upcomingParticipant %}
-        {% if forloop.counter is not 2 and event.hostID is not 8%}
         <div class="box">
             <div class="title"> {{event.title}}</div>
             <table class="info_table">
@@ -117,7 +114,6 @@
 
             <div class="event_btn result_btn">reply</div>
         </div>
-        {%endif%}
         {% endfor %}
         {% else %}
         <div class="nothing">you don't have any event requests</div>
@@ -128,7 +124,6 @@
         </div>
         {% if upcomingParticipant %}
         {% for event in upcomingParticipant %}
-        {% if event.hostID is 8%}
         <div class="box extra_bottom">
             <div class="title"> {{event.title}}</div>
             <div class="left_inv">
@@ -152,7 +147,6 @@
                 
             </div>
         </div>
-        {% endif %}
         {% endfor %}
         {% else %}
         <div class="nothing">you don't have any event invitations</div>

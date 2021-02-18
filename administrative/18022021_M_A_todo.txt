@@ -1,0 +1,3 @@
+- Fix my page  views 
+- Implement filter in template to get every event where user is not host.
+- Tests.
