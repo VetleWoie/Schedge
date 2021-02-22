@@ -16,10 +16,7 @@ class GroupEvent(models.Model):
 
 
 class Event(models.Model):
-    STATUS_OPTIONS = (
-        ('C', 'Concluded'),
-        ('U', 'Unresolved')
-    )
+    
     title = models.CharField(max_length=100)
     # startDate = models.DateField()
     # endDate = models.DateField()
@@ -29,9 +26,44 @@ class Event(models.Model):
     description = models.CharField(max_length=500)
     location = models.CharField(max_length=100)
     hostID = models.IntegerField()
-    status = models.CharField(max_length=10, choices=STATUS_OPTIONS)
+    
     
     # def addparticipant(self, userID):
 
 
 
+import datetime as dt
+import django
+# Create your models here.
+
+
+class Event(models.Model):
+    """The event model
+    TODO: Add more stuff"""
+    STATUS_OPTIONS = (
+        ('C', 'Concluded'),
+        ('U', 'Unresolved')
+    )
+    title = models.CharField(max_length=100)
+    location = models.CharField(max_length=100)
+    description = models.TextField(blank=True, max_length=500)
+
+    starttime = models.TimeField(default=django.utils.timezone.now)
+    endtime = models.TimeField(default=django.utils.timezone.now)
+
+    startdate = models.DateField(default=django.utils.timezone.now)
+    enddate = models.DateField(default=django.utils.timezone.now)
+
+    duration = models.DurationField(max_length=dt.timedelta(hours=10), default=dt.timedelta())
+
+    image = models.ImageField(default='default.jpg', upload_to='images/')
+    status = models.CharField(max_length=10, default='U', choices=STATUS_OPTIONS)
+
+class TimeSlot(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    time = models.TimeField()
+    date = models.DateField()
+    # creator = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        

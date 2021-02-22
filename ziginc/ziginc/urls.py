@@ -18,5 +18,9 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+<<<<<<< HEAD
     path('mypage/', include('schedge.urls')),
+=======
+    path('', include('schedge.urls'))
+>>>>>>> origin/eventpage
 ]

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}" />
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <title>Edit Event</title>
+</head>
+
+<body>
+    <form method="POST" action="/event/{{ event.id }}/edit/#/" enctype="multipart/form-data" class="blob">
+        {% csrf_token %}
+        {{form.as_p}}
+        <p>Current:</p>
+        <img src="{{imageurl}}" width="300px"><br>
+        <input type="submit" value="Save Edits" class="btn">
+    </form>
+    <form method="POST" action="/event/{{ event.id }}/edit/delete/" enctype="multipart/form-data" id="delete_form">
+        {% csrf_token %}
+        <!-- Make pop up work -->
+        <input type="submit" value="Delete event" class="btn" onclick="validateSubmit();return false;">
+    </form>
+    <script>
+        function validateSubmit() {
+            result = confirm("Are you sure you want to delete?");
+            if (result) {
+                $('#delete_form').submit();
+            }
+        }
+    </script>
+</body>
+
+</html>

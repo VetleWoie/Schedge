@@ -16,13 +16,10 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('title', models.CharField(max_length=100)),
-                ('startDate', models.DateField()),
-                ('enddate', models.DateField()),
-                ('startTime', models.TimeField()),
-                ('endTime', models.TimeField()),
-                ('duration', models.DurationField()),
-                ('description', models.CharField(max_length=500)),
                 ('location', models.CharField(max_length=100)),
+                ('desciption', models.CharField(max_length=500)),
+                ('time', models.TimeField()),
+                ('date', models.DateField()),
             ],
         ),
     ]

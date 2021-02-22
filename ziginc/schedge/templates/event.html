@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/event.css' %}" />
+    <title>Event</title>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="left_box blob">
+            <div class="eventinfo">
+                <div class="image">
+                    {% if event.image.url != "/media/default.jpg" %}
+                    <img src="{{event.image.url}}" />
+                    {% endif %}
+                </div>
+                <h1> {{ event.title }} </h1>
+                <table class="eventtable">
+                    <tr>
+                        <td>Title</td>
+                        <td>{{ event.title }}</td>
+                    </tr>
+                    <tr>
+                        <td>Location</td>
+                        <td>{{ event.location }}</td>
+                    </tr>
+                    <tr>
+                        <td>Start Time</td>
+                        <td>{{ event.starttime }}</td>
+                    </tr>
+                    <tr>
+                        <td>End Time</td>
+                        <td>{{ event.endtime }}</td>
+                    </tr>
+                    <tr>
+                        <td>Start Date</td>
+                        <td>{{ event.startdate }}</td>
+                    </tr>
+                    <tr>
+                        <td>End Date</td>
+                        <td>{{ event.enddate }}</td>
+                    </tr>
+                    <tr>
+                        <td>Duration</td>
+                        <td>{{ event.duration }}</td>
+                    </tr>
+                    <tr>
+                        <td>Description</td>
+                        <td>{{ event.description }}</td>
+                    </tr>
+                </table>
+                <a href="/event/{{ event.id}}/edit/" class="editbtn">Edit</a>
+            </div>
+
+        </div>
+        <div class="right_box">
+            <div class="timepicker blob">
+                <h2>Pick a time</h2>
+                <form action="/event/{{ event.id }}/" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <input type="submit" value="Submit">
+                </form>
+            </div>
+            <div class="timeslots">
+
+                {% for timeslot in timeslots %}
+                <div class="blob">
+                    <div class="timeslot">
+                        <table>
+                            <tr>
+                                <td>Time</td>
+                                <td>{{timeslot.time}}</td>
+                            </tr>
+                            <tr>
+                                <td>Date</td>
+                                <td>{{timeslot.date }}</td>
+                            </tr>
+                        </table>
+                        <form action="/event/{{event.id}}/delete/{{timeslot.id}}/" method="POST"
+                            enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="submit" value="🗑">
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+
+            </div>
+
+        </div>
+    </div>
+</body>
+
+</html>
