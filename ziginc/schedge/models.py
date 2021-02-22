@@ -8,7 +8,7 @@ class Event(models.Model):
     """The event model
     TODO: Add more stuff"""
     title = models.CharField(max_length=100)
-    location = models.CharField(max_length=100)
+    location = models.CharField(max_length=300)
     description = models.TextField(blank=True, max_length=500)
 
     starttime = models.TimeField(default=django.utils.timezone.now)
@@ -21,6 +21,9 @@ class Event(models.Model):
 
     image = models.ImageField(default='default.jpg', upload_to='images/')
 
+    def __str__(self):
+        return f"Event(id={self.id}, title={self.title}, ...)"
+
 class TimeSlot(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     time = models.TimeField()
@@ -28,4 +31,4 @@ class TimeSlot(models.Model):
     # creator = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        
+        return f"TimeSlot(id={self.id}, on={self.event.id}, time={self.time}, date={self.date}"

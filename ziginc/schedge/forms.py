@@ -6,7 +6,6 @@ from django.utils.dateparse import parse_duration
 
 from django.forms.widgets import MultiWidget
 from .models import Event, TimeSlot
-from durationwidget.widgets import TimeDurationWidget
 
 
 class DateInput(forms.DateInput):

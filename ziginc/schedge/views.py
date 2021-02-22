@@ -91,8 +91,7 @@ def eventedit(request, event_id):
             data = form.cleaned_data
             oldimg = this_event.image
             this_event.__dict__.update(data)
-            print(request.FILES)
-            print(data)
+
             this_event.image = request.FILES.get("image", oldimg)
             this_event.save()
 
@@ -100,19 +99,19 @@ def eventedit(request, event_id):
         else:
             return HttpResponseBadRequest("Invalid Form!")
 
+    # create form with info from the current event
     initial_times = {
         "starttime": this_event.starttime.strftime("%H:%M"),
         "endtime": this_event.endtime.strftime("%H:%M"),
     }
     form = EventForm(instance=this_event, initial=initial_times)
 
-    context = {"event": this_event, "form": form, "imageurl": this_event.image.url}
+    context = {"event": this_event, "form": form}
     return render(request, "eventedit.html", context)
 
 
 def event_delete(request, event_id):
 
-    # try:
     if request.method == "POST":
         Event.objects.get(id=event_id).delete()
         timeslots = TimeSlot.objects.filter(id=event_id)

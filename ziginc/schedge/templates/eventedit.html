@@ -16,7 +16,7 @@
         {% csrf_token %}
         {{form.as_p}}
         <p>Current:</p>
-        <img src="{{imageurl}}" width="300px"><br>
+        <img src="{{ event.image.url }}" width="300px"><br>
         <input type="submit" value="Save Edits" class="btn">
     </form>
     <form method="POST" action="/event/{{ event.id }}/edit/delete/" enctype="multipart/form-data" id="delete_form">
