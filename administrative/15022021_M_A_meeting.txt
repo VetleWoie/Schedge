@@ -1,0 +1,11 @@
+Status update:
+	- The site runs with template and html.
+		- Interface without backend
+	- backend is incomplete.
+
+
+TODO:
+	- Write tests
+	- Complete backend.
+
+

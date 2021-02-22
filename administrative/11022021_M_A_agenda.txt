@@ -1,0 +1,11 @@
+Agenda for today.
+
+- Expand database with userID (although not real):
+- ----||-------- with status (Concluded, unresolved)
+- Mypage - ONLY own events.
+- Upcoming events HOST:
+	- Only userID as host events.
+- Upcoming events participient:
+	- Upcoming evnts where user is NOT host. ( for now, to simulate.).
+- Write template to match discussed interface better.
+	- Starting with two collumns.
