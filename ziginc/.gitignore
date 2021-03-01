@@ -1,5 +1,0 @@
-*__pycache__
-media/images/*
-.vscode/*
-*.sqlite3
-*.pyc

@@ -1,0 +1,35 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}Schedge{% endblock %}</title>
+</head>
+
+<body>
+  {% load static %}
+    <img src="{% static 'schedge/pics/logo.png' %}" alt="My logo">
+  {% block header%}
+    {% block auth %}
+      {% if user.is_authenticated %}
+        <form action="{% url 'logout' %}">
+        <input type="submit" value="Sign out" />
+      </form>
+      {% else %}
+      {% block signin%}
+      <form action="{% url 'login' %}">
+        <input type="submit" value="Sign in" />
+      </form>
+      {% endblock%}
+      {% block signup%}
+        <form action="{% url 'signup' %}">
+          <input type="submit" value="Sign up" />
+        </form>
+      {% endblock%}
+    {% endif %}
+    {% endblock %}
+  {% endblock %}
+  <main>
+  {% block content%} {%endblock%}
+  </main>
+  {% block sidebar %}<!-- default navigation tegt for every page--> {% endblock %}
+</body>
+</html>
