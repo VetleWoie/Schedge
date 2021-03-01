@@ -1,159 +1,148 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
+{% load static %}
 
-<head>
-    {% load static %}
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'css/mypage.css' %}">
-    <title>My Page</title>
-</head>
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'css/mypage.css' %}">
+{% endblock %}
 
-<body>
-    <div class="header">
-        <a href="#default" class="name">schedge</a>
-        <div class="header-right">
-            <a href="/createevent" class="event_btn">&nbsp;+ CREATE EVENT </a>
-            <a href="#signout" class="sign_out">Sign out</a>
-        </div>
+{% block title%}My Page{%endblock%}
+
+{% block content %}
+
+<div id="box_myevents">
+    <div class="title_main">m&nbsp;y&nbsp;&nbsp;e&nbsp;v&nbsp;e&nbsp;n&nbsp;t&nbsp;s</div>
+    {% if hostUndecided %}
+    {% for event in hostUndecided %}
+
+    <div class="box">
+        <div class="title"> {{event.title}}</div>
+        <table class="info_table">
+            <tr>
+                <td><img src="{% static 'icons/queue.png' %}" class="icons" width="25px"></td>
+                <td class="info_text">{{event.duration}} hours</td>
+                <td><img src="{% static 'icons/placeholder.png' %}" class="icons" width="25px"></td>
+                <td class="info_text">{{event.location}}</td>
+            </tr>
+
+        </table>
+        <!-- <div class="description_text">{{event.description}}</div> -->
+        <div class="n_partic"><img src="{% static 'icons/group.png' %}" class="group_icon" width="25px"></div>
+        <div class="n_text">{{ forloop.counter }}&nbsp;/&nbsp;5</div>
+        <div class="event_btn result_btn">see replies</div>
     </div>
 
-    <div id="box_myevents">
-        <div class="title_main">m&nbsp;y&nbsp;&nbsp;e&nbsp;v&nbsp;e&nbsp;n&nbsp;t&nbsp;s</div>
-        {% if hostUndecided %}
-        {% for event in hostUndecided %}
 
-        <div class="box">
-            <div class="title"> {{event.title}}</div>
-            <table class="info_table">
+    {% endfor %}
+    {% else %}
+    <div class="nothing">you have no events of your own to determine</div>
+    {% endif %}
+</div>
+
+<div id="box_upcoming">
+    <div class="title_main">
+        u&nbsp;p&nbsp;c&nbsp;o&nbsp;m&nbsp;i&nbsp;n&nbsp;g&nbsp;&nbsp;e&nbsp;v&nbsp;e&nbsp;n&nbsp;t&nbsp;s&nbsp;
+    </div>
+    <div class="title_sub">host</div>
+    {% if upcomingHost %}
+    {% for event in upcomingHost %}
+    <div class="box">
+        <ul>
+            <li class="title"> {{event.title}}</li>
+            <li> {{event.duration}} hours</li>
+            <li> {{event.description}}</li>
+            <li> {{event.location}}</li>
+        </ul>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="nothing">you are not a host for any upcoming events</div>
+    {% endif %}
+
+    <div class="title_sub">participant</div>
+    {% if upcomingParticipant %}
+    {% for event in upcomingParticipant %}
+    <div class="box extra_bottom">
+        <div class="title"> {{event.title}}</div>
+        <table class="info_table extra_right">
+            <tr>
+                <td><img src="{% static 'icons/queue.png' %}" class="icons" width="25px"></td>
+                <td class="info_text">{{event.event.duration}} hours</td>
+                <td><img src="{% static 'icons/placeholder.png' %}" class="icons" width="25px"></td>
+                <td class="info_text">{{event.event.location}}</td>
+                <td><img src="{% static 'icons/group.png' %}" class="icons" width="25px"></td>
+                <td class="info_text">3</td>
+
+            </tr>
+
+        </table>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="nothing">you do not participate in any upcoming events</div>
+    {% endif %}
+</div>
+
+
+<div id="box_participant">
+    <div class="title_main">
+        requests
+    </div>
+    {% if upcomingParticipant %}
+    {% for event in upcomingParticipant %}
+    <div class="box">
+        <div class="title"> {{event.title}}</div>
+        <table class="info_table">
+            <tr>
+                <td><img src="{% static 'icons/queue.png' %}" class="icons" width="25px"></td>
+                <td class="info_text">{{event.duration}} hours</td>
+                <td><img src="{% static 'icons/placeholder.png' %}" class="icons" width="25px"></td>
+                <td class="info_text">{{event.location}}</td>
+            </tr>
+
+        </table>
+        <div class="description_text">{{event.description}}</div>
+
+        <div class="event_btn result_btn">reply</div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="nothing">you don't have any event requests</div>
+    {% endif %}
+
+    <div class="title_main">
+        invitations
+    </div>
+    {% if upcomingParticipant %}
+    {% for event in upcomingParticipant %}
+    <div class="box extra_bottom">
+        <div class="title"> {{event.title}}</div>
+        <div class="left_inv">
+            <table>
+
                 <tr>
                     <td><img src="{% static 'icons/queue.png' %}" class="icons" width="25px"></td>
                     <td class="info_text">{{event.duration}} hours</td>
                     <td><img src="{% static 'icons/placeholder.png' %}" class="icons" width="25px"></td>
                     <td class="info_text">{{event.location}}</td>
                 </tr>
-
-            </table>
-            <!-- <div class="description_text">{{event.description}}</div> -->
-            <div class="n_partic"><img src="{% static 'icons/group.png' %}" class="group_icon" width="25px"></div>
-            <div class="n_text">{{ forloop.counter }}&nbsp;/&nbsp;5</div>
-            <div class="event_btn result_btn">see replies</div>
-        </div>
-
-
-        {% endfor %}
-        {% else %}
-        <div class="nothing">you have no events of your own to determine</div>
-        {% endif %}
-    </div>
-
-    <div id="box_upcoming">
-        <div class="title_main">
-            u&nbsp;p&nbsp;c&nbsp;o&nbsp;m&nbsp;i&nbsp;n&nbsp;g&nbsp;&nbsp;e&nbsp;v&nbsp;e&nbsp;n&nbsp;t&nbsp;s&nbsp;
-        </div>
-        <div class="title_sub">host</div>
-        {% if upcomingHost %}
-        {% for event in upcomingHost %}
-        <div class="box">
-            <ul>
-                <li class="title"> {{event.title}}</li>
-                <li> {{event.duration}} hours</li>
-                <li> {{event.description}}</li>
-                <li> {{event.location}}</li>
-            </ul>
-        </div>
-        {% endfor %}
-        {% else %}
-        <div class="nothing">you are not a host for any upcoming events</div>
-        {% endif %}
-
-        <div class="title_sub">participant</div>
-        {% if upcomingParticipant %}
-        {% for event in upcomingParticipant %}
-        <div class="box extra_bottom">
-            <div class="title"> {{event.title}}</div>
-            <table class="info_table extra_right">
-                <tr>
-                    <td><img src="{% static 'icons/queue.png' %}" class="icons" width="25px"></td>
-                    <td class="info_text">{{event.event.duration}} hours</td>
-                    <td><img src="{% static 'icons/placeholder.png' %}" class="icons" width="25px"></td>
-                    <td class="info_text">{{event.event.location}}</td>
-                    <td><img src="{% static 'icons/group.png' %}" class="icons" width="25px"></td>
-                    <td class="info_text">3</td>
-
-                </tr>
-
             </table>
         </div>
-        {% endfor %}
-        {% else %}
-        <div class="nothing">you do not participate in any upcoming events</div>
-        {% endif %}
-    </div>
-
-
-    <div id="box_participant">
-        <div class="title_main">
-            requests
-        </div>
-        {% if upcomingParticipant %}
-        {% for event in upcomingParticipant %}
-        <div class="box">
-            <div class="title"> {{event.title}}</div>
-            <table class="info_table">
-                <tr>
-                    <td><img src="{% static 'icons/queue.png' %}" class="icons" width="25px"></td>
-                    <td class="info_text">{{event.duration}} hours</td>
-                    <td><img src="{% static 'icons/placeholder.png' %}" class="icons" width="25px"></td>
-                    <td class="info_text">{{event.location}}</td>
-                </tr>
-
-            </table>
-            <div class="description_text">{{event.description}}</div>
-
-            <div class="event_btn result_btn">reply</div>
-        </div>
-        {% endfor %}
-        {% else %}
-        <div class="nothing">you don't have any event requests</div>
-        {% endif %}
-
-        <div class="title_main">
-            invitations
-        </div>
-        {% if upcomingParticipant %}
-        {% for event in upcomingParticipant %}
-        <div class="box extra_bottom">
-            <div class="title"> {{event.title}}</div>
-            <div class="left_inv">
-               <table>
-
-                   <tr>
-                       <td><img src="{% static 'icons/queue.png' %}" class="icons" width="25px"></td>
-                       <td class="info_text">{{event.duration}} hours</td>
-                       <td><img src="{% static 'icons/placeholder.png' %}" class="icons" width="25px"></td>
-                       <td class="info_text">{{event.location}}</td>
-                    </tr>
-                </table> 
+        <div class="right_inv">
+            <div class="yes_btn">
+                ✓
             </div>
-            <div class="right_inv">
-                <div class="yes_btn">
-                    ✓
-                </div>
-                <div class="no_btn">
-                    ✗
-                </div>
-                
+            <div class="no_btn">
+                ✗
             </div>
+
         </div>
-        {% endfor %}
-        {% else %}
-        <div class="nothing">you don't have any event invitations</div>
-        {% endif %}
     </div>
+    {% endfor %}
+    {% else %}
+    <div class="nothing">you don't have any event invitations</div>
+    {% endif %}
+</div>
 
 
-</body>
 
-</html>
+{%endblock%}

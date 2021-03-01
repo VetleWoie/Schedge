@@ -1,37 +1,57 @@
-<html>
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
 <head>
   <meta charset="utf-8">
   <title>{% block title %}Schedge{% endblock %}</title>
+  <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <a href="{% url 'home' %}">
+    <link rel="stylesheet" href="{% static 'css/header.css' %}">
+    {% block stylesheet %}
+    {% endblock %}
+  </a>
 </head>
 
 <body>
-  {% load static %}
-    <a href="{% url 'home' %}">
-    <img src="{% static 'schedge/pics/logo.png' %}" alt="My logo">
-    </a>
   {% block header%}
-    {% block auth %}
+  <div class="header">
+    <a href="#default" class="name">schedge</a>
+
+
+
+    <div class="header-right">
+      {% block auth %}
       {% if user.is_authenticated %}
-        <form action="{% url 'logout' %}">
-        <input type="submit" value="Sign out" />
-      </form>
+      <a href="/createevent" class="event_btn">&nbsp;+ CREATE EVENT </a>
+
+      <a href="{% url 'logout' %}" class="sign_out">Sign out</a>
+
       {% else %}
       {% block signin%}
-      <form action="{% url 'login' %}">
-        <input type="submit" value="Sign in" />
-      </form>
+
+      <a href="{% url 'login' %}" class="sign_out">Sign in</a>
+
       {% endblock%}
       {% block signup%}
-        <form action="{% url 'signup' %}">
-          <input type="submit" value="Sign up" />
-        </form>
+
+      <a href="{% url 'signup' %}" class="sign_out">Register</a>
+
       {% endblock%}
-    {% endif %}
-    {% endblock %}
+      {% endif %}
+      {% endblock %}
+    </div>
+  </div>
   {% endblock %}
+
   <main>
-  {% block content%} {%endblock%}
+    {% block content%}
+    {%endblock%}
   </main>
-  {% block sidebar %}<!-- default navigation tegt for every page--> {% endblock %}
+  {% block sidebar %}
+  <!-- default navigation tegt for every page--> {% endblock %}
 </body>
+
 </html>

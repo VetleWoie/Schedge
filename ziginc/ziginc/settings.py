@@ -124,7 +124,7 @@ STATIC_URL = '/static/'
 
 MEDIA_ROOT =  os.path.join(BASE_DIR, 'media') 
 MEDIA_URL = '/media/'
-LOGIN_REDIRECT_URL = "/"
+LOGIN_REDIRECT_URL = "/mypage"
 LOGOUT_REDIRECT_URL = "/"
 
 #This emulates reset mails by writing to files instead

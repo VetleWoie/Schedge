@@ -155,7 +155,8 @@ def signUpView(request):
             # ...
             # redirect to a new URL:'
             createUser(request)
-            return HttpResponseRedirect(reverse("login")) #fixed
+            return redirect(mypage)
+            return HttpResponseRedirect(reverse("mypage")) #fixed
 
     # if a GET (or any other method) we'll create a blank form
     else:
