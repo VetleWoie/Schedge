@@ -31,6 +31,7 @@ class Event(models.Model):
 
     image = models.ImageField(default='default.jpg', upload_to='images/')
     status = models.CharField(max_length=10, default='U', choices=STATUS_OPTIONS)
+    host = models.ForeignKey(User, default=1, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Event(id={self.id}, title={self.title}, ...)"
@@ -51,4 +52,7 @@ class GroupEvent(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     #TODO: null=True needs to be removed before shippable product.    
     event = models.ForeignKey(Event, on_delete=models.CASCADE, null=True)
+    ishost = models.BooleanField(default=False)
 
+    def __str__(self):
+        return f"user={self.user}, event={self.event}"

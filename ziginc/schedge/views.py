@@ -12,11 +12,9 @@ from .models import Event, TimeSlot, GroupEvent
 # Create your views here.
 Simulated_user = 1
 def mypage(request):
-    hostUndecided = Event.objects.filter(id=Simulated_user, status='U')
-    hostDecided = Event.objects.filter(id=Simulated_user, status='C')
-    userevents = GroupEvent.objects.select_related('event').filter(id=Simulated_user)
-    upcomingParticipant = userevents.only("event")
-    print("herrrR!!1")
+    hostUndecided = Event.objects.filter(host=Simulated_user, status='U')
+    hostDecided = Event.objects.filter(host=Simulated_user, status='C')
+    upcomingParticipant = GroupEvent.objects.filter(user=Simulated_user, ishost=False)
     print(upcomingParticipant)
     # upcomingParticipant = userevents.exclude(hostID=Simulated_user)
     context = {'hostUndecided':hostUndecided,
