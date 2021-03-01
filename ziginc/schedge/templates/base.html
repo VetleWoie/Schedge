@@ -6,7 +6,9 @@
 
 <body>
   {% load static %}
+    <a href="{% url 'home' %}">
     <img src="{% static 'schedge/pics/logo.png' %}" alt="My logo">
+    </a>
   {% block header%}
     {% block auth %}
       {% if user.is_authenticated %}
