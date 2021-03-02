@@ -1,0 +1,8 @@
+- Add field to group table:
+	- Host = True/False
+
+- Check 'token' if user is authenticated and which user is logged in.
+- Agree on and create a base for a coherent design throughout the site.
+	- Change blocks in base to customize for each url.
+
+

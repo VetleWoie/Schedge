@@ -1,0 +1,6 @@
+Meeting with Owais.
+
+- The team discusses about the project.
+- Asked about pipeline, tests and CI:
+	- Owais informed us about Udemy (free of charge).
+

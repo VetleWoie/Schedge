@@ -1,0 +1,6 @@
+Problem:
+	- doing subquery to get every event connected to a user, but not where the user is host.
+proposed solution:
+	- Doing if else test in the template to filter user!=host
+
+

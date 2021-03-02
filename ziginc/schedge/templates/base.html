@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}Schedge{% endblock %}</title>
+  <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <a href="{% url 'home' %}">
+    <link rel="stylesheet" href="{% static 'css/header.css' %}">
+    {% block stylesheet %}
+    {% endblock %}
+  </a>
+</head>
+
+<body>
+  {% block header%}
+  <div class="header">
+    <a href="#default" class="name">schedge</a>
+
+
+
+    <div class="header-right">
+      {% block auth %}
+      {% if user.is_authenticated %}
+      <a href="/createevent" class="event_btn">&nbsp;+ CREATE EVENT </a>
+
+      <a href="{% url 'logout' %}" class="sign_out">Sign out</a>
+
+      {% else %}
+      {% block signin%}
+
+      <a href="{% url 'login' %}" class="sign_out">Sign in</a>
+
+      {% endblock%}
+      {% block signup%}
+
+      <a href="{% url 'signup' %}" class="sign_out">Register</a>
+
+      {% endblock%}
+      {% endif %}
+      {% endblock %}
+    </div>
+  </div>
+  {% endblock %}
+
+  <main>
+    {% block content%}
+    {%endblock%}
+  </main>
+  {% block sidebar %}
+  <!-- default navigation tegt for every page--> {% endblock %}
+</body>
+
+</html>

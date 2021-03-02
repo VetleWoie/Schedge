@@ -1,0 +1,15 @@
+- Discuss user interface on mypage (aka profile page):
+	- 3 column layout
+		- left: 
+			-Upcoming events as HOST, not concluded yet
+		- middle (upcoming events):
+			- Upper - Upcoming events as HOST, concluded.
+			- Lower - Upcoming evnts as participient.
+		- right:
+			- upper - Request (like invite but available times included in respons)
+			- lower - invitaions, a time and date has been set and the user is invited.
+Goal for iteration 1:
+	- Tests for any functionality implemented. (tests written first, implement later).
+	- Functional prototype of mypage that is responsive using a dummy-database (if the real db is not up and running yet.).
+
+
