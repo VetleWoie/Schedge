@@ -1,0 +1,5 @@
+Shown demo, css is a bit broken for some pages.
+
+For the next iteration:
+	- Do more calculations on when would be the best time.
+	- Write more tests
