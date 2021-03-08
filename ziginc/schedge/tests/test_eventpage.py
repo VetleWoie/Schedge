@@ -6,6 +6,8 @@ from schedge.models import Event, TimeSlot
 from schedge.forms import EventForm
 import datetime as dt
 from django.http import JsonResponse
+from django.contrib.auth.models import User
+
 
 class CourseModelTest(TestCase):
     def setUp(self):
@@ -19,12 +21,15 @@ class CourseModelTest(TestCase):
             enddate=dt.datetime.now() + dt.timedelta(days=1),
             duration=dt.timedelta(hours=2),
         )
+        user = User.objects.create_user("tester", "myemail@test.com", "Elias123")
+
+        self.client.login(username="tester", password="Elias123")
 
     def test_event_url_resolve_to_event_page(self):
-        response = self.client.get(f'/event/{self.golf.id}/')
-        self.assertTemplateUsed(response, 'event.html')
+        response = self.client.get(f"/event/{self.golf.id}/")
+        self.assertTemplateUsed(response, "event.html")
 
     def test_context_has_the_event(self):
         # test if self.golf is part of the context
-        response = self.client.get(f'/event/{self.golf.id}/')
-        self.assertEqual(response.context['event'], self.golf)
+        response = self.client.get(f"/event/{self.golf.id}/")
+        self.assertEqual(response.context["event"], self.golf)
