@@ -1,14 +1,11 @@
 from django.db import models
-
 import datetime as dt
+from django.contrib.auth.models import User
 import django
+
 
 import uuid
 # Create your models here.
-
-
-class User(models.Model):
-    name = models.CharField(max_length=100)
 
 class Event(models.Model):
     """The event model
