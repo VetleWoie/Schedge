@@ -18,9 +18,11 @@
 <body>
   {% block header%}
   <div class="header">
-    <a href="#default" class="name">schedge</a>
-
-
+    {% if user.is_authenticated %}
+    <a href="{% url 'mypage' %}" class="name">schedge</a>
+    {% else %}
+    <a href="{% url 'home' %}" class="name">schedge</a>
+    {% endif %}
 
     <div class="header-right">
       {% block auth %}

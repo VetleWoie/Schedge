@@ -7,6 +7,9 @@ body {
     background-color: #E3E5EA;
 }
 
+main {
+    padding-top: 100px;
+}
 
 .header {
     overflow: hidden;
@@ -18,9 +21,7 @@ body {
     padding-top: 30px;
     /* padding-bottom: 20px; */
     position: fixed;
-    /* margin-bottom: 500px; */
-
-
+    margin-bottom: 60px;
 }
 
 .header a {

@@ -12,8 +12,15 @@
     background-color: white;
     border-radius: 50px;
     overflow: hidden;
+    text-decoration:none;
+    color: black;
     /* transition: scale 0.4s ease; */
     
+}
+
+.invislink {
+    color:inherit;
+    text-decoration: inherit;
 }
 
 .box:hover {
@@ -50,19 +57,16 @@ li {
 }
 
 #box_myevents {
-    margin-top: 110px;
     float: left;
     width: 33%;
 }
 
 #box_upcoming {
-    margin-top: 110px;
     float: left;
     width: 33%;
 }
 
 #box_participant {
-    margin-top: 110px;
     float: right;
     width: 33%;
 }
@@ -100,8 +104,6 @@ li {
 .description_text {
     margin: 4% 0;
 }
-
-
 
 .info_table, .description_text {
     margin-left: 8%;

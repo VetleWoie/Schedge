@@ -6,9 +6,10 @@ from django.http import (
 )
 import datetime as dt
 from .forms import EventForm, TimeSlotForm
-from .models import Event, TimeSlot, GroupEvent
+from .models import Event, TimeSlot, Participant
 from django.shortcuts import render
 from django.http import HttpResponse, Http404, HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
 from .forms import NameForm
 from django.template import loader
 from django.urls import reverse_lazy
@@ -21,36 +22,46 @@ from .admin import createUser
 
 # Create your views here.
 Simulated_user = 1
+
+
+@login_required
 def mypage(request):
-    hostUndecided = Event.objects.filter(host=Simulated_user, status='U')
-    hostDecided = Event.objects.filter(host=Simulated_user, status='C')
-    upcomingParticipant = GroupEvent.objects.filter(user=Simulated_user, ishost=False)
+    hostUndecided = Event.objects.filter(host=Simulated_user, status="U")
+    hostDecided = Event.objects.filter(host=Simulated_user, status="C")
+    upcomingParticipant = Participant.objects.filter(user=Simulated_user, ishost=False)
     print(upcomingParticipant)
     # upcomingParticipant = userevents.exclude(hostID=Simulated_user)
-    context = {'hostUndecided':hostUndecided,
-                'upcomingHost':hostDecided,
-                'upcomingParticipant':upcomingParticipant}
-    return render(request, 'mypage.html', context)
+    context = {
+        "hostUndecided": hostUndecided,
+        "upcomingHost": hostDecided,
+        "upcomingParticipant": upcomingParticipant,
+    }
+    return render(request, "mypage.html", context)
 
 
 # from .models import User
 # Create your views here.
-
-
+@login_required
 def create_event(request):
     if request.method == "POST":
         # pressed submit
-
-        # get info in the form
-        form = EventForm(request.POST, request.FILES)
-        if form.is_valid():
-            data = form.cleaned_data
-            # create new event with stuff in form
-            # because EventForm is model of Event, we can safely use kwargs
-            newevent = Event.objects.create(**data)
-            return redirect(event, newevent.id)
+        host = request.user
+        if host.is_authenticated:
+            # get info in the form
+            form = EventForm(request.POST, request.FILES)
+            if form.is_valid():
+                data = form.cleaned_data
+                # create new event with stuff in form
+                # because EventForm is model of Event, we can safely use kwarg
+                newevent = Event.objects.create(**data, host=host)
+                newparticipant = Participant.objects.create(
+                    event=newevent, user=host, ishost=True
+                )
+                return redirect(event, newevent.id)
+            else:
+                return HttpResponseBadRequest("Invalid Form!")
         else:
-            return HttpResponseBadRequest("Invalid Form!")
+            return HttpResponseBadRequest("Sign in to create an event!")
 
     # GET
     form = EventForm()  # empty form
@@ -67,10 +78,13 @@ def event(request, event_id):
 
     if request.method == "POST":
         timeslotform = TimeSlotForm(request.POST)
+        creator = request.user
 
-        if timeslotform.is_valid():
+        if timeslotform.is_valid() and creator.is_authenticated:
             timeslotdata = timeslotform.cleaned_data
-            newtimeslot = TimeSlot.objects.create(event=this_event, **timeslotdata)
+            newtimeslot = TimeSlot.objects.create(
+                event=this_event, creator=creator, **timeslotdata
+            )
 
     # only timeslots from this event
     timeslots = TimeSlot.objects.filter(event=this_event)
@@ -144,9 +158,10 @@ def event_delete(request, event_id):
     return redirect(event, event_id)
     # return redirect(mypage)
 
+
 def signUpView(request):
     # if this is a POST request we need to process the form data
-    if request.method == 'POST':
+    if request.method == "POST":
         # create a form instance and populate it with data from the request:
         form = NameForm(request.POST)
         # check whether it's valid:
@@ -156,10 +171,9 @@ def signUpView(request):
             # redirect to a new URL:'
             createUser(request)
             return redirect(mypage)
-            return HttpResponseRedirect(reverse("mypage")) #fixed
 
     # if a GET (or any other method) we'll create a blank form
     else:
         form = NameForm()
 
-    return render(request, 'registration/signup.html', {'form': form})
+    return render(request, "registration/signup.html", {"form": form})

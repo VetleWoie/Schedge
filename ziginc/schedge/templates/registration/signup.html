@@ -10,4 +10,9 @@
   {{ form.as_p }}
   <button type='submit'>Sign up</button>
 </form>
+</break>
+Already have an account? 
+<form action="{% url 'login' %}">
+  <input type="submit" value="Sign in" />
+</form>
 {% endblock %}
