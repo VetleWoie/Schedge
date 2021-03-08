@@ -11,18 +11,3 @@ admin.site.register(TimeSlot)
 admin.site.register(Participant)
 
 # admin.site.register(User)
-
-def createUser(request):
-    #Add user to new user database
-    username = request.POST['username']
-    firstname = request.POST['firstname']
-    lastname = request.POST['lastname']
-    email = request.POST['email']
-    password = request.POST['password1']
-
-    u = User.objects.create_user(username, 
-                                email=email, 
-                                password=password,
-                                first_name=firstname,
-                                last_name=lastname)
-    return u
