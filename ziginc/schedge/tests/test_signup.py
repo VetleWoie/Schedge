@@ -79,18 +79,18 @@ class signUpModelTest(TestCase):
 
 
         
-    def test_userCreation(self):
+    def test_user_creation(self):
         response = self.client.post("/signup/", self.userGood)
-        print(response)
+        self.assertEqual(response.status_code, 302)
 
         # Can't find existing values in DB so these don't work
 
-        # formEmailOld = NameForm(data=self.userEmailOld)
-        # self.assertEqual(formEmailOld.is_valid(), False)
+        response = self.client.post("/signup/", self.userEmailOld)
+        self.assertEqual(response.status_code, 200)
 
-        # formUnOld = NameForm(data=self.userUsernameOld)
-        # self.assertEqual(formUnOld.is_valid(), False)
+        response = self.client.post("/signup/", self.userUsernameOld)
+        self.assertEqual(response.status_code, 200)
 
-        # formOldBoth = NameForm(data=self.userOldBoth)
-        # self.assertEqual(formOldBoth.is_valid(), False)
+        response = self.client.post("/signup/", self.userOldBoth)
+        self.assertEqual(response.status_code, 200)
         
