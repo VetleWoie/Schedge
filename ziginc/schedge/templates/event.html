@@ -1,18 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Event{% endblock %}
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'css/base.css' %}" />
+<link rel="stylesheet" href="{% static 'css/event.css' %}" />
+{% endblock %}
+<!-- <head>
     {% load static %}
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
-    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/event.css' %}" />
-    <title>Event</title>
-</head>
 
-<body>
+    <title>Event</title>
+</head> -->
+{% block content %}
     <div class="wrap">
         <div class="left_box blob">
             <div class="eventinfo">
@@ -97,6 +99,4 @@
 
         </div>
     </div>
-</body>
-
-</html>
+{% endblock %}

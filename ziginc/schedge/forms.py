@@ -78,7 +78,7 @@ class NameForm(forms.Form):
     username = forms.CharField(label='Username', max_length=100)
     firstname = forms.CharField(label='First name', max_length=100)
     lastname = forms.CharField(label='Last name', max_length=100)
-    email = forms.EmailField(label='Email', max_length=20)
+    email = forms.EmailField(label='Email', max_length=254)
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Rewrite password', widget=forms.PasswordInput)
     

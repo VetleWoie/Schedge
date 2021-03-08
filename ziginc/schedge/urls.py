@@ -13,7 +13,7 @@ urlpatterns = [
     path('event/<int:event_id>/edit/', views.eventedit, name="eventedit"),
     path('event/<int:event_id>/edit/delete/',views.event_delete, name="event_delete" ),
     path('signup/' ,signUpView,name='signup'),
-    path("", TemplateView.as_view(template_name="home.html"), name="home"),
+    path('', TemplateView.as_view(template_name="home.html"), name="home"),
     path('', include('django.contrib.auth.urls')),
 ]
 if settings.DEBUG:

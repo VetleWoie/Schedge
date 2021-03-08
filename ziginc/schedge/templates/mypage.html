@@ -13,23 +13,24 @@
     <div class="title_main">m&nbsp;y&nbsp;&nbsp;e&nbsp;v&nbsp;e&nbsp;n&nbsp;t&nbsp;s</div>
     {% if hostUndecided %}
     {% for event in hostUndecided %}
+    <a href="{% url 'event' event_id=event.id %}" class="invislink">
+        <div class="box">
+            <div class="title"> {{event.title}}</div>
+            <table class="info_table">
+                <tr>
+                    <td><img src="{% static 'icons/queue.png' %}" class="icons" width="25px"></td>
+                    <td class="info_text">{{event.duration}} hours</td>
+                    <td><img src="{% static 'icons/placeholder.png' %}" class="icons" width="25px"></td>
+                    <td class="info_text">{{event.location}}</td>
+                </tr>
 
-    <div class="box">
-        <div class="title"> {{event.title}}</div>
-        <table class="info_table">
-            <tr>
-                <td><img src="{% static 'icons/queue.png' %}" class="icons" width="25px"></td>
-                <td class="info_text">{{event.duration}} hours</td>
-                <td><img src="{% static 'icons/placeholder.png' %}" class="icons" width="25px"></td>
-                <td class="info_text">{{event.location}}</td>
-            </tr>
-
-        </table>
-        <!-- <div class="description_text">{{event.description}}</div> -->
-        <div class="n_partic"><img src="{% static 'icons/group.png' %}" class="group_icon" width="25px"></div>
-        <div class="n_text">{{ forloop.counter }}&nbsp;/&nbsp;5</div>
-        <div class="event_btn result_btn">see replies</div>
-    </div>
+            </table>
+            <!-- <div class="description_text">{{event.description}}</div> -->
+            <div class="n_partic"><img src="{% static 'icons/group.png' %}" class="group_icon" width="25px"></div>
+            <div class="n_text">{{ forloop.counter }}&nbsp;/&nbsp;5</div>
+            <div class="event_btn result_btn">see replies</div>
+        </div>
+    </a>
 
 
     {% endfor %}

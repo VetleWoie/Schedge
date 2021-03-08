@@ -1,23 +1,17 @@
 {% extends 'base.html' %}
-{%load static%}
 {% block title %}Schedge{% endblock %}
-{% block stylesheet %}
-<link rel="stylesheet" href="{% static 'css/home.css' %}">
-{% endblock %}
 {% block content%}
 {% if user.is_authenticated %}
   Hello there {{user.username}}
 {%endif%}
-<div class="loremipsum">
-  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam id suscipit metus. Quisque imperdiet magna et urna aliquet mattis. Aliquam efficitur enim quis velit ullamcorper pretium. Integer at magna imperdiet, hendrerit nisl eget, blandit elit. Suspendisse consequat magna ut nunc gravida facilisis. Pellentesque at est massa. Nam dictum vehicula urna sed interdum. In a mollis lacus, et bibendum augue.
-  
-  Etiam facilisis sit amet nibh ut bibendum. Donec finibus eleifend eleifend. Cras luctus quis purus tincidunt tempus. Suspendisse potenti. Quisque ac ultrices ante. Suspendisse vitae est non turpis consequat tristique vitae a tellus. Ut consectetur, orci sit amet vehicula tempus, nibh justo mattis ex, vel cursus orci enim sed ligula. Donec luctus mattis justo, at semper libero. Donec ultricies interdum ex ac tempus. Praesent ornare molestie libero, eget vehicula quam dictum id. Sed sed ex orci. Praesent vitae dignissim massa.
-  
-  Praesent sodales diam sed est eleifend aliquet. Pellentesque sit amet hendrerit augue. In ac purus porttitor, sodales velit id, viverra dolor. Vestibulum purus dui, interdum et tortor et, convallis sagittis augue. Maecenas nisl erat, dapibus euismod libero sit amet, pellentesque convallis dolor. Maecenas dignissim congue metus, ac suscipit sapien tempus eget. Fusce id leo nunc. Suspendisse eget sodales risus, vehicula tincidunt tellus. Mauris convallis nec massa accumsan posuere.
-  
-  Sed laoreet, nunc nec consequat porta, lorem arcu iaculis mauris, sit amet varius ligula leo at mi. Etiam porta semper tortor, eu pharetra neque auctor vitae. Etiam porta quis augue nec finibus. Cras gravida elit scelerisque, porta velit egestas, viverra ante. Nulla in ante nisi. Vestibulum id efficitur est. Aenean placerat est finibus, rhoncus nisi ac, dignissim risus. Phasellus quis metus mollis, luctus sapien ac, molestie diam. Nulla id rutrum felis, eu sagittis orci. Donec tincidunt, augue in interdum venenatis, massa turpis elementum felis, ut pharetra tellus nibh sed neque. Integer ullamcorper, eros a euismod euismod, quam arcu rutrum tellus, in rutrum mauris dui elementum sem. Morbi gravida fermentum vestibulum. Nam posuere et leo et dictum. Curabitur sodales fermentum maximus. Aliquam id nisi quis magna posuere volutpat.
-  
-  Pellentesque non auctor magna. Duis ex leo, tempor in ante sed, ullamcorper feugiat ex. Etiam varius malesuada nisi sit amet consequat. Quisque eu tellus varius, interdum purus vitae, fermentum est. Nullam quis sapien purus. Sed in varius tellus, eget consectetur elit. Sed feugiat nec libero sodales tincidunt.
-</div>
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam id suscipit metus. Quisque imperdiet magna et urna aliquet mattis. Aliquam efficitur enim quis velit ullamcorper pretium. Integer at magna imperdiet, hendrerit nisl eget, blandit elit. Suspendisse consequat magna ut nunc gravida facilisis. Pellentesque at est massa. Nam dictum vehicula urna sed interdum. In a mollis lacus, et bibendum augue.
+
+Etiam facilisis sit amet nibh ut bibendum. Donec finibus eleifend eleifend. Cras luctus quis purus tincidunt tempus. Suspendisse potenti. Quisque ac ultrices ante. Suspendisse vitae est non turpis consequat tristique vitae a tellus. Ut consectetur, orci sit amet vehicula tempus, nibh justo mattis ex, vel cursus orci enim sed ligula. Donec luctus mattis justo, at semper libero. Donec ultricies interdum ex ac tempus. Praesent ornare molestie libero, eget vehicula quam dictum id. Sed sed ex orci. Praesent vitae dignissim massa.
+
+Praesent sodales diam sed est eleifend aliquet. Pellentesque sit amet hendrerit augue. In ac purus porttitor, sodales velit id, viverra dolor. Vestibulum purus dui, interdum et tortor et, convallis sagittis augue. Maecenas nisl erat, dapibus euismod libero sit amet, pellentesque convallis dolor. Maecenas dignissim congue metus, ac suscipit sapien tempus eget. Fusce id leo nunc. Suspendisse eget sodales risus, vehicula tincidunt tellus. Mauris convallis nec massa accumsan posuere.
+
+Sed laoreet, nunc nec consequat porta, lorem arcu iaculis mauris, sit amet varius ligula leo at mi. Etiam porta semper tortor, eu pharetra neque auctor vitae. Etiam porta quis augue nec finibus. Cras gravida elit scelerisque, porta velit egestas, viverra ante. Nulla in ante nisi. Vestibulum id efficitur est. Aenean placerat est finibus, rhoncus nisi ac, dignissim risus. Phasellus quis metus mollis, luctus sapien ac, molestie diam. Nulla id rutrum felis, eu sagittis orci. Donec tincidunt, augue in interdum venenatis, massa turpis elementum felis, ut pharetra tellus nibh sed neque. Integer ullamcorper, eros a euismod euismod, quam arcu rutrum tellus, in rutrum mauris dui elementum sem. Morbi gravida fermentum vestibulum. Nam posuere et leo et dictum. Curabitur sodales fermentum maximus. Aliquam id nisi quis magna posuere volutpat.
+
+Pellentesque non auctor magna. Duis ex leo, tempor in ante sed, ullamcorper feugiat ex. Etiam varius malesuada nisi sit amet consequat. Quisque eu tellus varius, interdum purus vitae, fermentum est. Nullam quis sapien purus. Sed in varius tellus, eget consectetur elit. Sed feugiat nec libero sodales tincidunt.
 {%endblock%}
 {% block sidebar %} {% endblock %}
