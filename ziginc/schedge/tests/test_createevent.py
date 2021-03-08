@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 import datetime as dt
 from django.http import JsonResponse
 
-class EventModelTest(TestCase):
+class CreateEventTest(TestCase):
     def setUp(self):
         self.example_form = {
             "title": "hiking",
