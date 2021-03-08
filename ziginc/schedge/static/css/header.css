@@ -8,12 +8,14 @@ body {
 }
 
 main {
-    padding-top: 100px;
+    padding-top: 90px;
 }
 
 .header {
-    overflow: hidden;
-    border-bottom: 3px solid white;
+    position: fixed;
+    overflow: visible;
+    /* overflow: hidden; */
+    /* border-bottom: 3px solid white; */
     padding: 20px 0px;
     /* padding-bottom: 20px; */
     background-color: #2F323A;
