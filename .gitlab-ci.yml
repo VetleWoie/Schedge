@@ -6,6 +6,6 @@ test:
   tags:
     - django
   script:
-    - python3 manage.py test courses/tests
+    - python3 manage.py test schedge/tests
   only:
     - master
