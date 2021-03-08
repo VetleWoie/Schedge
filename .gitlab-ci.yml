@@ -6,6 +6,7 @@ test:
   tags:
     - django
   script:
+    - python3 -m pip install Pillow
     - python3 ziginc/manage.py test schedge/tests
   only:
     - master
