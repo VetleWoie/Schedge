@@ -17,7 +17,6 @@ from django.views import generic
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.models import User
-from .admin import createUser
 
 
 # Create your views here.
@@ -29,7 +28,7 @@ def mypage(request):
     hostUndecided = Event.objects.filter(host=Simulated_user, status="U")
     hostDecided = Event.objects.filter(host=Simulated_user, status="C")
     upcomingParticipant = Participant.objects.filter(user=Simulated_user, ishost=False)
-    print(upcomingParticipant)
+    # print(upcomingParticipant)
     # upcomingParticipant = userevents.exclude(hostID=Simulated_user)
     context = {
         "hostUndecided": hostUndecided,
@@ -169,7 +168,10 @@ def signUpView(request):
             # process the data in form.cleaned_data as required
             # ...
             # redirect to a new URL:'
-            user = createUser(request)
+            userData = form.cleaned_data
+            userData.pop("password2") # Remove retype password from dict
+
+            user = User.objects.create_user(**userData) # Create User from dict
             login(request, user) # Log user in
             return redirect(reverse("mypage"))
 
