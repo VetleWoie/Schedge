@@ -6,6 +6,6 @@ test:
   tags:
     - django
   script:
-    - python3 manage.py test schedge/tests
+    - python3 manage.py test ziginc/schedge/tests
   only:
     - master
