@@ -12,10 +12,10 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from .forms import NameForm
 from django.template import loader
-from django.urls import reverse_lazy
-from django.urls import reverse
+from django.urls import reverse_lazy, reverse
 from django.views import generic
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
 from django.contrib.auth.models import User
 from .admin import createUser
 
@@ -169,8 +169,9 @@ def signUpView(request):
             # process the data in form.cleaned_data as required
             # ...
             # redirect to a new URL:'
-            createUser(request)
-            return redirect(mypage)
+            user = createUser(request)
+            login(request, user) # Log user in
+            return redirect(reverse("mypage"))
 
     # if a GET (or any other method) we'll create a blank form
     else:

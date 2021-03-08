@@ -124,6 +124,7 @@ STATIC_URL = '/static/'
 
 MEDIA_ROOT =  os.path.join(BASE_DIR, 'media') 
 MEDIA_URL = '/media/'
+LOGIN_URL = "/"
 LOGIN_REDIRECT_URL = "/mypage"
 LOGOUT_REDIRECT_URL = "/"
 

@@ -25,3 +25,4 @@ def createUser(request):
                                 password=password,
                                 first_name=firstname,
                                 last_name=lastname)
+    return u
