@@ -20,23 +20,18 @@ from django.contrib.auth.models import User
 from .admin import createUser
 
 
-# Create your views here.
-Simulated_user = 1
-
-
 @login_required
 def mypage(request):
-    hostUndecided = Event.objects.filter(host=Simulated_user, status="U")
-    hostDecided = Event.objects.filter(host=Simulated_user, status="C")
-    upcomingParticipant = Participant.objects.filter(user=Simulated_user, ishost=False)
-    print(upcomingParticipant)
-    # upcomingParticipant = userevents.exclude(hostID=Simulated_user)
-    context = {
-        "hostUndecided": hostUndecided,
-        "upcomingHost": hostDecided,
-        "upcomingParticipant": upcomingParticipant,
-    }
-    return render(request, "mypage.html", context)
+    if request.user.is_authenticated:
+        hostUndecided = Event.objects.filter(host=request.user, status="U")
+        hostDecided = Event.objects.filter(host=request.user, status="C")
+        upcomingParticipant = Participant.objects.filter(user=request.user, ishost=False)
+        context = {
+            "hostUndecided": hostUndecided,
+            "upcomingHost": hostDecided,
+            "upcomingParticipant": upcomingParticipant,
+        }
+        return render(request, "mypage.html", context)
 
 
 # from .models import User
