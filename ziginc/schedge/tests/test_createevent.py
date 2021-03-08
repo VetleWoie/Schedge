@@ -19,7 +19,7 @@ class CreateEventTest(TestCase):
         }
         user = User.objects.create_user('tester', 'myemail@test.com', 'Elias123')
 
-        self.client.login(username='tester', password='Elias123')
+        # self.client.login(username='tester', password='Elias123')
 
 
     def test_create(self):
