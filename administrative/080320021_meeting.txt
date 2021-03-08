@@ -6,7 +6,9 @@ Attendense:
 	- Vetle
 
 TODO:
-	- Tests
+	- Tests:
+		- mypage - Alex/Marte
+		- home/reg/sign - Elias/Vetle
 	- CI (Continuous integration)
 	- Fix HTML to work with base HTML and css.
 		- Make more generell ( MARTE - PLEASE HELP)
@@ -18,4 +20,4 @@ Next features:
 	- Invite friends.
 	- See timeslots that works for x-amount of people.
 		- Determine time for event.
-	-  	
+  	
