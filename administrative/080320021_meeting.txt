@@ -1,0 +1,21 @@
+Meeting about what to do during the next sprint/iteration:
+Attendense:
+	- Elias
+	- Alex
+	- Iris
+	- Vetle
+
+TODO:
+	- Tests
+	- CI (Continuous integration)
+	- Fix HTML to work with base HTML and css.
+		- Make more generell ( MARTE - PLEASE HELP)
+	- Invite people to event.
+	- mypage - see only events for given user.
+
+Next features:
+	- Only host can edit events.
+	- Invite friends.
+	- See timeslots that works for x-amount of people.
+		- Determine time for event.
+	-  	
