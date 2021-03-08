@@ -9,7 +9,7 @@ from django.http import JsonResponse
 from django.contrib.auth.models import User
 
 
-class CourseModelTest(TestCase):
+class EventTest(TestCase):
     def setUp(self):
         self.example_model = {
             "title": "golfing",
