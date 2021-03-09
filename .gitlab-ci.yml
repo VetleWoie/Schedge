@@ -10,6 +10,7 @@ test:
   script:
     - apt-get update
     - apt install wget
+    - apt install firefox
     - python3 -m pip install Pillow
     - python3 -m pip install selenium
     - wget https://github.com/mozilla/geckodriver/releases/download/v0.29.0/geckodriver-v0.29.0-linux64.tar.gz
