@@ -15,88 +15,101 @@
     <title>Event</title>
 </head> -->
 {% block content %}
-    <div class="wrap">
-        <div class="left_box blob">
-            <div class="eventinfo">
-                <div class="image">
-                    {% if event.image.url != "/media/default.jpg" %}
-                    <img src="{{event.image.url}}" />
-                    {% endif %}
-                </div>
-                <h1> {{ event.title }} </h1>
-                <table class="eventtable">
-                    <tr>
-                        <td>Title</td>
-                        <td id="id_event_title">{{ event.title }}</td>
-                    </tr>
-                    <tr>
-                        <td>Location</td>
-                        <td>{{ event.location }}</td>
-                    </tr>
-                    <tr>
-                        <td>Start Time</td>
-                        <td>{{ event.starttime }}</td>
-                    </tr>
-                    <tr>
-                        <td>End Time</td>
-                        <td>{{ event.endtime }}</td>
-                    </tr>
-                    <tr>
-                        <td>Start Date</td>
-                        <td>{{ event.startdate }}</td>
-                    </tr>
-                    <tr>
-                        <td>End Date</td>
-                        <td>{{ event.enddate }}</td>
-                    </tr>
-                    <tr>
-                        <td>Duration</td>
-                        <td>{{ event.duration }}</td>
-                    </tr>
-                    <tr>
-                        <td>Description</td>
-                        <td>{{ event.description }}</td>
-                    </tr>
-                </table>
-                <a href="/event/{{ event.id}}/edit/" class="editbtn">Edit</a>
+<div class="wrap">
+    <div class="left_box blob">
+        <div class="eventinfo">
+            <div class="image">
+                {% if event.image.url != "/media/default.jpg" %}
+                <img src="{{event.image.url}}" />
+                {% endif %}
             </div>
+            <h1> {{ event.title }} </h1>
+            <table class="eventtable">
+                <tr>
+                    <td>Title</td>
+                    <td id="id_event_title">{{ event.title }}</td>
+                </tr>
+                <tr>
+                    <td>Hosted By</td>
+                    <td>{{ event.host.first_name }} {{ event.host.last_name }}</td>
+                </tr>
+                <tr>
+                    <td>Location</td>
+                    <td>{{ event.location }}</td>
+                </tr>
+                <tr>
+                    <td>Start Time</td>
+                    <td>{{ event.starttime }}</td>
+                </tr>
+                <tr>
+                    <td>End Time</td>
+                    <td>{{ event.endtime }}</td>
+                </tr>
+                <tr>
+                    <td>Start Date</td>
+                    <td>{{ event.startdate }}</td>
+                </tr>
+                <tr>
+                    <td>End Date</td>
+                    <td>{{ event.enddate }}</td>
+                </tr>
+                <tr>
+                    <td>Duration</td>
+                    <td>{{ event.duration }}</td>
+                </tr>
+                <tr>
+                    <td>Description</td>
+                    <td>{{ event.description }}</td>
+                </tr>
+            </table>
+            <a href="/event/{{ event.id}}/edit/" class="editbtn">Edit</a>
+        </div>
+
+    </div>
+    <div class="right_box">
+        <div class="timepicker blob">
+            <h2>Pick a time</h2>
+            <form action="{% url 'event' event_id=event.id %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ timeslotform.as_p }}
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+        <div class="timeslots">
+            {% for timeslot in timeslots %}
+            <div class="blob">
+                <div class="timeslot">
+                    <table>
+                        <tr>
+                            <td>Time</td>
+                            <td>{{timeslot.time}}</td>
+                        </tr>
+                        <tr>
+                            <td>Date</td>
+                            <td>{{timeslot.date }}</td>
+                        </tr>
+                    </table>
+                    <form action="{% url 'timeslot_delete' event_id=event.id timeslot_id=timeslot.id %}" method="POST"
+                        enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="submit" value="🗑">
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
 
         </div>
-        <div class="right_box">
-            <div class="timepicker blob">
-                <h2>Pick a time</h2>
-                <form action="/event/{{ event.id }}/" method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    {{ form.as_p }}
-                    <input type="submit" value="Submit">
-                </form>
-            </div>
-            <div class="timeslots">
-
-                {% for timeslot in timeslots %}
-                <div class="blob">
-                    <div class="timeslot">
-                        <table>
-                            <tr>
-                                <td>Time</td>
-                                <td>{{timeslot.time}}</td>
-                            </tr>
-                            <tr>
-                                <td>Date</td>
-                                <td>{{timeslot.date }}</td>
-                            </tr>
-                        </table>
-                        <form action="/event/{{event.id}}/delete/{{timeslot.id}}/" method="POST"
-                            enctype="multipart/form-data">
-                            {% csrf_token %}
-                            <input type="submit" value="🗑">
-                        </form>
-                    </div>
-                </div>
-                {% endfor %}
-
-            </div>
-
+        <div class="timepicker blob">
+            <h2>Invite someone</h2>
+            <form action="{% url 'event_invite' event_id=event.id%}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <p>
+                    <label>Invite:</label>
+                    {{inviteform.invitee}}
+                </p>
+                <input type="submit" value="Submit">
+            </form>
         </div>
     </div>
+</div>
 {% endblock %}

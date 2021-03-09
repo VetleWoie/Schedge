@@ -5,8 +5,8 @@ from django.http import (
     HttpResponseBadRequest,
 )
 import datetime as dt
-from .forms import EventForm, TimeSlotForm
-from .models import Event, TimeSlot, Participant
+from .forms import EventForm, TimeSlotForm, InviteForm
+from .models import Event, TimeSlot, Participant, Invite
 from django.shortcuts import render
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
@@ -19,21 +19,19 @@ from django.contrib.auth import login
 from django.contrib.auth.models import User
 
 
-# Create your views here.
-Simulated_user = 1
-
-
 @login_required(login_url="/login/")
 def mypage(request):
-    hostUndecided = Event.objects.filter(host=Simulated_user, status="U")
-    hostDecided = Event.objects.filter(host=Simulated_user, status="C")
-    upcomingParticipant = Participant.objects.filter(user=Simulated_user, ishost=False)
-
+    user = request.user
+    hostUndecided = Event.objects.filter(host=user, status="U")
+    hostDecided = Event.objects.filter(host=user, status="C")
+    upcomingParticipant = Participant.objects.filter(user=user, ishost=False)
+    invites = Invite.objects.filter(invitee=user)
     # upcomingParticipant = userevents.exclude(hostID=Simulated_user)
     context = {
         "hostUndecided": hostUndecided,
         "upcomingHost": hostDecided,
         "upcomingParticipant": upcomingParticipant,
+        "invites": invites,
     }
     return render(request, "mypage.html", context)
 
@@ -93,8 +91,16 @@ def event(request, event_id):
     timeslotform = TimeSlotForm()
     timeslotform.set_limits(this_event)
 
-    context = {"event": this_event, "form": timeslotform, "timeslots": timeslots}
+    inviteform = InviteForm()
+
+    context = {
+        "event": this_event,
+        "timeslotform": timeslotform,
+        "timeslots": timeslots,
+        "inviteform": inviteform,
+    }
     return render(request, "event.html", context)
+
 
 @login_required(login_url="/login/")
 def timeslot_delete(request, event_id, timeslot_id):
@@ -113,6 +119,7 @@ def timeslot_delete(request, event_id, timeslot_id):
         timeslot.delete()
 
     return redirect(event, event_id)
+
 
 @login_required(login_url="/login/")
 def eventedit(request, event_id):
@@ -147,6 +154,7 @@ def eventedit(request, event_id):
     context = {"event": this_event, "form": form}
     return render(request, "eventedit.html", context)
 
+
 @login_required(login_url="/login/")
 def event_delete(request, event_id):
 
@@ -170,10 +178,10 @@ def signUpView(request):
             # ...
             # redirect to a new URL:'
             userData = form.cleaned_data
-            userData.pop("password2") # Remove retype password from dict
+            userData.pop("password2")  # Remove retype password from dict
 
-            user = User.objects.create_user(**userData) # Create User from dict
-            login(request, user) # Log user in
+            user = User.objects.create_user(**userData)  # Create User from dict
+            login(request, user)  # Log user in
             return redirect(reverse("mypage"))
 
     # if a GET (or any other method) we'll create a blank form
@@ -181,3 +189,39 @@ def signUpView(request):
         form = NameForm()
 
     return render(request, "registration/signup.html", {"form": form})
+
+
+@login_required
+def event_invite(request, event_id):
+    try:
+        # select * from Event where id=event_id;
+        this_event = Event.objects.get(id=event_id)
+    except Event.DoesNotExist:
+        return HttpResponseNotFound("404: not valid event id")
+
+    if request.method != "POST":
+        return HttpResponseBadRequest("invite view does not support other than post method")
+    form = InviteForm(request.POST)
+    if form.is_valid():
+        data = form.cleaned_data
+        invitee = data["invitee"]
+        invirer = request.user
+        if Invite.objects.filter(event=this_event, inviter=invirer, invitee=invitee).exists():
+            # TODO: what do we do?
+            return HttpResponseBadRequest("You have already invited this person!")
+            pass
+        else:
+            invite = Invite.objects.create(
+                event=this_event,
+                inviter=invirer,
+                invitee=invitee,
+                senttime=dt.datetime.now()
+            )
+            print(f"new invite {invite.__dict__}")
+    return redirect(event, event_id)
+
+def invite_accept(request, invite_id):
+    return HttpResponseBadRequest(":)")
+
+def invite_reject(request, invite_id):
+    return HttpResponseBadRequest(":(")

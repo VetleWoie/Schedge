@@ -105,3 +105,5 @@ class NameForm(forms.Form):
         return email
 
 
+class InviteForm(forms.Form):
+    invitee = forms.ModelChoiceField(queryset=User.objects.all().order_by('username'))

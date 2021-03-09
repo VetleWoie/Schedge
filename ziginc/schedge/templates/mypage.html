@@ -113,29 +113,23 @@
     <div class="title_main">
         invitations
     </div>
-    {% if upcomingParticipant %}
-    {% for event in upcomingParticipant %}
+    {% if invites %}
+    {% for invite in invites %}
     <div class="box extra_bottom">
-        <div class="title"> {{event.title}}</div>
+        <div class="title"> {{invite.event.title}}</div>
         <div class="left_inv">
             <table>
-
                 <tr>
                     <td><img src="{% static 'icons/queue.png' %}" class="icons" width="25px"></td>
-                    <td class="info_text">{{event.duration}} hours</td>
+                    <td class="info_text">{{invite.event.duration}} hours</td>
                     <td><img src="{% static 'icons/placeholder.png' %}" class="icons" width="25px"></td>
-                    <td class="info_text">{{event.location}}</td>
+                    <td class="info_text">{{invite.event.location}}</td>
                 </tr>
             </table>
         </div>
         <div class="right_inv">
-            <div class="yes_btn">
-                ✓
-            </div>
-            <div class="no_btn">
-                ✗
-            </div>
-
+                <a href="{% url 'invite_accept' invite_id=invite.id%}" class="invislink yes_btn">✓</a>
+                <a href="{% url 'invite_reject' invite_id=invite.id%}" class="invislink no_btn">✗</a>
         </div>
     </div>
     {% endfor %}
