@@ -1,15 +1,27 @@
 stages:
+  #Jobs in the same stage run in parallel so we only need one stage but several jobs
   - test
 
+#Jobs
 test:
   stage: test
   tags:
     - django
   script:
     - python3 -m pip install Pillow
-    - python3 -m pip install selenium
     - cd ziginc
     - python3 manage.py test schedge/tests
   only:
     - merge_requests
+    - master
+
+celenium:
+  stage: test
+  tags:
+    - django
+  script:
+    #Write celenium stuff here
+    - echo Celenium!
+  only:
+    - merge_request
     - master
