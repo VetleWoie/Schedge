@@ -4,8 +4,18 @@
 {%block auth%}{%endblock%}
 {% block content %}
 <h2>Sign in</h2>
-<form method="post">
+<form method="post" id="sign-in-form">
   {% csrf_token %}
+  <!-- <table>
+    <tr>
+        <td>{{ form.username.label_tag }}</td>
+        <td>{{ form.username }}</td>
+    </tr>
+    <tr>
+        <td>{{ form.password.label_tag }}</td>
+        <td>{{ form.password }}</td>
+    </tr>
+    </table> -->
   {{ form.as_p }}
   <button type="submit">Sign in</button>
 </form>

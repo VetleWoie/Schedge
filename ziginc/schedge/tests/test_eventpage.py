@@ -11,19 +11,27 @@ from django.contrib.auth.models import User
 
 class EventTest(TestCase):
     def setUp(self):
-        self.golf = Event.objects.create(
-            title="golfing",
-            location="golf course",
-            description=":)",
-            starttime=dt.time(),
-            endtime=dt.time(hour=2),
-            startdate=dt.datetime.now(),
-            enddate=dt.datetime.now() + dt.timedelta(days=1),
-            duration=dt.timedelta(hours=2),
-        )
+        self.example_model = {
+            "title": "golfing",
+            "location": "golf course",
+            "description": ":)",
+            "starttime": dt.time(),
+            "endtime": dt.time(hour=2),
+            "startdate": dt.datetime.now(),
+            "enddate": dt.datetime.now() + dt.timedelta(days=1),
+            "duration": dt.timedelta(hours=2),
+        }
+
+        self.golf = Event.objects.create(**self.example_model)
         user = User.objects.create_user("tester", "myemail@test.com", "Elias123")
 
         self.client.login(username="tester", password="Elias123")
+
+    def test_invalid_duration_field(self):
+        with self.assertRaises(AttributeError):
+            invalid_model = self.example_model.copy()
+            invalid_model["duration"] = "This should be a timedelta"
+            Event.objects.create(**invalid_model)
 
     def test_event_url_resolve_to_event_page(self):
         response = self.client.get(f"/event/{self.golf.id}/")

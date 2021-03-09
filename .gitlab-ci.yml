@@ -22,3 +22,4 @@ test:
   only:
     - merge_requests
     - master
+
