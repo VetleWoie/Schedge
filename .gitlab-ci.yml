@@ -9,18 +9,6 @@ test:
     - django
   script:
     - python3 -m pip install Pillow
-    - cd ziginc
-    - python3 manage.py test schedge/tests
-  only:
-    - merge_requests
-    - master
-
-celenium:
-  stage: test
-  tags:
-    - django
-  script:
-    #Write celenium stuff here
     - python3 -m pip install selenium
     - wget https://github.com/mozilla/geckodriver/releases/download/v0.29.0/geckodriver-v0.29.0-linux64.tar.gz
     - tar -xf geckodriver-v0.29.0-linux64.tar.gz
@@ -28,8 +16,7 @@ celenium:
     - export PATH=$PATH:.
     - python3 -m pip install Pillow
     - cd ziginc
-    - python3 manage.py test schedge/tests/scenario
-    
+    - python3 manage.py test schedge/tests
   only:
-    - merge_request
+    - merge_requests
     - master
