@@ -10,4 +10,5 @@ test:
     - cd ziginc
     - python3 manage.py test schedge/tests
   only:
+    - merge_requests
     - master
