@@ -17,19 +17,18 @@ from django.views import generic
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.models import User
-from .admin import createUser
 
 
 # Create your views here.
 Simulated_user = 1
 
 
-@login_required
+@login_required(login_url="/login/")
 def mypage(request):
     hostUndecided = Event.objects.filter(host=Simulated_user, status="U")
     hostDecided = Event.objects.filter(host=Simulated_user, status="C")
     upcomingParticipant = Participant.objects.filter(user=Simulated_user, ishost=False)
-    print(upcomingParticipant)
+
     # upcomingParticipant = userevents.exclude(hostID=Simulated_user)
     context = {
         "hostUndecided": hostUndecided,
@@ -41,7 +40,7 @@ def mypage(request):
 
 # from .models import User
 # Create your views here.
-@login_required
+@login_required(login_url="/login/")
 def create_event(request):
     if request.method == "POST":
         # pressed submit
@@ -69,6 +68,7 @@ def create_event(request):
     return render(request, "createevent.html", context)
 
 
+@login_required(login_url="/login/")
 def event(request, event_id):
     try:
         # select * from Event where id=event_id;
@@ -96,7 +96,7 @@ def event(request, event_id):
     context = {"event": this_event, "form": timeslotform, "timeslots": timeslots}
     return render(request, "event.html", context)
 
-
+@login_required(login_url="/login/")
 def timeslot_delete(request, event_id, timeslot_id):
     if request.method == "POST":
         try:
@@ -114,7 +114,7 @@ def timeslot_delete(request, event_id, timeslot_id):
 
     return redirect(event, event_id)
 
-
+@login_required(login_url="/login/")
 def eventedit(request, event_id):
     try:
         # select * from Event where id=event_id;
@@ -147,7 +147,7 @@ def eventedit(request, event_id):
     context = {"event": this_event, "form": form}
     return render(request, "eventedit.html", context)
 
-
+@login_required(login_url="/login/")
 def event_delete(request, event_id):
 
     if request.method == "POST":
@@ -169,7 +169,10 @@ def signUpView(request):
             # process the data in form.cleaned_data as required
             # ...
             # redirect to a new URL:'
-            user = createUser(request)
+            userData = form.cleaned_data
+            userData.pop("password2") # Remove retype password from dict
+
+            user = User.objects.create_user(**userData) # Create User from dict
             login(request, user) # Log user in
             return redirect(reverse("mypage"))
 
