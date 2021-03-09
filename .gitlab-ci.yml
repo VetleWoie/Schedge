@@ -8,9 +8,10 @@ test:
   tags:
     - django
   script:
+    - apt-get update
+    - apt install wget
     - python3 -m pip install Pillow
     - python3 -m pip install selenium
-    - apt install wget
     - wget https://github.com/mozilla/geckodriver/releases/download/v0.29.0/geckodriver-v0.29.0-linux64.tar.gz
     - tar -xf geckodriver-v0.29.0-linux64.tar.gz
     - chmod 777 geckodriver
