@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+import django
 from django.http import (
     HttpResponseRedirect,
     HttpResponseNotFound,
@@ -56,7 +57,7 @@ def create_event(request):
                 )
                 return redirect(event, newevent.id)
             else:
-                return HttpResponseBadRequest("Invalid Form!")
+                return render(request, "createevent.html", {"form": form})
         else:
             return HttpResponseBadRequest("Sign in to create an event!")
 
@@ -91,7 +92,8 @@ def event(request, event_id):
     timeslotform = TimeSlotForm()
     timeslotform.set_limits(this_event)
 
-    inviteform = InviteForm()
+    inviteform = InviteForm(user=request.user)
+    # print(inviteform)
 
     context = {
         "event": this_event,
@@ -198,30 +200,40 @@ def event_invite(request, event_id):
         this_event = Event.objects.get(id=event_id)
     except Event.DoesNotExist:
         return HttpResponseNotFound("404: not valid event id")
-
     if request.method != "POST":
-        return HttpResponseBadRequest("invite view does not support other than post method")
-    form = InviteForm(request.POST)
+        return HttpResponseBadRequest(
+            "invite view does not support other than post method"
+        )
+    form = InviteForm(request.POST, user=request.user)
     if form.is_valid():
         data = form.cleaned_data
         invitee = data["invitee"]
         invirer = request.user
-        if Invite.objects.filter(event=this_event, inviter=invirer, invitee=invitee).exists():
+        is_duplicate = Invite.objects.filter(
+            event=this_event, inviter=invirer, invitee=invitee
+        ).exists()
+        
+        if is_duplicate:
             # TODO: what do we do?
             return HttpResponseBadRequest("You have already invited this person!")
             pass
+        elif invitee == request.user:
+            return HttpResponseBadRequest("You cannot invite yourself")
         else:
             invite = Invite.objects.create(
                 event=this_event,
                 inviter=invirer,
                 invitee=invitee,
-                senttime=dt.datetime.now()
+                senttime=django.utils.timezone.now(),
             )
-            print(f"new invite {invite.__dict__}")
+    else:
+        return HttpResponseBadRequest("Invalid Form!")
     return redirect(event, event_id)
+
 
 def invite_accept(request, invite_id):
     return HttpResponseBadRequest(":)")
+
 
 def invite_reject(request, invite_id):
     return HttpResponseBadRequest(":(")

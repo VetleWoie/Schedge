@@ -9,20 +9,44 @@
 {%block title%}Create Event{%endblock%}
 
 {% block content %}
+
 <div class="wrap">
 
     <form action="/createevent/" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <h1>CREATE AN EVENT</h1>
         <table class="createevent blob">
+            {% for field in form %}
             <tr>
+                <td>{{field.label}}</td>
+                {% if field.errors %}
+                <td>
+                    <div class="errormsg invalid">{{ field }}
+                        <span class="errormsgtext">{{field.errors}}</span>
+                    </div>
+                </td>
+                {%else%}
+                <td>{{ field }}</td>
+                {% endif %}
+                {% if field.label == "Location" %}
+                <td>
+                    <div id="loc-div"><button onclick="getLocation()" type="button" id="curlocbutton">Current Location</button>
+                        <span class="invis" id="loc-err-msg"></span>
+                    </div>
+                </td>
+                {%endif%}
+            </tr>
+            {% endfor %}
+            <!-- <tr>
                 <td>Title</td>
                 <td>{{ form.title }}</td>
             </tr>
             <tr>
                 <td>Location</td>
                 <td>{{ form.location }}</td>
-                <td><button onclick="getLocation()" type="button" id="curlocbutton">Current Location</button></td>
+                <td id="loc-td"><button onclick="getLocation()" type="button" id="curlocbutton">Current Location</button>
+                    <span class="invis" id="loc-err-msg"></span>
+                </td>
             </tr>
             <tr>
                 <td>Start Time</td>
@@ -32,19 +56,19 @@
             </tr>
             <tr>
                 <td>Start Date</td>
-                <td class="datepicker">{{ form.startdate }}</td>
+                {% if form.startdate.errors %}
+                <td class="errormsg"><p class="invalid">{{ form.startdate }}</p>
+                    <span class="errormsgtext">{{form.startdate.errors}}</span>
+                </td>
+                {%else%}
+                <td>{{ form.startdate }}</td>
+                {% endif %}
                 <td>End Date</td>
-                <td class="datepicker">{{ form.enddate }}</td>
+                <td>{{ form.enddate }}</td>
             </tr>
-            <!-- <tr>
-                <td>Hours</td>
-                <td>{{ form.hours }}</td>
-                <td>Minutes</td>
-                <td>{{ form.minutes }}</td>
-            </tr>             -->
             <tr>
                 <td>Duration</td>
-                <td>{{ form.duration }}</td>
+                <td>{{ form.duration}}</td>
             </tr>
             <tr>
                 <td>Description</td>
@@ -53,12 +77,13 @@
             <tr>
                 <td>Image</td>
                 <td>{{ form.image }}</td>
-            </tr>
+            </tr> -->
 
         </table>
         <input type="submit" value="Submit" class="btn wrap" id="id_submit_btn">
     </form>
 </div>
+
 <script src="{% static 'js/event.js' %}"></script>
 
 {%endblock%}

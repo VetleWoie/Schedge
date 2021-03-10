@@ -1,6 +1,7 @@
-var x = document.getElementById("loc");
+var x = document.getElementById("id_location");
 var button = document.getElementById("curlocbutton");
-
+var loc_errmsg = document.getElementById("loc-err-msg")
+var loc_div = document.getElementById("loc-div")
 function getLocation() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showPosition, errorCallBack);
@@ -30,5 +31,9 @@ function getPlace(response) {
 }
 
 function errorCallBack(error) {
-    button.className = "invalid";
+    button.classList.add(["invalid"]);
+    loc_div.classList.add(["errormsg"]);
+
+    loc_errmsg.className = "errormsgtext"
+    loc_errmsg.innerHTML = "Enable location services to use this feature"
 }

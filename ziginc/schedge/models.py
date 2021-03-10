@@ -4,6 +4,7 @@ import datetime as dt
 import django
 
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 
@@ -31,8 +32,31 @@ class Event(models.Model):
     status = models.CharField(max_length=10, default="U", choices=STATUS_OPTIONS)
     host = models.ForeignKey(get_user_model(), default=1, on_delete=models.CASCADE)
 
+    error_css_class = "error"
+
     def __str__(self):
         return f"Event(id={self.id}, title={self.title}, ...)"
+
+    def clean(self):
+        earliest = dt.datetime.combine(self.startdate, self.starttime)
+        latest = dt.datetime.combine(self.enddate, self.endtime)
+
+        if self.startdate < dt.date.today():
+            raise ValidationError({"startdate": ["Cannot create event in the past"]})
+
+        if earliest > latest:
+            raise ValidationError(
+                {
+                    "startdate": [
+                        "Your earliest possible time is after the latest possible"
+                    ]
+                }
+            )
+
+        if (latest - earliest) < self.duration:
+            raise ValidationError(
+                {"duration": ["The allotted timespan is shorter than the duration"]}
+            )
 
 
 class TimeSlot(models.Model):
