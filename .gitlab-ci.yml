@@ -20,7 +20,7 @@ functional:
 scenario:
   stage: test
   tags:
-      django
+    - django
   script:
     - apt-get update
     - apt -y install wget
