@@ -5,11 +5,7 @@ from schedge.forms import EventForm
 from django.contrib.auth.models import User
 import datetime as dt
 from django.http import JsonResponse
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from time import sleep
-from selenium.webdriver.common.action_chains import ActionChains
+
 
 
 class CreateEventTest(TestCase):
