@@ -20,6 +20,10 @@ from django.contrib.auth import login
 from django.contrib.auth.models import User
 
 
+from django.db.models.signals import post_save
+from notifications.signals import notify
+
+
 @login_required(login_url="/login/")
 def mypage(request):
     user = request.user
@@ -79,7 +83,7 @@ def event(request, event_id):
         timeslotform = TimeSlotForm(request.POST)
         creator = request.user
 
-        if timeslotform.is_valid()  and creator.is_authenticated:
+        if timeslotform.is_valid() and creator.is_authenticated:
             timeslotdata = timeslotform.cleaned_data
             newtimeslot = TimeSlot.objects.create(
                 event=this_event, creator=creator, **timeslotdata
@@ -96,10 +100,9 @@ def event(request, event_id):
     timeslotform = TimeSlotForm()
     timeslotform.set_limits(this_event)
 
-
     participants = Participant.objects.filter(event=this_event)
     invites = Invite.objects.filter(event=this_event)
-    
+
     inviteform = InviteForm(invites=invites, accepted=participants, user=request.user)
 
     context = {
@@ -108,7 +111,7 @@ def event(request, event_id):
         "timeslots": timeslots,
         "inviteform": inviteform,
         "participants": participants,
-        "invites": invites
+        "invites": invites,
     }
     return render(request, "event.html", context)
 
@@ -162,9 +165,9 @@ def eventedit(request, event_id):
         "endtime": this_event.endtime.strftime("%H:%M"),
         "duration": [seconds // 86400, (seconds // 3600) % 24, (seconds // 60) % 60],
     }
-    
+
     form = EventForm(instance=this_event, initial=initial_times)
-    
+
     context = {"event": this_event, "form": form}
     return render(request, "eventedit.html", context)
 
@@ -249,6 +252,13 @@ def invite_accept(request, invite_id):
 
     assert invite.invitee == request.user
     Participant.objects.create(event=invite.event, user=invite.invitee, ishost=False)
+
+    name = f"{invite.invitee.first_name} {invite.invitee.last_name}"
+    notify.send(
+        invite.invitee,
+        recipient=invite.inviter,
+        verb=f"{name} accpted your invite to {invite.event.title}",
+    )
 
     invite.delete()
 

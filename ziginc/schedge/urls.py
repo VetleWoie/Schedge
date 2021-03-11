@@ -4,6 +4,9 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic.base import TemplateView
 from .views import signUpView
+import notifications.urls
+from django.conf.urls import url
+
 
 urlpatterns = [
     path('mypage/', views.mypage, name='mypage'),
@@ -18,6 +21,8 @@ urlpatterns = [
     path('signup/' ,signUpView,name='signup'),
     path('', TemplateView.as_view(template_name="home.html"), name="home"),
     path('', include('django.contrib.auth.urls')),
+    url('^inbox/notifications/', include(notifications.urls, namespace='notifications')),
+
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,

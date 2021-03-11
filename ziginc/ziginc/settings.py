@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "schedge.apps.SchedgeConfig",
     "django.contrib.admin",
     "django.contrib.auth",
+    "notifications",
 ]
 
 MIDDLEWARE = [

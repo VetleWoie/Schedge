@@ -97,3 +97,22 @@ main {
     text-transform: lowercase;
     color: white;
 }
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+  }
+
+.notifimg {
+    width: 35px;
+}
+.live_notify_list {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown:hover .live_notify_list {display: block;}
