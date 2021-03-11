@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 from django.forms.widgets import MultiWidget
 from .models import Event, TimeSlot
 from django.contrib.auth.models import User
-
+from .widgets import SplitDurationWidget, MultiValueDurationField
 
 class DateInput(forms.DateInput):
     input_type = "date"
@@ -30,8 +30,11 @@ def max_date(years=10):
 
 
 class EventForm(forms.ModelForm):
-    # hours = forms.IntegerField(min_value=0)
-    # minutes = forms.IntegerField(min_value=0)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['duration'] = MultiValueDurationField()
+        self.fields["starttime"].initial = "08:00"
+        self.fields["endtime"].initial = "16:00"
 
     class Meta:
         model = Event
@@ -40,10 +43,10 @@ class EventForm(forms.ModelForm):
             "location",
             "startdate",
             "enddate",
-            "endtime",
             "starttime",
-            "description",
+            "endtime",
             "duration",
+            "description",
             "image",
         ]
 

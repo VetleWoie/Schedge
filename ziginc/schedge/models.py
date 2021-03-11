@@ -49,13 +49,25 @@ class Event(models.Model):
                 {
                     "startdate": [
                         "Your earliest possible time is after the latest possible"
-                    ]
+                    ],
+                    "enddate": [
+                        "Your earliest possible time is after the latest possible"
+                    ],
                 }
             )
 
         if (latest - earliest) < self.duration:
             raise ValidationError(
                 {"duration": ["The allotted timespan is shorter than the duration"]}
+            )
+
+        if self.duration < dt.timedelta(0):
+            raise ValidationError(
+                {
+                    "duration": [
+                        "Negative duration! Time's arrow neither stands still nor reverses. It merely marches forward."
+                    ]
+                }
             )
 
 
@@ -67,6 +79,10 @@ class TimeSlot(models.Model):
 
     class Meta:
         unique_together = ["event", "time", "date"]
+
+    def clean(self):
+        if self.date < dt.date.today():
+            raise ValidationError({"date": ["Cannot create event in the past"]})
 
     def __str__(self):
         return f"TimeSlot(id={self.id}, on={self.event.id}, time={self.time}, date={self.date}"

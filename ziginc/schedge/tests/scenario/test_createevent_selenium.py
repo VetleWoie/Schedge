@@ -61,7 +61,6 @@ class CreateEventSeleniumTest(StaticLiveServerTestCase):
     def test_selenium(self):
         # move to create event page
         self.driver.get(self.live_server_url + "/createevent/")
-        sleep(2)
 
         # start filling in the fields
 
@@ -82,7 +81,7 @@ class CreateEventSeleniumTest(StaticLiveServerTestCase):
         submit_btn.click()
 
         # wait for new site to load
-        sleep(2)
+        sleep(1)
 
         # url ends with /event/[some number]/
         self.assertRegex(self.driver.current_url, "^.*\/event\/\d+\/$")

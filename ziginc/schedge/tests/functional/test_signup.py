@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from schedge.forms import NameForm
 
-class signUpModelTest(TestCase):
+class SignUpModelTest(TestCase):
     def setUp(self):
         # self.goodUser = request.post
 

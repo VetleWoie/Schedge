@@ -57,7 +57,7 @@ def create_event(request):
                 )
                 return redirect(event, newevent.id)
             else:
-                return render(request, "createevent.html", {"form": form})
+                return render(request, "createevent.html", {"form": form}, status=400)
         else:
             return HttpResponseBadRequest("Sign in to create an event!")
 
@@ -73,17 +73,21 @@ def event(request, event_id):
         # select * from Event where id=event_id;
         this_event = Event.objects.get(id=event_id)
     except Event.DoesNotExist:
-        return HttpResponseNotFound("404: not valid event id")
+        raise Http404("404: not valid event id")
 
     if request.method == "POST":
         timeslotform = TimeSlotForm(request.POST)
         creator = request.user
 
-        if timeslotform.is_valid() and creator.is_authenticated:
+        if timeslotform.is_valid()  and creator.is_authenticated:
             timeslotdata = timeslotform.cleaned_data
             newtimeslot = TimeSlot.objects.create(
                 event=this_event, creator=creator, **timeslotdata
             )
+        else:
+            # TODO: rewrite maybe.
+            # shouldn't be possible through the website though. only through manual post
+            return HttpResponseBadRequest("Invalid Form!")
 
     # only timeslots from this event
     timeslots = TimeSlot.objects.filter(event=this_event)
@@ -111,7 +115,7 @@ def timeslot_delete(request, event_id, timeslot_id):
             # select * from Event where id=event_id;
             this_event = Event.objects.get(id=event_id)
         except Event.DoesNotExist:
-            return HttpResponseNotFound("404: not valid event id")
+            raise Http404("Not valid event id")
 
         try:
             timeslot = TimeSlot.objects.get(id=timeslot_id, event=this_event)
@@ -146,27 +150,28 @@ def eventedit(request, event_id):
         else:
             return HttpResponseBadRequest("Invalid Form!")
 
-    # create form with info from the current event
+    # create form with info from the current event¨
+    seconds = this_event.duration.seconds
     initial_times = {
         "starttime": this_event.starttime.strftime("%H:%M"),
         "endtime": this_event.endtime.strftime("%H:%M"),
+        "duration": [seconds // 86400, (seconds // 3600) % 24, (seconds // 60) % 60],
     }
+    
     form = EventForm(instance=this_event, initial=initial_times)
-
+    
     context = {"event": this_event, "form": form}
     return render(request, "eventedit.html", context)
 
 
 @login_required(login_url="/login/")
 def event_delete(request, event_id):
-
     if request.method == "POST":
         Event.objects.get(id=event_id).delete()
         timeslots = TimeSlot.objects.filter(id=event_id)
         timeslots.delete()
 
-    return redirect(event, event_id)
-    # return redirect(mypage)
+    return redirect(mypage)
 
 
 def signUpView(request):
@@ -212,7 +217,7 @@ def event_invite(request, event_id):
         is_duplicate = Invite.objects.filter(
             event=this_event, inviter=invirer, invitee=invitee
         ).exists()
-        
+
         if is_duplicate:
             # TODO: what do we do?
             return HttpResponseBadRequest("You have already invited this person!")

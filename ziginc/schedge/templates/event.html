@@ -31,7 +31,7 @@
                 </tr>
                 <tr>
                     <td>Hosted By</td>
-                    <td>{{ event.host.first_name }} {{ event.host.last_name }}</td>
+                    <td>username: {{ event.host.username }} name: {{ event.host.first_name }} {{ event.host.last_name }}</td>
                 </tr>
                 <tr>
                     <td>Location</td>
@@ -67,15 +67,15 @@
 
     </div>
     <div class="right_box">
-        <div class="timepicker blob">
-            <h2>Pick a time</h2>
+        <div class="centred blob">
+            <h2>Pick a Time</h2>
             <form action="{% url 'event' event_id=event.id %}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ timeslotform.as_p }}
                 <input type="submit" value="Submit">
             </form>
         </div>
-        <div class="timeslots">
+        <div class="centred">
             {% for timeslot in timeslots %}
             <div class="blob">
                 <div class="timeslot">
@@ -99,8 +99,8 @@
             {% endfor %}
 
         </div>
-        <div class="timepicker blob">
-            <h2>Invite someone</h2>
+        <div class="centred blob">
+            <h2>Invite Someone</h2>
             <form action="{% url 'event_invite' event_id=event.id%}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <p>
@@ -109,6 +109,9 @@
                 </p>
                 <input type="submit" value="Submit">
             </form>
+        </div>
+        <div class="centred blob">
+            <h2>Pending Invites</h2>
         </div>
     </div>
 </div>

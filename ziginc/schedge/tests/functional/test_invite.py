@@ -5,9 +5,10 @@ from schedge.forms import EventForm
 from django.contrib.auth.models import User
 import datetime as dt
 from django.utils.timezone import now
+from unittest import skip
 
 
-class CreateEventTest(TestCase):
+class InviteTest(TestCase):
     def setUp(self):
         self.me = User.objects.create_user("Alice", "alice@test.com", "Elias123")
         self.other = User.objects.create_user("Bob", "bob@test.com", "Elias123")
@@ -58,19 +59,21 @@ class CreateEventTest(TestCase):
         self.assertEqual(response.status_code, 400)
 
 
-    def test_invite_on_mypage(self):
+    def test_invite_is_on_mypage(self):
         response = self.client.get("/mypage/")
         # the invitation is on the mypage
         self.assertIn(self.inv, response.context["invites"])
 
+    @skip("doesn't work yet")
     def test_accept_invitation(self):
         # other invites me
         response = self.client.get(f"/invite_accept/{self.inv.id}/")
         # the accepting should redirect
-        # self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
+    @skip("doesn't work yet")
     def test_reject_invitation(self):
         # other invites me
         response = self.client.get(f"/invite_reject/{self.inv.id}/")
         # the accepting should redirect
-        # self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)

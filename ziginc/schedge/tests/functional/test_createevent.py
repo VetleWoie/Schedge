@@ -5,11 +5,6 @@ from schedge.forms import EventForm
 from django.contrib.auth.models import User
 import datetime as dt
 from django.http import JsonResponse
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from time import sleep
-from selenium.webdriver.common.action_chains import ActionChains
 
 
 class CreateEventTest(TestCase):
@@ -23,7 +18,7 @@ class CreateEventTest(TestCase):
             "endtime": "23:00",
             "startdate": self.tomorrow,
             "enddate": self.next_week,
-            "duration": "00:10:00",
+            "duration": ["0", "10", "0"],
         }
         user = User.objects.create_user("tester", "myemail@test.com", "Elias123")
 
@@ -49,21 +44,22 @@ class CreateEventTest(TestCase):
         invalid_form["title"] = "a really long title " * 10
 
         response = self.client.post("/createevent/", invalid_form)
-        self.assertTemplateNotUsed(response, "event.html")  # didn't create event
+        self.assertEqual(response.status_code, 400)  # invalid form. didn't create event
 
     def test_invalid_duration_field(self):
         invalid_form = self.example_form.copy()
         invalid_form["duration"] = "this is not a proper duration"
 
         response = self.client.post("/createevent/", invalid_form)
-        self.assertTemplateNotUsed(response, "event.html")  # didn't create event
+        self.assertEqual(response.status_code, 400)  # didn't create event
 
     def test_event_in_the_past(self):
         invalid_form = self.example_form.copy()
         invalid_form["startdate"] = "1969-07-20"
 
         response = self.client.post("/createevent/", invalid_form)
-        self.assertTemplateNotUsed(response, "event.html")  # didn't create event
+
+        self.assertEqual(response.status_code, 400)  # didn't create event
 
     def test_event_too_short(self):
         # dancing takes 2 hours, but time between start and end is 1 hour
@@ -74,8 +70,15 @@ class CreateEventTest(TestCase):
             "endtime": "18:00",
             "startdate": self.tomorrow,
             "enddate": self.tomorrow,
-            "duration": "02:00:00",
+            "duration": ["0", "2", "0"],
         }
 
         response = self.client.post("/createevent/", invalid_form)
-        self.assertTemplateNotUsed(response, "event.html")  # didn't create event
+        self.assertEqual(response.status_code, 400)  # didn't create event
+
+    def test_event_negative_duration(self):
+        invalid_form = self.example_form.copy()
+        invalid_form["duration"] = ["0", "-2", "0"]
+
+        response = self.client.post("/createevent/", invalid_form)
+        self.assertEqual(response.status_code, 400)  # didn't create event

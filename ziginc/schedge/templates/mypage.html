@@ -85,11 +85,41 @@
 
 
 <div id="box_participant">
+
     <div class="title_main">
-        requests
+        invitations
+    </div>
+    {% if invites %}
+    {% for invite in invites %}
+    <a href="{% url 'event' event_id=invite.event.id %}" class="invislink">
+        <div class="box extra_bottom">
+            <div class="title"> {{invite.event.title}}</div>
+            <div class="left_inv">
+                <table>
+                    <tr>
+                        <td><img src="{% static 'icons/queue.png' %}" class="icons" width="25px"></td>
+                        <td class="info_text">{{invite.event.duration}} hours</td>
+                        <td><img src="{% static 'icons/placeholder.png' %}" class="icons" width="25px"></td>
+                        <td class="info_text">{{invite.event.location}}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="right_inv">
+                <a href="{% url 'invite_accept' invite_id=invite.id%}" class="invislink yes_btn">✓</a>
+                <a href="{% url 'invite_reject' invite_id=invite.id%}" class="invislink no_btn">✗</a>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+    {% else %}
+    <div class="nothing">you don't have any event invitations</div>
+    {% endif %}
+    <div class="title_main">
+        RSVP
     </div>
     {% if upcomingParticipant %}
     {% for event in upcomingParticipant %}
+    <a href="{% url 'event' event_id=event.id %}" class="invislink">
     <div class="box">
         <div class="title"> {{event.title}}</div>
         <table class="info_table">
@@ -105,37 +135,12 @@
 
         <div class="event_btn result_btn">reply</div>
     </div>
+    </a>
     {% endfor %}
     {% else %}
-    <div class="nothing">you don't have any event requests</div>
+    <div class="nothing">you don't have any event RSVPs</div>
     {% endif %}
 
-    <div class="title_main">
-        invitations
-    </div>
-    {% if invites %}
-    {% for invite in invites %}
-    <div class="box extra_bottom">
-        <div class="title"> {{invite.event.title}}</div>
-        <div class="left_inv">
-            <table>
-                <tr>
-                    <td><img src="{% static 'icons/queue.png' %}" class="icons" width="25px"></td>
-                    <td class="info_text">{{invite.event.duration}} hours</td>
-                    <td><img src="{% static 'icons/placeholder.png' %}" class="icons" width="25px"></td>
-                    <td class="info_text">{{invite.event.location}}</td>
-                </tr>
-            </table>
-        </div>
-        <div class="right_inv">
-                <a href="{% url 'invite_accept' invite_id=invite.id%}" class="invislink yes_btn">✓</a>
-                <a href="{% url 'invite_reject' invite_id=invite.id%}" class="invislink no_btn">✗</a>
-        </div>
-    </div>
-    {% endfor %}
-    {% else %}
-    <div class="nothing">you don't have any event invitations</div>
-    {% endif %}
 </div>
 
 

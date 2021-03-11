@@ -95,7 +95,7 @@ textarea {
     /* letter-spacing: 2px; */
 }
 
-.timepicker {
+.centred {
     text-align: center;
     margin-top: 0;
     /* width: auto; */
@@ -105,7 +105,7 @@ textarea {
 
 }
 
-.timepicker h1{
+.centred h1{
     text-emphasis: bold;
 }
 

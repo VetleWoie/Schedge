@@ -11,7 +11,6 @@
 {% block content %}
 
 <div class="wrap">
-
     <form action="/createevent/" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <h1>CREATE AN EVENT</h1>
@@ -19,22 +18,23 @@
             {% for field in form %}
             <tr>
                 <td>{{field.label}}</td>
-                {% if field.errors %}
-                <td>
-                    <div class="errormsg invalid">{{ field }}
-                        <span class="errormsgtext">{{field.errors}}</span>
-                    </div>
-                </td>
-                {%else%}
-                <td>{{ field }}</td>
-                {% endif %}
-                {% if field.label == "Location" %}
-                <td>
-                    <div id="loc-div"><button onclick="getLocation()" type="button" id="curlocbutton">Current Location</button>
-                        <span class="invis" id="loc-err-msg"></span>
-                    </div>
-                </td>
-                {%endif%}
+                <div class="field">
+                    <td>
+                        {% if field.errors %}
+                        <div class="errormsg invalid">{{ field }}
+                            <span class="errormsgtext">{{field.errors}}</span>
+                        </div>
+                        {%else%}
+                        {{ field }}
+                        {% endif %}
+                        {% if field.label == "Location" %}
+                        <div id="loc-div"><button onclick="getLocation()" type="button" id="curlocbutton" class="smallbtn">Current
+                                Location</button>
+                            <span class="invis" id="loc-err-msg"></span>
+                        </div>
+                        {% endif %}
+                    </td>
+                </div>
             </tr>
             {% endfor %}
             <!-- <tr>
