@@ -122,13 +122,25 @@ class InviteForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
+        invites = kwargs.pop("invites", None)
+        if invites is not None:
+            invited_ids = invites.values_list("invitee", flat=True)
+            invited_names = User.objects.filter(id__in=invited_ids).values_list("username", flat=True)
+        
+        accepted = kwargs.pop("accepted", None)
+        if accepted is not None:
+            accepted_ids = accepted.values_list("user", flat=True)
+            accepted_names = User.objects.filter(id__in=accepted_ids).values_list("username", flat=True)
+
         user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
-        if user is None:
+        if invites is None or accepted is None or user is None:
             return
+
+        excluded = invited_names | accepted_names
 
         # remove yourself from choises
         choices = self.fields["invitee"].choices
         self.fields["invitee"].choices = [
-            (v, u) for v, u in choices if u != user.username
+            (v, u) for v, u in choices if u not in excluded and u != user.username
         ]

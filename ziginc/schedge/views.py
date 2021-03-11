@@ -96,14 +96,19 @@ def event(request, event_id):
     timeslotform = TimeSlotForm()
     timeslotform.set_limits(this_event)
 
-    inviteform = InviteForm(user=request.user)
-    # print(inviteform)
+
+    participants = Participant.objects.filter(event=this_event)
+    invites = Invite.objects.filter(event=this_event)
+    
+    inviteform = InviteForm(invites=invites, accepted=participants, user=request.user)
 
     context = {
         "event": this_event,
         "timeslotform": timeslotform,
         "timeslots": timeslots,
         "inviteform": inviteform,
+        "participants": participants,
+        "invites": invites
     }
     return render(request, "event.html", context)
 
@@ -237,8 +242,24 @@ def event_invite(request, event_id):
 
 
 def invite_accept(request, invite_id):
-    return HttpResponseBadRequest(":)")
+    try:
+        invite = Invite.objects.get(id=invite_id)
+    except Invite.DoesNotExist:
+        return HttpResponseBadRequest("Unknown invite")
+
+    assert invite.invitee == request.user
+    Participant.objects.create(event=invite.event, user=invite.invitee, ishost=False)
+
+    invite.delete()
+
+    return redirect(mypage)
 
 
 def invite_reject(request, invite_id):
-    return HttpResponseBadRequest(":(")
+    try:
+        invite = Invite.objects.get(id=invite_id)
+    except Invite.DoesNotExist:
+        return HttpResponseBadRequest("Unknown invite")
+
+    invite.delete()
+    return redirect(mypage)

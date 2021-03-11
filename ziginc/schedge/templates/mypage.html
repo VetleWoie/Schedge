@@ -58,25 +58,26 @@
     {% else %}
     <div class="nothing">you are not a host for any upcoming events</div>
     {% endif %}
-
     <div class="title_sub">participant</div>
     {% if upcomingParticipant %}
-    {% for event in upcomingParticipant %}
-    <div class="box extra_bottom">
-        <div class="title"> {{event.title}}</div>
-        <table class="info_table extra_right">
-            <tr>
-                <td><img src="{% static 'icons/queue.png' %}" class="icons" width="25px"></td>
-                <td class="info_text">{{event.event.duration}} hours</td>
-                <td><img src="{% static 'icons/placeholder.png' %}" class="icons" width="25px"></td>
-                <td class="info_text">{{event.event.location}}</td>
-                <td><img src="{% static 'icons/group.png' %}" class="icons" width="25px"></td>
-                <td class="info_text">3</td>
+    {% for participant in upcomingParticipant %}
+    <a href="{% url 'event' event_id=participant.event.id %}" class="invislink">
+        <div class="box extra_bottom">
+            <div class="title"> {{participant.event.title}}</div>
+            <table class="info_table extra_right">
+                <tr>
+                    <td><img src="{% static 'icons/queue.png' %}" class="icons" width="25px"></td>
+                    <td class="info_text">{{participant.event.duration}} hours</td>
+                    <td><img src="{% static 'icons/placeholder.png' %}" class="icons" width="25px"></td>
+                    <td class="info_text">{{participant.event.location}}</td>
+                    <td><img src="{% static 'icons/group.png' %}" class="icons" width="25px"></td>
+                    <td class="info_text">3</td>
 
-            </tr>
+                </tr>
 
-        </table>
-    </div>
+            </table>
+        </div>
+    </a>
     {% endfor %}
     {% else %}
     <div class="nothing">you do not participate in any upcoming events</div>
@@ -118,23 +119,23 @@
         RSVP
     </div>
     {% if upcomingParticipant %}
-    {% for event in upcomingParticipant %}
-    <a href="{% url 'event' event_id=event.id %}" class="invislink">
-    <div class="box">
-        <div class="title"> {{event.title}}</div>
-        <table class="info_table">
-            <tr>
-                <td><img src="{% static 'icons/queue.png' %}" class="icons" width="25px"></td>
-                <td class="info_text">{{event.duration}} hours</td>
-                <td><img src="{% static 'icons/placeholder.png' %}" class="icons" width="25px"></td>
-                <td class="info_text">{{event.location}}</td>
-            </tr>
+    {% for participant in upcomingParticipant %}
+    <a href="{% url 'event' event_id=participant.event.id %}" class="invislink">
+        <div class="box">
+            <div class="title"> {{participant.event.title}}</div>
+            <table class="info_table">
+                <tr>
+                    <td><img src="{% static 'icons/queue.png' %}" class="icons" width="25px"></td>
+                    <td class="info_text">{{participant.event.duration}} hours</td>
+                    <td><img src="{% static 'icons/placeholder.png' %}" class="icons" width="25px"></td>
+                    <td class="info_text">{{participant.event.location}}</td>
+                </tr>
 
-        </table>
-        <div class="description_text">{{event.description}}</div>
+            </table>
+            <div class="description_text">{{participant.event.description}}</div>
 
-        <div class="event_btn result_btn">reply</div>
-    </div>
+            <div class="event_btn result_btn">reply</div>
+        </div>
     </a>
     {% endfor %}
     {% else %}

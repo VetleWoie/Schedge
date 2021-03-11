@@ -31,7 +31,8 @@
                 </tr>
                 <tr>
                     <td>Hosted By</td>
-                    <td>username: {{ event.host.username }} name: {{ event.host.first_name }} {{ event.host.last_name }}</td>
+                    <td>username: {{ event.host.username }} name: {{ event.host.first_name }} {{ event.host.last_name }}
+                    </td>
                 </tr>
                 <tr>
                     <td>Location</td>
@@ -77,27 +78,24 @@
         </div>
         <div class="centred">
             {% for timeslot in timeslots %}
-            <div class="blob">
-                <div class="timeslot">
-                    <table>
-                        <tr>
-                            <td>Time</td>
-                            <td>{{timeslot.time}}</td>
-                        </tr>
-                        <tr>
-                            <td>Date</td>
-                            <td>{{timeslot.date }}</td>
-                        </tr>
-                    </table>
-                    <form action="{% url 'timeslot_delete' event_id=event.id timeslot_id=timeslot.id %}" method="POST"
-                        enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <input type="submit" value="🗑">
-                    </form>
-                </div>
+            <div class="blob timeslot">
+                <table>
+                    <tr>
+                        <td>Time</td>
+                        <td>{{timeslot.time}}</td>
+                    </tr>
+                    <tr>
+                        <td>Date</td>
+                        <td>{{timeslot.date }}</td>
+                    </tr>
+                </table>
+                <form action="{% url 'timeslot_delete' event_id=event.id timeslot_id=timeslot.id %}" method="POST"
+                    enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="submit" value="🗑">
+                </form>
             </div>
             {% endfor %}
-
         </div>
         <div class="centred blob">
             <h2>Invite Someone</h2>
@@ -111,7 +109,28 @@
             </form>
         </div>
         <div class="centred blob">
-            <h2>Pending Invites</h2>
+            <h2>Attendees</h2>
+            <table class="centred people">
+                {% for participant in participants %}
+                <tr>
+                    <td>
+                        {{participant.user.first_name}} {{participant.user.last_name}}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="centred blob">
+            <h2>Pending Invitations</h2>
+            <table class="centred people">
+                {% for invite in invites %}
+                <tr>
+                    <td>
+                        {{invite.invitee.first_name}} {{invite.invitee.last_name}}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
         </div>
     </div>
 </div>
