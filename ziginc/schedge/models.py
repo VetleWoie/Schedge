@@ -112,9 +112,3 @@ class Invite(models.Model):
     def __str__(self):
         return f"Invite(inviter={self.inviter}, invitee={self.invitee}, event={self.event}, sent={self.senttime})"
 
-
-class Notification(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    message = models.CharField(max_length=500)
-    senttime = models.DateTimeField()

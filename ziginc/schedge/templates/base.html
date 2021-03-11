@@ -27,7 +27,6 @@
     <div class="header-right">
       {% block auth %}
       {% if user.is_authenticated %}
-      <img src="{% static 'icons/bell.jpg'%}" width="50px">
       <a href="/createevent" class="event_btn">&nbsp;+ CREATE EVENT </a>
 
       <a href="{% url 'logout' %}" class="sign_out">Sign out</a>

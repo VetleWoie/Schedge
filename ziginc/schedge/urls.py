@@ -5,6 +5,7 @@ from django.conf.urls.static import static
 from django.views.generic.base import TemplateView
 from .views import signUpView
 
+
 urlpatterns = [
     path('mypage/', views.mypage, name='mypage'),
     path('createevent/', views.create_event, name='createevent'),
