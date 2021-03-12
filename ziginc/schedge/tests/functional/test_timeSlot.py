@@ -6,6 +6,8 @@ from django.contrib.auth.models import User, UserManager
 import datetime as dt
 from django.http import JsonResponse
 
+from schedge.views import find_potential_time_slots
+
 
 class TimeSlotTest(TestCase):
     def setUp(self):
@@ -35,23 +37,23 @@ class TimeSlotTest(TestCase):
             "endtime" : dt.time(00,00,00),
             "duration" : dt.timedelta(hours=2),
         }
-        self.e = Event.objects.create(**e, host=User.objects.get(username="elias"))
+        self.event = Event.objects.create(**e, host=User.objects.get(username="elias"))
+        
     
     def test_same_time_slot(self):
-        print()
-        t1 = TimeSlot.objects.create(starttime = dt.time(12,00,00),
-                                    endtime = dt.time(16,00,00),
+        t1 = TimeSlot.objects.create(start_time = dt.time(12,00,00),
+                                    end_time = dt.time(16,00,00),
                                     date= dt.date(2020,1,1),
-                                    event = self.e,
+                                    event = self.event,
                                     creator = self.user_1)
 
-        t2 = TimeSlot.objects.create(starttime = dt.time(12,00,00),
-                                    endtime = dt.time(16,00,00),
+        t2 = TimeSlot.objects.create(start_time = dt.time(12,00,00),
+                                    end_time = dt.time(16,00,00),
                                     date= dt.date(2020,1,1),
-                                    event = self.e,
+                                    event = self.event,
                                     creator = self.user_2)
 
-        res = self.e.findTimeSlot()
+        find_potential_time_slots(self.event.id, t1)
         
         
 
