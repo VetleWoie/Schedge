@@ -95,17 +95,14 @@ textarea {
     /* letter-spacing: 2px; */
 }
 
-.timepicker {
+.centred {
     text-align: center;
     margin-top: 0;
-    /* width: auto; */
-    /* margin-right: 5%; */
-    text-align: center;
     padding-bottom: 20px;
 
 }
 
-.timepicker h1{
+.centred h1{
     text-emphasis: bold;
 }
 
@@ -124,4 +121,19 @@ textarea {
 
 .timeslot table {
     margin: 0 auto; /* or margin: 0 auto 0 auto */
+}
+
+.people td{
+    text-align: center;
+}
+
+
+.people tr{
+    text-align: center;
+}
+
+
+.people {
+    width: 100%;
+    text-align: center;
 }

@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect
+import django
 from django.http import (
     HttpResponseRedirect,
     HttpResponseNotFound,
     HttpResponseBadRequest,
 )
 import datetime as dt
-from .forms import EventForm, TimeSlotForm
-from .models import Event, TimeSlot, Participant
+from .forms import EventForm, TimeSlotForm, InviteForm
+from .models import Event, TimeSlot, Participant, Invite
 from django.shortcuts import render
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
@@ -19,21 +20,19 @@ from django.contrib.auth import login
 from django.contrib.auth.models import User
 
 
-# Create your views here.
-Simulated_user = 1
-
-
 @login_required(login_url="/login/")
 def mypage(request):
-    hostUndecided = Event.objects.filter(host=Simulated_user, status="U")
-    hostDecided = Event.objects.filter(host=Simulated_user, status="C")
-    upcomingParticipant = Participant.objects.filter(user=Simulated_user, ishost=False)
-
+    user = request.user
+    hostUndecided = Event.objects.filter(host=user, status="U")
+    hostDecided = Event.objects.filter(host=user, status="C")
+    upcomingParticipant = Participant.objects.filter(user=user, ishost=False)
+    invites = Invite.objects.filter(invitee=user)
     # upcomingParticipant = userevents.exclude(hostID=Simulated_user)
     context = {
         "hostUndecided": hostUndecided,
         "upcomingHost": hostDecided,
         "upcomingParticipant": upcomingParticipant,
+        "invites": invites,
     }
     return render(request, "mypage.html", context)
 
@@ -58,7 +57,7 @@ def create_event(request):
                 )
                 return redirect(event, newevent.id)
             else:
-                return HttpResponseBadRequest("Invalid Form!")
+                return render(request, "createevent.html", {"form": form}, status=400)
         else:
             return HttpResponseBadRequest("Sign in to create an event!")
 
@@ -74,17 +73,21 @@ def event(request, event_id):
         # select * from Event where id=event_id;
         this_event = Event.objects.get(id=event_id)
     except Event.DoesNotExist:
-        return HttpResponseNotFound("404: not valid event id")
+        raise Http404("404: not valid event id")
 
     if request.method == "POST":
         timeslotform = TimeSlotForm(request.POST)
         creator = request.user
 
-        if timeslotform.is_valid() and creator.is_authenticated:
+        if timeslotform.is_valid()  and creator.is_authenticated:
             timeslotdata = timeslotform.cleaned_data
             newtimeslot = TimeSlot.objects.create(
                 event=this_event, creator=creator, **timeslotdata
             )
+        else:
+            # TODO: rewrite maybe.
+            # shouldn't be possible through the website though. only through manual post
+            return HttpResponseBadRequest("Invalid Form!")
 
     # only timeslots from this event
     timeslots = TimeSlot.objects.filter(event=this_event)
@@ -93,8 +96,22 @@ def event(request, event_id):
     timeslotform = TimeSlotForm()
     timeslotform.set_limits(this_event)
 
-    context = {"event": this_event, "form": timeslotform, "timeslots": timeslots}
+
+    participants = Participant.objects.filter(event=this_event)
+    invites = Invite.objects.filter(event=this_event)
+    
+    inviteform = InviteForm(invites=invites, accepted=participants, user=request.user)
+
+    context = {
+        "event": this_event,
+        "timeslotform": timeslotform,
+        "timeslots": timeslots,
+        "inviteform": inviteform,
+        "participants": participants,
+        "invites": invites
+    }
     return render(request, "event.html", context)
+
 
 @login_required(login_url="/login/")
 def timeslot_delete(request, event_id, timeslot_id):
@@ -103,7 +120,7 @@ def timeslot_delete(request, event_id, timeslot_id):
             # select * from Event where id=event_id;
             this_event = Event.objects.get(id=event_id)
         except Event.DoesNotExist:
-            return HttpResponseNotFound("404: not valid event id")
+            raise Http404("Not valid event id")
 
         try:
             timeslot = TimeSlot.objects.get(id=timeslot_id, event=this_event)
@@ -113,6 +130,7 @@ def timeslot_delete(request, event_id, timeslot_id):
         timeslot.delete()
 
     return redirect(event, event_id)
+
 
 @login_required(login_url="/login/")
 def eventedit(request, event_id):
@@ -137,26 +155,28 @@ def eventedit(request, event_id):
         else:
             return HttpResponseBadRequest("Invalid Form!")
 
-    # create form with info from the current event
+    # create form with info from the current event¨
+    seconds = this_event.duration.seconds
     initial_times = {
         "starttime": this_event.starttime.strftime("%H:%M"),
         "endtime": this_event.endtime.strftime("%H:%M"),
+        "duration": [seconds // 86400, (seconds // 3600) % 24, (seconds // 60) % 60],
     }
+    
     form = EventForm(instance=this_event, initial=initial_times)
-
+    
     context = {"event": this_event, "form": form}
     return render(request, "eventedit.html", context)
 
+
 @login_required(login_url="/login/")
 def event_delete(request, event_id):
-
     if request.method == "POST":
         Event.objects.get(id=event_id).delete()
         timeslots = TimeSlot.objects.filter(id=event_id)
         timeslots.delete()
 
-    return redirect(event, event_id)
-    # return redirect(mypage)
+    return redirect(mypage)
 
 
 def signUpView(request):
@@ -170,10 +190,10 @@ def signUpView(request):
             # ...
             # redirect to a new URL:'
             userData = form.cleaned_data
-            userData.pop("password2") # Remove retype password from dict
+            userData.pop("password2")  # Remove retype password from dict
 
-            user = User.objects.create_user(**userData) # Create User from dict
-            login(request, user) # Log user in
+            user = User.objects.create_user(**userData)  # Create User from dict
+            login(request, user)  # Log user in
             return redirect(reverse("mypage"))
 
     # if a GET (or any other method) we'll create a blank form
@@ -181,3 +201,65 @@ def signUpView(request):
         form = NameForm()
 
     return render(request, "registration/signup.html", {"form": form})
+
+
+@login_required
+def event_invite(request, event_id):
+    try:
+        # select * from Event where id=event_id;
+        this_event = Event.objects.get(id=event_id)
+    except Event.DoesNotExist:
+        return HttpResponseNotFound("404: not valid event id")
+    if request.method != "POST":
+        return HttpResponseBadRequest(
+            "invite view does not support other than post method"
+        )
+    form = InviteForm(request.POST, user=request.user)
+    if form.is_valid():
+        data = form.cleaned_data
+        invitee = data["invitee"]
+        invirer = request.user
+        is_duplicate = Invite.objects.filter(
+            event=this_event, inviter=invirer, invitee=invitee
+        ).exists()
+
+        if is_duplicate:
+            # TODO: what do we do?
+            return HttpResponseBadRequest("You have already invited this person!")
+            pass
+        elif invitee == request.user:
+            return HttpResponseBadRequest("You cannot invite yourself")
+        else:
+            invite = Invite.objects.create(
+                event=this_event,
+                inviter=invirer,
+                invitee=invitee,
+                senttime=django.utils.timezone.now(),
+            )
+    else:
+        return HttpResponseBadRequest("Invalid Form!")
+    return redirect(event, event_id)
+
+
+def invite_accept(request, invite_id):
+    try:
+        invite = Invite.objects.get(id=invite_id)
+    except Invite.DoesNotExist:
+        return HttpResponseBadRequest("Unknown invite")
+
+    assert invite.invitee == request.user
+    Participant.objects.create(event=invite.event, user=invite.invitee, ishost=False)
+
+    invite.delete()
+
+    return redirect(mypage)
+
+
+def invite_reject(request, invite_id):
+    try:
+        invite = Invite.objects.get(id=invite_id)
+    except Invite.DoesNotExist:
+        return HttpResponseBadRequest("Unknown invite")
+
+    invite.delete()
+    return redirect(mypage)
