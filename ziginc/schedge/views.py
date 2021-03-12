@@ -6,7 +6,7 @@ from django.http import (
 )
 import datetime as dt
 from .forms import EventForm, TimeSlotForm
-from .models import Event, TimeSlot, Participant
+from .models import Event, TimeSlot, Participant, PotentialTimeSlot
 from django.shortcuts import render
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
@@ -67,6 +67,41 @@ def create_event(request):
     context = {"form": form}
     return render(request, "createevent.html", context)
 
+def intersect(a, b, c, d): # find intersection 
+    """ 
+        a = timeslot1 
+        b = timeslot2 
+        c = minimum size of intersection (leave blank if no size)
+        d = True: won't allow same creator
+    """
+    if d and a.creator == b.creator:
+        return
+    if not (b == a or b.start_time > a.end_time or b.end_time < a.start_time or a.date != b.date): # Check if intersection exists
+        start = max(a.start_time, b.start_time)
+        end = min(a.end_time, b.end_time)
+        if not dt.datetime.combine(a.date, end) - dt.datetime.combine(a.date, start) < c: # chech if intersection is big enough
+            return ((start, end), a.date)
+    return # No valid intersection was found
+
+def find_potential_time_slots(event_id, time_slot):
+    
+    this_event = Event.objects.get(id=event_id)
+
+    time_slots = TimeSlot.objects.filter(event=this_event)
+
+    for ts in time_slots:
+        I = intersect(time_slot, ts, this_event.duration, True)
+        if I:
+            db_fetch = PotentialTimeSlot.objects.get(event=this_event, start_time=I[0][0], end_time=I[0][1], date=I[1])
+            print(db_fetch)
+            if db_fetch:
+                print("found old pts")
+                db_fetch.participants += 1
+                db_fetch.save()
+            else:
+                PotentialTimeSlot.objects.create(event=this_event, start_time=I[0][0], end_time=I[0][1], date=I[1], participants=2)
+
+    return
 
 @login_required(login_url="/login/")
 def event(request, event_id):
@@ -77,7 +112,7 @@ def event(request, event_id):
         return HttpResponseNotFound("404: not valid event id")
 
     if request.method == "POST":
-        timeslotform = TimeSlotForm(request.POST)
+        timeslotform = TimeSlotForm(this_event, request.user, request.POST)
         creator = request.user
 
         if timeslotform.is_valid() and creator.is_authenticated:
@@ -85,15 +120,19 @@ def event(request, event_id):
             newtimeslot = TimeSlot.objects.create(
                 event=this_event, creator=creator, **timeslotdata
             )
+            # get new potential timeslots
+            find_potential_time_slots(event_id, newtimeslot)
 
-    # only timeslots from this event
+
+
+    potentialtimeslots = PotentialTimeSlot.objects.filter(event=this_event)
+    # if not potentialtimeslots:
     timeslots = TimeSlot.objects.filter(event=this_event)
-
     # new time slot form with this event's start date and end date
-    timeslotform = TimeSlotForm()
+    timeslotform = TimeSlotForm(this_event, request.user)
     timeslotform.set_limits(this_event)
 
-    context = {"event": this_event, "form": timeslotform, "timeslots": timeslots}
+    context = {"event": this_event, "form": timeslotform, "ptimeslots": potentialtimeslots, "timeslots": timeslots}
     return render(request, "event.html", context)
 
 @login_required(login_url="/login/")
@@ -157,8 +196,7 @@ def event_delete(request, event_id):
 
     return redirect(event, event_id)
     # return redirect(mypage)
-
-
+    
 def signUpView(request):
     # if this is a POST request we need to process the form data
     if request.method == "POST":

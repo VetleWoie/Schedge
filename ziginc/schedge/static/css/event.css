@@ -125,3 +125,20 @@ textarea {
 .timeslot table {
     margin: 0 auto; /* or margin: 0 auto 0 auto */
 }
+
+.ptimeslot td {
+    padding-left: 7px;
+    padding-right: 7px;
+}
+
+.ptimeslot {
+    /* width: auto; */
+    /* margin-right: 5%; */
+    padding-top: 15px;
+    padding-bottom: 15px;
+    text-align: center;
+}
+
+.ptimeslot table {
+    margin: 0 auto; /* or margin: 0 auto 0 auto */
+}

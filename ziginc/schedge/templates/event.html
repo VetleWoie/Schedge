@@ -71,19 +71,64 @@
                     <input type="submit" value="Submit">
                 </form>
             </div>
+            <div class="ptimeslots">
+
+                {% for ptimeslot in ptimeslots %}
+                <div class="blob">
+                    <div class="ptimeslot">
+                        <table>
+                            
+                            <tr>
+                                <td>Time</td>
+                                <td>From:</td>
+                                <td>{{ptimeslot.start_time}}</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>To:</td>
+                                <td>{{ptimeslot.end_time}}</td>
+                            </tr>
+                            <tr>
+                                <td>Date</td>
+                                <td></td>
+                                <td>{{ptimeslot.date}}</td>
+                            </tr>
+                            <tr>
+                                <td>Participants</td>
+                                <td>{{ptimeslot.participants}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                {% endfor %}
+
+            </div>
             <div class="timeslots">
 
                 {% for timeslot in timeslots %}
                 <div class="blob">
                     <div class="timeslot">
                         <table>
+                            
                             <tr>
                                 <td>Time</td>
-                                <td>{{timeslot.time}}</td>
+                                <td>From:</td>
+                                <td>{{timeslot.start_time}}</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>To:</td>
+                                <td>{{timeslot.end_time}}</td>
                             </tr>
                             <tr>
                                 <td>Date</td>
+                                <td></td>
                                 <td>{{timeslot.date }}</td>
+                            </tr>
+                            <tr>
+                                <td>creator</td>
+                                <td></td>
+                                <td>{{timeslot.creator.id }}</td>
                             </tr>
                         </table>
                         <form action="/event/{{event.id}}/delete/{{timeslot.id}}/" method="POST"

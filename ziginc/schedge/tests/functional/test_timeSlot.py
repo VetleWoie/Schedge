@@ -51,7 +51,8 @@ class TimeSlotTest(TestCase):
                                     event = self.e,
                                     creator = self.user_2)
 
-        self.e.findTimeSlot()
+        res = self.e.findTimeSlot()
+        
         
 
 
