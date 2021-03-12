@@ -43,7 +43,7 @@ class TimeSlot(models.Model):
     creator = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, default=1)
 
     class Meta:
-        unique_together = ["event", "start_time", "end_time", "date"]
+        unique_together = ["event", "start_time", "end_time", "date", "creator"]
 
     def __str__(self):
         return f"TimeSlot(id={self.id}, on={self.event.id}, start_time={self.start_time}, end_time={self.end_time}, date={self.date}"
