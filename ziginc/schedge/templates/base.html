@@ -24,16 +24,7 @@
   {% block header%}
   <div class="header">
     {% if user.is_authenticated %}
-    <div class="dropdown">
-      {% if unread_count %}
-      <img src="{% static 'icons/bell_active.png' %}" class="notifimg">
-      <!-- <a href="{% url 'notifications:unread' %}" class="notiflist"> -->
-        {% live_notify_list %}
-      {%else%}
-      <img src="{% static 'icons/bell.jpg' %}" class="notifimg">
-      {%endif%}
-      <!-- </a> -->
-    </div>
+
 
     <a href="{% url 'mypage' %}" class="name">schedge</a>
     {% else %}
@@ -44,7 +35,19 @@
       {% block auth %}
       {% if user.is_authenticated %}
       <a href="/createevent" class="event_btn">&nbsp;+ CREATE EVENT </a>
-
+      <div class="dropdown">
+        {% if unread_count %}
+        <div class="busybell">
+            <span class="dot">
+              <p>{{unread_count}}</p>
+            </span>
+            <img src="{% static 'icons/bell.svg' %}" class="notifimg">
+        </div>
+        {% live_notify_list %}
+        {%else%}
+        <img src="{% static 'icons/bell.svg' %}" class="busybell">
+        {%endif%}
+      </div>
       <a href="{% url 'logout' %}" class="sign_out">Sign out</a>
 
       {% else %}
@@ -60,6 +63,7 @@
       {% endblock%}
       {% endif %}
       {% endblock %}
+
     </div>
   </div>
   {% endblock %}
@@ -70,8 +74,9 @@
   </main>
   {% block sidebar %}
   <!-- default navigation tegt for every page--> {% endblock %}
+  <script src="{% static 'js/fix_notifications.js' %}"></script>
   <script src="{% static 'notifications/notify.js' %}" type="text/javascript"></script>
-  {% register_notify_callbacks callbacks='fill_notification_list,fill_notification_badge' %}
+  {% register_notify_callbacks callbacks='parse_invitation_list,fill_notification_badge' %}
 </body>
 
 </html>

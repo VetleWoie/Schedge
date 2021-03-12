@@ -2,6 +2,7 @@ var x = document.getElementById("id_location");
 var button = document.getElementById("curlocbutton");
 var loc_errmsg = document.getElementById("loc-err-msg")
 var loc_div = document.getElementById("loc-div")
+
 function getLocation() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showPosition, errorCallBack);

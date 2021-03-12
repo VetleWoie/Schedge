@@ -34,6 +34,10 @@ class Event(models.Model):
 
     error_css_class = "error"
 
+    @property
+    def n_attendees(self):
+        return len(Participant.objects.filter(event=self))
+
     def __str__(self):
         return f"Event(id={self.id}, title={self.title}, ...)"
 

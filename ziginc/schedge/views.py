@@ -22,20 +22,22 @@ from django.contrib.auth.models import User
 
 from django.db.models.signals import post_save
 from notifications.signals import notify
+from notifications.models import Notification
 
 
 @login_required(login_url="/login/")
 def mypage(request):
     user = request.user
-    hostUndecided = Event.objects.filter(host=user, status="U")
-    hostDecided = Event.objects.filter(host=user, status="C")
-    upcomingParticipant = Participant.objects.filter(user=user, ishost=False)
+    host_undecided = Event.objects.filter(host=user, status="U")
+    host_decided = Event.objects.filter(host=user, status="C")
+    participant_as_guest = Participant.objects.filter(user=user, ishost=False)
+
     invites = Invite.objects.filter(invitee=user)
-    # upcomingParticipant = userevents.exclude(hostID=Simulated_user)
+    # participants = userevents.exclude(hostID=Simulated_user)
     context = {
-        "hostUndecided": hostUndecided,
-        "upcomingHost": hostDecided,
-        "upcomingParticipant": upcomingParticipant,
+        "host_undecided": host_undecided,
+        "host_decided": host_decided,
+        "participant_as_guest": participant_as_guest,
         "invites": invites,
     }
     return render(request, "mypage.html", context)
@@ -221,24 +223,33 @@ def event_invite(request, event_id):
     if form.is_valid():
         data = form.cleaned_data
         invitee = data["invitee"]
-        invirer = request.user
+        inviter = request.user
         is_duplicate = Invite.objects.filter(
-            event=this_event, inviter=invirer, invitee=invitee
+            event=this_event, inviter=inviter, invitee=invitee
         ).exists()
 
         if is_duplicate:
             # TODO: what do we do?
             return HttpResponseBadRequest("You have already invited this person!")
             pass
-        elif invitee == request.user:
+        elif invitee == inviter:
             return HttpResponseBadRequest("You cannot invite yourself")
         else:
             invite = Invite.objects.create(
                 event=this_event,
-                inviter=invirer,
+                inviter=inviter,
                 invitee=invitee,
                 senttime=django.utils.timezone.now(),
             )
+            notify.send(
+                inviter,
+                recipient=invitee,
+                target=this_event,
+                verb="invite",
+                title=this_event.title,
+                url=f"{invite.event.id}",
+            )
+
     else:
         return HttpResponseBadRequest("Invalid Form!")
     return redirect(event, event_id)
@@ -257,7 +268,10 @@ def invite_accept(request, invite_id):
     notify.send(
         invite.invitee,
         recipient=invite.inviter,
-        verb=f"{name} accpted your invite to {invite.event.title}",
+        target=invite.event,
+        verb=f"invite accept",
+        title=invite.event.title,
+        url=f"{invite.event.id}",
     )
 
     invite.delete()
@@ -273,3 +287,12 @@ def invite_reject(request, invite_id):
 
     invite.delete()
     return redirect(mypage)
+
+def event_fromnotification(self, event_id, notification_id):
+    try:
+        notice = Notification.objects.get(id=notification_id)
+    except Notification.DoesNotExist:
+        return HttpResponseNotFound("Unknown notification")
+
+    notice.mark_as_read()
+    return redirect(event, event_id)
