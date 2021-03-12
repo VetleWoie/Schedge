@@ -53,7 +53,12 @@ class PotentialTimeSlot(models.Model):
     start_time = models.TimeField()
     end_time = models.TimeField()
     date = models.DateField()
-    participants = models.ForeignKey(get_user_model, on_delete=models.DO_NOTHING)
+    participants = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    #TODO find a way so if a timeslot gets deleted PTS also gets deleted
+
+    class Meta:
+        unique_together = ["event", "start_time", "end_time", "date", "participants"]
+
 
     def __str__(self):
         return f"PotentialTimeSlot(id={self.id}, on={self.event.id}, start_time={self.start_time}, end_time={self.end_time}, date={self.date}, participants={self.participants}"

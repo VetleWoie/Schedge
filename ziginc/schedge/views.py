@@ -83,26 +83,42 @@ def intersect(a, b, c, d): # find intersection
             return ((start, end), a.date)
     return # No valid intersection was found
 
-def find_potential_time_slots(event_id, time_slot):
-    
-    this_event = Event.objects.get(id=event_id)
+def find_potential_time_slots(event, new_time_slot, user):
 
-    time_slots = TimeSlot.objects.filter(event=this_event)
-
+    time_slots = TimeSlot.objects.filter(event=event)
     for ts in time_slots:
-        I = intersect(time_slot, ts, this_event.duration, True)
+        I = intersect(new_time_slot, ts, event.duration, True)
         if I:
-            db_fetch = PotentialTimeSlot.objects.get(event=this_event, start_time=I[0][0], end_time=I[0][1], date=I[1])
-            print(db_fetch)
-            if db_fetch:
-                print("found old pts")
-                db_fetch.participants += 1
-                db_fetch.save()
-            else:
-                PotentialTimeSlot.objects.create(event=this_event, start_time=I[0][0], end_time=I[0][1], date=I[1], participants=2)
-
+            PotentialTimeSlot.objects.create(event=event, start_time=I[0][0], end_time=I[0][1], date=I[1], participants=user)
     return
 
+def refactor_potential_time_slots(event):
+    time_slots = TimeSlot.objects.filter(event=event)
+    PotentialTimeSlot.objects.filter(event=event).delete()
+
+    for i, time_slot in enumerate(time_slots):
+        for ts in time_slots[:i]:
+            I = intersect(time_slot, ts, event.duration, True)
+            if I:
+                PotentialTimeSlot.objects.create(event=event, start_time=I[0][0], end_time=I[0][1], date=I[1], participants=time_slot.creator)
+    return
+
+# merges new timeslot to existing from same user if they overlap
+def check_overlap_ts(event, user, start, end, date, first):
+    time_slots = TimeSlot.objects.filter(event=event, creator=user)
+    for ts in time_slots:
+        if (ts.start_time >= end or ts.end_time >= start) and date == ts.date: # Check if intersection exists
+            ts_start = ts.start_time
+            ts_end = ts.end_time
+            ts.delete()
+            return check_overlap_ts(event, user, min(start, ts_start), max(end, ts_end), date, 0)
+    if not first:
+        TimeSlot.objects.create(event=event, start_time=start, end_time=end, date=date, creator=user)
+        # TODO full refactor of available timeslots
+        refactor_potential_time_slots(event)
+        return
+    return first
+    
 @login_required(login_url="/login/")
 def event(request, event_id):
     try:
@@ -112,24 +128,21 @@ def event(request, event_id):
         return HttpResponseNotFound("404: not valid event id")
 
     if request.method == "POST":
-        timeslotform = TimeSlotForm(this_event, request.user, request.POST)
+        timeslotform = TimeSlotForm(request.POST)
         creator = request.user
 
         if timeslotform.is_valid() and creator.is_authenticated:
             timeslotdata = timeslotform.cleaned_data
-            newtimeslot = TimeSlot.objects.create(
-                event=this_event, creator=creator, **timeslotdata
-            )
-            # get new potential timeslots
-            find_potential_time_slots(event_id, newtimeslot)
-
+            if check_overlap_ts(this_event, creator, timeslotdata["start_time"], timeslotdata["end_time"], timeslotdata["date"], 1):
+                newtimeslot = TimeSlot.objects.create(event=this_event, creator=creator, **timeslotdata)
+                find_potential_time_slots(this_event, newtimeslot, creator) # check for new potential ts with new ts
 
 
     potentialtimeslots = PotentialTimeSlot.objects.filter(event=this_event)
     # if not potentialtimeslots:
     timeslots = TimeSlot.objects.filter(event=this_event)
     # new time slot form with this event's start date and end date
-    timeslotform = TimeSlotForm(this_event, request.user)
+    timeslotform = TimeSlotForm()
     timeslotform.set_limits(this_event)
 
     context = {"event": this_event, "form": timeslotform, "ptimeslots": potentialtimeslots, "timeslots": timeslots}

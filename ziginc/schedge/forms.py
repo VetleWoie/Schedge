@@ -66,11 +66,7 @@ class TimeSlotForm(forms.ModelForm):
         fields = ["start_time", "end_time", "date"]
 
         widgets = {"start_time": TimeInput(), "end_time": TimeInput(), "date": DateInput()}
-    def __init__(self, event="", user="", *args, **kwargs):
-        self.user = user
-        self.event = event
-        super(TimeSlotForm, self).__init__(*args, **kwargs)
-
+        
     def set_limits(self, event):
         self.fields["date"].widget.attrs["min"] = event.startdate
         self.fields["date"].widget.attrs["max"] = event.enddate
@@ -79,16 +75,6 @@ class TimeSlotForm(forms.ModelForm):
         self.fields["end_time"].widget.attrs["min"] = event.starttime
         self.fields["end_time"].widget.attrs["max"] = event.endtime
 
-    # Check if time slot intersects with other timeslots from the same user
-    def clean(self):
-        start =  self.cleaned_data["start_time"]
-        end =  self.cleaned_data["end_time"]
-        date =  self.cleaned_data["date"]
-        user_ts = TimeSlot.objects.filter(event=self.event, creator=self.user)
-        for ts in user_ts:
-            if not (ts.start_time > end or ts.end_time < start or date != ts.date): # Check if intersection exists
-                raise forms.ValidationError("This timeslot is already selected")
-        return self.cleaned_data
 
 class NameForm(forms.Form):
     username = forms.CharField(label='Username', max_length=100, widget=forms.TextInput(attrs={'autofocus': 'autofocus'}))
