@@ -8,6 +8,7 @@ import notifications.urls
 from django.conf.urls import url
 
 
+
 urlpatterns = [
     path('mypage/', views.mypage, name='mypage'),
     path('createevent/', views.create_event, name='createevent'),
