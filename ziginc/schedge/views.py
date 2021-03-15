@@ -91,10 +91,12 @@ def find_potential_time_slots(event, new_time_slot):
         if I:
             pts = PotentialTimeSlot.objects.filter(event=event, start_time=I[0][0], end_time=I[0][1], date=I[1])
             if pts.exists():
-                pts.participants.add(new_time_slot.creator)
+                pts[0].participants.add(new_time_slot.creator)
             else:
                 pts = PotentialTimeSlot.objects.create(event=event, start_time=I[0][0], end_time=I[0][1], date=I[1])
-                pts.participants.add(new_time_slot.creator, ts.creator)
+                pts.participants.add(new_time_slot.creator)
+                pts.participants.add(ts.creator)
+
     return
 
 def refactor_potential_time_slots(event):

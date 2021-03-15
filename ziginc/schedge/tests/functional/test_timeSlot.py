@@ -11,23 +11,18 @@ from schedge.views import find_potential_time_slots
 
 class TimeSlotTest(TestCase):
     def setUp(self):
-        user_1 = {
-            "username" : "elias",
-            "first_name" : "Elias",
-            "last_name" : "Riiser",
-            "email" : "elias@riise.no",
-            "password" : "Elias123",
-        }
-        user_2 = {
-            "username" : "vetle",
-            "first_name" : "Vetle",
-            "last_name" : "Woie",
-            "email" : "vetle@woie.no",
-            "password" : "Elias123"
-        }
-        self.user_1 = User.objects.create_user(**user_1)
-        self.user_2 = User.objects.create_user(**user_2)
-        # self.client.login(username="elias", password="Elias123")
+
+        self.users = []
+        #create ten test users
+        for i in range(10):
+            user = {
+                "username" : "testUsername_%d" %i,
+                "first_name" : "testFirstName_%d"%i,
+                "last_name" : "testLastName_%d"%i,
+                "email" : "testMail_%d@riise.no"%i,
+                "password" : "testPassword_%d"%i,
+            }
+            self.users.append(User.objects.create_user(**user))
 
         e = {
             "title" : "testevent",
@@ -37,7 +32,7 @@ class TimeSlotTest(TestCase):
             "endtime" : dt.time(00,00,00),
             "duration" : dt.timedelta(hours=2),
         }
-        self.event = Event.objects.create(**e, host=User.objects.get(username="elias"))
+        self.event = Event.objects.create(**e, host=self.users[0])
         
     
     def test_same_time_slot(self):
@@ -47,21 +42,14 @@ class TimeSlotTest(TestCase):
             "end_time" : dt.time(16,00,00),
             "date" : dt.date(2020,1,1),
         }
-        t1 = TimeSlot.objects.create(start_time = dt.time(12,00,00),
-                                    end_time = dt.time(16,00,00),
-                                    date= dt.date(2020,1,1),
-                                    event = self.event,
-                                    creator = self.user_1)
+        for user in self.users:
+            t = TimeSlot.objects.create(start_time = dt.time(12,00,00),
+                                        end_time = dt.time(16,00,00),
+                                        date= dt.date(2020,1,1),
+                                        event = self.event,
+                                        creator = user)
+            find_potential_time_slots(self.event, t)
 
-        find_potential_time_slots(self.event, t1)
-
-        t2 = TimeSlot.objects.create(start_time = dt.time(12,00,00),
-                                    end_time = dt.time(16,00,00),
-                                    date= dt.date(2020,1,1),
-                                    event = self.event,
-                                    creator = self.user_2)
-        find_potential_time_slots(self.event, t2)
-       
         #Get all potential timeslots from database
         potTimeSlot = PotentialTimeSlot.objects.all()
 
@@ -74,9 +62,9 @@ class TimeSlotTest(TestCase):
         self.assertEqual(potTimeSlot.date,expected["date"] , msg="Date should be %s but got %s" % (expected['date'], potTimeSlot.date))
         #Check users
         users = potTimeSlot.participants.all()
-        self.assertEqual(len(users), 2, msg="Should be 2 users in the timeslot got %s" % len(users))
-        self.assertIn(self.user_1, users)
-        self.assertIn(self.user_2, users)
+        self.assertEqual(len(users), len(self.users), msg="Should be %s users in the timeslot got %s" % (len(self.users),len(users)))
+        for user in self.users:
+            self.assertIn(user, users)
 
     def test_diffrent_time_slot(self):
         expected = {
@@ -89,14 +77,14 @@ class TimeSlotTest(TestCase):
                                     end_time = dt.time(16,00,00),
                                     date= dt.date(2020,1,1),
                                     event = self.event,
-                                    creator = self.user_1)
+                                    creator = self.users[0])
         find_potential_time_slots(self.event, t1)
 
         t2 = TimeSlot.objects.create(start_time = dt.time(12,00,00),
                                     end_time = dt.time(18,00,00),
                                     date= dt.date(2020,1,1),
                                     event = self.event,
-                                    creator = self.user_2)
+                                    creator = self.users[1])
         find_potential_time_slots(self.event, t2)
         
         #Get all potential timeslots from database
@@ -112,8 +100,8 @@ class TimeSlotTest(TestCase):
         #Check users
         users = potTimeSlot.participants.all()
         self.assertEqual(len(users), 2, msg="Should be 2 users in the timeslot got %s" % len(users))
-        self.assertIn(self.user_1, users)
-        self.assertIn(self.user_2, users)
+        self.assertIn(self.users[1], users)
+        self.assertIn(self.users[0], users)
 
     def test_delete_event(self):
         expected = {
@@ -124,8 +112,8 @@ class TimeSlotTest(TestCase):
         }
 
         pt = PotentialTimeSlot.objects.create(**expected)
-        pt.participants.add(self.user_1)
-        pt.participants.add(self.user_2)
+        pt.participants.add(self.users[1])
+        pt.participants.add(self.users[0])
 
         self.event.delete()
 
