@@ -141,13 +141,13 @@ class TimeSlotTest(TestCase):
             {
             "event" : event,
             "start_time" : dt.time(11,00,00),
-            "end_time" : dt.time(12,00,00),
+            "end_time" : dt.time(13,00,00),
             "date" : dt.date(2020,1,1),
             "users" : [self.users[0], self.users[1]],
             },
             {
             "event" : event,
-            "start_time" : dt.time(12,00,00),
+            "start_time" : dt.time(12,30,00),
             "end_time" : dt.time(14,00,00),
             "date" : dt.date(2020,1,1),
             "users" : [self.users[0], self.users[1], self.users[2]],
@@ -166,38 +166,66 @@ class TimeSlotTest(TestCase):
             "date" : dt.date(2020,1,1),
             "users" : [self.users[0], self.users[2]],
             },
+            {
+            "event" : event,
+            "start_time" : dt.time(16,00,00),
+            "end_time" : dt.time(17,00,00),
+            "date" : dt.date(2020,1,1),
+            "users" : [self.users[2], self.users[4]],
+            },
         ]
 
-        t1 = TimeSlot.objects.create(start_time = dt.time(10,00,00),
+        t0 = TimeSlot.objects.create(start_time = dt.time(10,00,00),
                                     end_time = dt.time(16,00,00),
                                     date= dt.date(2020,1,1),
                                     event = event,
                                     creator = self.users[0])
-        find_potential_time_slots(event, t1)
+        find_potential_time_slots(event, t0)
 
-        t2 = TimeSlot.objects.create(start_time = dt.time(11,00,00),
-                                    end_time = dt.time(14,00,00),
+        t1 = TimeSlot.objects.create(start_time = dt.time(11,00,00),
+                                    end_time = dt.time(13,00,00),
                                     date= dt.date(2020,1,1),
                                     event = event,
                                     creator = self.users[1])
-        find_potential_time_slots(event, t2)
+        find_potential_time_slots(event, t1)
 
-        t3 = TimeSlot.objects.create(start_time = dt.time(12,00,00),
-                                    end_time = dt.time(17,00,00),
+        t2 = TimeSlot.objects.create(start_time = dt.time(12,30,00),
+                                    end_time = dt.time(18,00,00),
                                     date= dt.date(2020,1,1),
                                     event = event,
                                     creator = self.users[2])
-        find_potential_time_slots(event, t3)
+        find_potential_time_slots(event, t2)
 
-        t4 = TimeSlot.objects.create(start_time = dt.time(14,00,00),
+        t3 = TimeSlot.objects.create(start_time = dt.time(14,00,00),
                                     end_time = dt.time(15,00,00),
                                     date= dt.date(2020,1,1),
                                     event = event,
                                     creator = self.users[3])
+        find_potential_time_slots(event, t3)
+
+        t4 = TimeSlot.objects.create(start_time = dt.time(16,00,00),
+                                    end_time = dt.time(17,00,00),
+                                    date= dt.date(2020,1,1),
+                                    event = event,
+                                    creator = self.users[4])
         find_potential_time_slots(event, t4)
+
+        t5 = TimeSlot.objects.create(start_time = dt.time(17,30,00),
+                                    end_time = dt.time(18,30,00),
+                                    date= dt.date(2020,1,1),
+                                    event = event,
+                                    creator = self.users[5])
+        find_potential_time_slots(event, t5)
+
+        t6 = TimeSlot.objects.create(start_time = dt.time(20,00,00),
+                                    end_time = dt.time(21,00,00),
+                                    date= dt.date(2020,1,1),
+                                    event = event,
+                                    creator = self.users[6])
+        find_potential_time_slots(event, t6)
         
         #Get all potential timeslots from database
-        potTimeSlot = PotentialTimeSlot.objects.all()
+        potTimeSlot = PotentialTimeSlot.objects.order_by("start_time")
 
         print()
         for t in potTimeSlot:
