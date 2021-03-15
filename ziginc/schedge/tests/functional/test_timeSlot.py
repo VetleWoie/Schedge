@@ -53,16 +53,51 @@ class TimeSlotTest(TestCase):
                                     event = self.event,
                                     creator = self.user_1)
 
+        find_potential_time_slots(self.event, t1)
+
         t2 = TimeSlot.objects.create(start_time = dt.time(12,00,00),
                                     end_time = dt.time(16,00,00),
                                     date= dt.date(2020,1,1),
                                     event = self.event,
                                     creator = self.user_2)
+        find_potential_time_slots(self.event, t2)
+       
+        #Get all potential timeslots from database
+        potTimeSlot = PotentialTimeSlot.objects.all()
 
-        find_potential_time_slots(self.event.id, t1)
-        # pt = PotentialTimeSlot.objects.create(**expected)
-        # pt.participants.add(self.user_1)
-        # pt.participants.add(self.user_2)
+        #Check that it is only one potential timeslot in the database
+        self.assertEqual(len(potTimeSlot), 1, msg="Should only be one potential timeslot found %s" % len(potTimeSlot))        
+        potTimeSlot = potTimeSlot[0]
+        #Check timeslot values
+        self.assertEqual(potTimeSlot.start_time,expected["start_time"] , msg="Start time should be %s but got %s" % (expected['start_time'], potTimeSlot.start_time))        
+        self.assertEqual(potTimeSlot.end_time,expected["end_time"] , msg="End time should be %s but got %s" % (expected['end_time'], potTimeSlot.end_time))
+        self.assertEqual(potTimeSlot.date,expected["date"] , msg="Date should be %s but got %s" % (expected['date'], potTimeSlot.date))
+        #Check users
+        users = potTimeSlot.participants.all()
+        self.assertEqual(len(users), 2, msg="Should be 2 users in the timeslot got %s" % len(users))
+        self.assertIn(self.user_1, users)
+        self.assertIn(self.user_2, users)
+
+    def test_diffrent_time_slot(self):
+        expected = {
+            "event" : self.event,
+            "start_time" : dt.time(12,00,00),
+            "end_time" : dt.time(16,00,00),
+            "date" : dt.date(2020,1,1),
+        }
+        t1 = TimeSlot.objects.create(start_time = dt.time(10,00,00),
+                                    end_time = dt.time(16,00,00),
+                                    date= dt.date(2020,1,1),
+                                    event = self.event,
+                                    creator = self.user_1)
+        find_potential_time_slots(self.event, t1)
+
+        t2 = TimeSlot.objects.create(start_time = dt.time(12,00,00),
+                                    end_time = dt.time(18,00,00),
+                                    date= dt.date(2020,1,1),
+                                    event = self.event,
+                                    creator = self.user_2)
+        find_potential_time_slots(self.event, t2)
         
         #Get all potential timeslots from database
         potTimeSlot = PotentialTimeSlot.objects.all()
@@ -79,6 +114,30 @@ class TimeSlotTest(TestCase):
         self.assertEqual(len(users), 2, msg="Should be 2 users in the timeslot got %s" % len(users))
         self.assertIn(self.user_1, users)
         self.assertIn(self.user_2, users)
+
+    def test_delete_event(self):
+        expected = {
+            "event" : self.event,
+            "start_time" : dt.time(12,00,00),
+            "end_time" : dt.time(16,00,00),
+            "date" : dt.date(2020,1,1),
+        }
+
+        pt = PotentialTimeSlot.objects.create(**expected)
+        pt.participants.add(self.user_1)
+        pt.participants.add(self.user_2)
+
+        self.event.delete()
+
+        events = Event.objects.all()
+
+        #Check that event database is zero 
+        self.assertEqual(len(events), 0, msg="Event table should be empty but found %s entries" % len(events))
+        
+        #Check that potential timeslot also is deleted
+        potTimeSlots = PotentialTimeSlot.objects.all()
+        self.assertEqual(len(potTimeSlots), 0, msg="Potential time slot database should be empty but found %s entries" % len(potTimeSlots))
+        
 
         
 
