@@ -125,12 +125,94 @@ class TimeSlotTest(TestCase):
         #Check that potential timeslot also is deleted
         potTimeSlots = PotentialTimeSlot.objects.all()
         self.assertEqual(len(potTimeSlots), 0, msg="Potential time slot database should be empty but found %s entries" % len(potTimeSlots))
+    
+    def test_multiple_overlapping_time_slots(self):
+        e = {
+            "title" : "testevent",
+            "startdate" : dt.date(2020,1,1),
+            "enddate" : dt.date(2020,1,2),
+            "starttime" : dt.time(00,00,00),
+            "endtime" : dt.time(00,00,00),
+            "duration" : dt.timedelta(hours=1),
+        }
+        event = Event.objects.create(**e, host=self.users[0])
+
+        expected = [
+            {
+            "event" : event,
+            "start_time" : dt.time(11,00,00),
+            "end_time" : dt.time(12,00,00),
+            "date" : dt.date(2020,1,1),
+            "users" : [self.users[0], self.users[1]],
+            },
+            {
+            "event" : event,
+            "start_time" : dt.time(12,00,00),
+            "end_time" : dt.time(14,00,00),
+            "date" : dt.date(2020,1,1),
+            "users" : [self.users[0], self.users[1], self.users[2]],
+            },
+            {
+            "event" : event,
+            "start_time" : dt.time(14,00,00),
+            "end_time" : dt.time(15,00,00),
+            "date" : dt.date(2020,1,1),
+            "users" : [self.users[0], self.users[2], self.users[3]],
+            },
+            {
+            "event" : event,
+            "start_time" : dt.time(15,00,00),
+            "end_time" : dt.time(16,00,00),
+            "date" : dt.date(2020,1,1),
+            "users" : [self.users[0], self.users[2]],
+            },
+        ]
+
+        t1 = TimeSlot.objects.create(start_time = dt.time(10,00,00),
+                                    end_time = dt.time(16,00,00),
+                                    date= dt.date(2020,1,1),
+                                    event = event,
+                                    creator = self.users[0])
+        find_potential_time_slots(event, t1)
+
+        t2 = TimeSlot.objects.create(start_time = dt.time(11,00,00),
+                                    end_time = dt.time(14,00,00),
+                                    date= dt.date(2020,1,1),
+                                    event = event,
+                                    creator = self.users[1])
+        find_potential_time_slots(event, t2)
+
+        t3 = TimeSlot.objects.create(start_time = dt.time(12,00,00),
+                                    end_time = dt.time(17,00,00),
+                                    date= dt.date(2020,1,1),
+                                    event = event,
+                                    creator = self.users[2])
+        find_potential_time_slots(event, t3)
+
+        t4 = TimeSlot.objects.create(start_time = dt.time(14,00,00),
+                                    end_time = dt.time(15,00,00),
+                                    date= dt.date(2020,1,1),
+                                    event = event,
+                                    creator = self.users[3])
+        find_potential_time_slots(event, t4)
         
+        #Get all potential timeslots from database
+        potTimeSlot = PotentialTimeSlot.objects.all()
 
-        
+        print()
+        for t in potTimeSlot:
+            print(t, t.participants.all())
 
+        #Check that it is four potential timeslots in the database
+        self.assertEqual(len(potTimeSlot), len(expected), msg="Should be %s potential timeslots, found %s" % (len(expected),len(potTimeSlot)))        
 
-
-
-
-        
+        for i,time in enumerate(potTimeSlot):
+            #Check timeslot values
+            self.assertEqual(time.start_time,expected[i]["start_time"] , msg="Start time should be %s but got %s" % (expected[i]['start_time'], time.start_time))        
+            self.assertEqual(time.end_time,expected[i]["end_time"] , msg="End time should be %s but got %s" % (expected[i]['end_time'], time.end_time))
+            self.assertEqual(time.date,expected[i]["date"] , msg="Date should be %s but got %s" % (expected[i]['date'], time.date))
+            #Check users
+            users = time.participants.all()
+            self.assertEqual(len(users), 2, msg="Should be 3 users in the timeslot got %s" % len(users))
+            for user in expected[i]["users"]:
+                self.assertIn(user, users)
