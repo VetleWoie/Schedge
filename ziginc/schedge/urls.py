@@ -8,24 +8,31 @@ import notifications.urls
 from django.conf.urls import url
 
 
-
 urlpatterns = [
-    path('mypage/', views.mypage, name='mypage'),
-    path('createevent/', views.create_event, name='createevent'),
-    path('event/<int:event_id>/', views.event, name="event"),
-    path('event/<int:event_id>/delete/<int:timeslot_id>/', views.timeslot_delete, name="timeslot_delete"),
-    path('event/<int:event_id>/edit/', views.eventedit, name="eventedit"),
-    path('event/<int:event_id>/edit/delete/',views.event_delete, name="event_delete" ),
-    path('event/<int:event_id>/invite/',views.event_invite, name="event_invite" ),
-    path('event/<int:event_id>/fromnotification/<int:notification_id>',views.event_fromnotification, name="event_fromnotification" ),
-    path('invite_accept/<int:invite_id>/',views.invite_accept, name="invite_accept" ),
-    path('invite_reject/<int:invite_id>/',views.invite_reject, name="invite_reject" ),\
-    path('signup/' ,signUpView,name='signup'),
-    path('', TemplateView.as_view(template_name="home.html"), name="home"),
-    path('', include('django.contrib.auth.urls')),
-    url('^inbox/notifications/', include(notifications.urls, namespace='notifications')),
-
+    path("mypage/", views.mypage, name="mypage"),
+    path("createevent/", views.create_event, name="createevent"),
+    path("event/<int:event_id>/", views.event, name="event"),
+    path(
+        "event/<int:event_id>/delete/<int:timeslot_id>/",
+        views.timeslot_delete,
+        name="timeslot_delete",
+    ),
+    path("event/<int:event_id>/edit/", views.eventedit, name="eventedit"),
+    path("event/<int:event_id>/edit/delete/", views.event_delete, name="event_delete"),
+    path("event/<int:event_id>/invite/", views.event_invite, name="event_invite"),
+    path("invite_accept/<int:invite_id>/", views.invite_accept, name="invite_accept"),
+    path("invite_reject/<int:invite_id>/", views.invite_reject, name="invite_reject"),
+    path("signup/", signUpView, name="signup"),
+    path("", TemplateView.as_view(template_name="home.html"), name="home"),
+    path("", include("django.contrib.auth.urls")),
+    path(
+        "mark_notification_as_read/<int:notif_id>/",
+        views.mark_notification_as_read,
+        name="mark_notif_as_read",
+    ),
+    url(
+        "^inbox/notifications/", include(notifications.urls, namespace="notifications")
+    ),
 ]
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL,
-                          document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

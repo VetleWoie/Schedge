@@ -36,6 +36,8 @@ class Event(models.Model):
 
     @property
     def n_attendees(self):
+        """returns the number of users who have accepted this event
+        we use a property so that it can be used in templates"""
         return len(Participant.objects.filter(event=self))
 
     def __str__(self):
@@ -62,7 +64,7 @@ class Event(models.Model):
 
         if (latest - earliest) < self.duration:
             raise ValidationError(
-                {"duration": ["The allotted timespan is shorter than the duration"]}
+                {"duration": ["The allotted time is shorter than the duration"]}
             )
 
         if self.duration < dt.timedelta(0):

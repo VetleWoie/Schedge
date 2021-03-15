@@ -248,6 +248,7 @@ def event_invite(request, event_id):
                 verb="invite",
                 title=this_event.title,
                 url=f"{invite.event.id}",
+                invite_id=invite.id,
             )
 
     else:
@@ -261,10 +262,16 @@ def invite_accept(request, invite_id):
     except Invite.DoesNotExist:
         return HttpResponseBadRequest("Unknown invite")
 
+    # does not work. create reverse relation?? how??
+    # try:
+    #     notif = Notification.objects.get(target=invite)
+    #     notif.mark_as_read()
+    # except Notification.DoesNotExist:
+    #     pass
+
     assert invite.invitee == request.user
     Participant.objects.create(event=invite.event, user=invite.invitee, ishost=False)
 
-    name = f"{invite.invitee.first_name} {invite.invitee.last_name}"
     notify.send(
         invite.invitee,
         recipient=invite.inviter,
@@ -279,20 +286,34 @@ def invite_accept(request, invite_id):
     return redirect(mypage)
 
 
+def mark_notification_as_read(request, notif_id):
+    try:
+        notif = Notification.objects.get(id=notif_id)
+    except Notification.DoesNotExist:
+        return HttpResponseNotFound("notification not found", status=404)
+    notif.mark_as_read()
+    return HttpResponse("ok", status=200)
+
 def invite_reject(request, invite_id):
     try:
         invite = Invite.objects.get(id=invite_id)
     except Invite.DoesNotExist:
         return HttpResponseBadRequest("Unknown invite")
 
+    # does not work. create reverse relation?? how??
+    # try:
+    #     notif = Notification.objects.get(target=invite)
+    #     notif.mark_as_read()
+    # except Notification.DoesNotExist:
+    #     pass
+
+    notify.send(
+        invite.invitee,
+        recipient=invite.inviter,
+        target=invite.event,
+        verb=f"invite reject",
+        title=invite.event.title,
+        url=f"{invite.event.id}",
+    )
     invite.delete()
     return redirect(mypage)
-
-def event_fromnotification(self, event_id, notification_id):
-    try:
-        notice = Notification.objects.get(id=notification_id)
-    except Notification.DoesNotExist:
-        return HttpResponseNotFound("Unknown notification")
-
-    notice.mark_as_read()
-    return redirect(event, event_id)

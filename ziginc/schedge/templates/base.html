@@ -36,17 +36,12 @@
       {% if user.is_authenticated %}
       <a href="/createevent" class="event_btn">&nbsp;+ CREATE EVENT </a>
       <div class="dropdown">
-        {% if unread_count %}
         <div class="busybell">
-            <span class="dot">
-              <p>{{unread_count}}</p>
-            </span>
-            <img src="{% static 'icons/bell.svg' %}" class="notifimg">
+          {%live_notify_badge%}
+          <img src="{% static 'icons/bell.svg' %}" class="notifimg">
         </div>
         {% live_notify_list %}
-        {%else%}
-        <img src="{% static 'icons/bell.svg' %}" class="busybell">
-        {%endif%}
+
       </div>
       <a href="{% url 'logout' %}" class="sign_out">Sign out</a>
 
@@ -74,9 +69,11 @@
   </main>
   {% block sidebar %}
   <!-- default navigation tegt for every page--> {% endblock %}
-  <script src="{% static 'js/fix_notifications.js' %}"></script>
+  {% csrf_token %}
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+  <script src="{% static 'js/header.js' %}" type="text/javascript"></script>
   <script src="{% static 'notifications/notify.js' %}" type="text/javascript"></script>
-  {% register_notify_callbacks callbacks='parse_invitation_list,fill_notification_badge' %}
+  {% register_notify_callbacks callbacks='parse_invitation_list, my_fill_notification_badge' %}
 </body>
 
 </html>

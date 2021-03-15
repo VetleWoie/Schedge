@@ -164,3 +164,6 @@ main {
     height: 35px;
 }
 
+.invislist {
+    display: none !important;
+}
