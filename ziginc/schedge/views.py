@@ -145,6 +145,10 @@ def eventedit(request, event_id):
     except Event.DoesNotExist:
         return HttpResponseNotFound("404: not valid event id")
 
+
+    if request.user != this_event.host:
+        return HttpResponse("Unauthorized", status=401)
+
     if request.method == "POST":
         # get info in the form
         form = EventForm(request.POST, request.FILES)
@@ -169,18 +173,55 @@ def eventedit(request, event_id):
     }
 
     form = EventForm(instance=this_event, initial=initial_times)
-
     context = {"event": this_event, "form": form}
+
+    par = Participant.objects.filter(event=this_event, ishost=False)
+    user_ids = par.values_list("user", flat=True)
+    users = User.objects.filter(id__in=user_ids)
+
+    notify.send(
+        request.user,
+        recipient=users,
+        target=this_event,
+        verb="event edited",
+        title=this_event.title,
+        url=f"/event/{this_event.id}/",
+    )
+
     return render(request, "eventedit.html", context)
 
 
 @login_required(login_url="/login/")
 def event_delete(request, event_id):
-    if request.method == "POST":
-        Event.objects.get(id=event_id).delete()
-        timeslots = TimeSlot.objects.filter(id=event_id)
-        timeslots.delete()
+    try:
+        event_del = Event.objects.get(id=event_id)
+    except Event.DoesNotExist:
+        return HttpResponseNotFound("Event not found")
 
+    if request.method != "POST":
+        return HttpResponseBadRequest("Bad request")
+
+    if request.user != event_del.host:
+        return HttpResponse("Unauthorized", status=401)
+
+    par = Participant.objects.filter(event=event_del, ishost=False)
+    user_ids = par.values_list("user", flat=True)
+    users = User.objects.filter(id__in=user_ids)
+
+    timeslots = TimeSlot.objects.filter(id=event_id)
+    timeslots.delete()
+
+    Notification.objects.filter(target_object_id=event_del.id).delete()
+    notify.send(
+        request.user,
+        recipient=users,
+        target=event_del,
+        verb="event deleted",
+        title=event_del.title,
+        url="/mypage/",
+    )
+
+    event_del.delete()
     return redirect(mypage)
 
 
@@ -246,7 +287,7 @@ def event_invite(request, event_id):
                 target=this_event,
                 verb="invite",
                 title=this_event.title,
-                url=f"{invite.event.id}",
+                url=f"/event/{invite.event.id}/",
                 invite_id=invite.id,
             )
 
@@ -277,12 +318,58 @@ def invite_accept(request, invite_id):
         target=invite.event,
         verb=f"invite accept",
         title=invite.event.title,
-        url=f"{invite.event.id}",
+        url=f"/event/{invite.event.id}/",
     )
 
     invite.delete()
 
     return redirect(mypage)
+
+
+def invite_delete(request, invite_id):
+    try:
+        invite = Invite.objects.get(id=invite_id)
+
+    except Invite.DoesNotExist:
+        return HttpResponseBadRequest("Unknown invite")
+
+    if request.method != "POST":
+        return HttpResponseBadRequest("Bad request")
+
+    if invite.event.host != request.user:
+        return HttpResponse("Unauthorized", status=401)
+
+    invite.delete()
+    return redirect(event, invite.event.id)
+
+
+def participant_delete(request, participant_id):
+
+    try:
+        participant = Participant.objects.get(id=participant_id)
+
+    except Participant.DoesNotExist:
+        return HttpResponseNotFound("Unknown participant")
+
+    if request.method != "POST":
+        return HttpResponseBadRequest("Bad request")
+
+    if participant.event.host != request.user or participant.ishost:
+        return HttpResponse("Unauthorized", status=401)
+
+    TimeSlot.objects.filter(event=participant.event, creator=participant.user).delete()
+    participant.delete()
+
+    notify.send(
+        request.user,
+        recipient=participant.user,
+        target=participant.event,
+        verb=f"participant deleted",
+        title=participant.event.title,
+        url=f"/event/{participant.event.id}/",
+    )
+
+    return redirect(event, participant.event.id)
 
 
 def mark_notification_as_read(request, notif_id):
@@ -292,6 +379,7 @@ def mark_notification_as_read(request, notif_id):
         return HttpResponseNotFound("notification not found", status=404)
     notif.mark_as_read()
     return HttpResponse("ok", status=200)
+
 
 def invite_reject(request, invite_id):
     try:
@@ -312,7 +400,7 @@ def invite_reject(request, invite_id):
         target=invite.event,
         verb=f"invite reject",
         title=invite.event.title,
-        url=f"{invite.event.id}",
+        url=f"/event/{invite.event.id}/",
     )
     invite.delete()
     return redirect(mypage)

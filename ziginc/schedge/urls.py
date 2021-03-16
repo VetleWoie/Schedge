@@ -22,6 +22,8 @@ urlpatterns = [
     path("event/<int:event_id>/invite/", views.event_invite, name="event_invite"),
     path("invite_accept/<int:invite_id>/", views.invite_accept, name="invite_accept"),
     path("invite_reject/<int:invite_id>/", views.invite_reject, name="invite_reject"),
+    path("participant_delete/<int:participant_id>/", views.participant_delete, name="participant_delete"),
+    path("invite_delete/<int:invite_id>/", views.invite_delete, name="invite_delete"),
     path("signup/", signUpView, name="signup"),
     path("", TemplateView.as_view(template_name="home.html"), name="home"),
     path("", include("django.contrib.auth.urls")),

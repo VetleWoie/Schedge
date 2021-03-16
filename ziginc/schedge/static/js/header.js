@@ -19,21 +19,33 @@ function parse_invitation_list(data) {
     if (menus) {
         var messages = data.unread_list.map(function (item) {
             message = ""
-            if (item.verb === "invite") {
-                message += item.actor + " has invited you to join an event:</br><i>" + item.data.title + "</i></br>"
-                message += "<button type=\"button\" onclick=\"invitation_respond('accept', " + item.data.invite_id + ", " + item.id + ")\">✓</button>"
-                message += "<button type=\"button\" onclick=\"invitation_respond('reject', " + item.data.invite_id + ", " + item.id + ")\">✗</button>"
-                // TODO: add buttons for accept and reject
+            switch (item.verb) {
+                case "invite":
+                    message += item.actor + " has <span style=\"color:green;\">invited</span> you to join an event:</br><i>" + item.data.title + "</i></br>"
+                    message += "<button type=\"button\" onclick=\"invitation_respond('accept', " + item.data.invite_id + ", " + item.id + ")\">✓</button>"
+                    message += "<button type=\"button\" onclick=\"invitation_respond('reject', " + item.data.invite_id + ", " + item.id + ")\">✗</button>"
+                    
+                    break;
+                case "invite accepted":
+                    message += item.actor + " has <span style=\"color:green;\">accepted</span> your invite for the event:</br>" + item.data.title
+                    break;
+                case "invite rejected":
+                    message += item.actor + " has <span style=\"color:red;\">declined</span> your invite for the event:</br>" + item.data.title
+                    break;
+                case "participant deleted":
+                    message += item.actor + " has <span style=\"color:red;\">removed</span> you from the event:</br>" + item.data.title
+                    break;
+                case "event deleted":
+                    message += item.actor + " has <span style=\"color:red;\">deleted</span> the event:</br>" + item.data.title
+                    break;
+                case "event edited":
+                    message += item.actor + " has <span style=\"color:blue;\">edited</span> the event:</br>" + item.data.title
+                    break;
+                default:
+                    break;
             }
-            if (item.verb === "invite accept") {
-                message += item.actor + " has <span style=\"color:green;\">accepted</span> your invite for the event:</br>" + item.data.title
-            }
-            if (item.verb === "invite reject") {
-                message += item.actor + " has <span style=\"color:red;\">declined</span> your invite for the event:</br>" + item.data.title
-            }
-            eventid = item.data.url
-            url = "/mark_notification_as_read/" + item.id + "/"
-            return '<span style="cursor:pointer;" onclick="mark_notification(' + item.id + ')"><li>' + message + '</li></span>';
+            return `<a href="${item.data.url}" onclick="mark_notification(${item.id})"><li>${message}</li></a>`
+            // return '<span style="cursor:pointer;" onclick="mark_notification(' + item.id + ')"><li>' + message + '</li></span>';
         }).join('')
 
         for (var i = 0; i < menus.length; i++) {
