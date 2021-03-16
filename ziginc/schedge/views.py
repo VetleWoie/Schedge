@@ -83,19 +83,8 @@ def intersect(a, b, c, d): # find intersection
             return ((start, end), a.date)
     return # No valid intersection was found
 
-def find_potential_time_slots(event, new_time_slot):
-
-    time_slots = TimeSlot.objects.filter(event=event)
-    for ts in time_slots:
-        I = intersect(new_time_slot, ts, event.duration, True)
-        if I:
-            pts = PotentialTimeSlot.objects.filter(event=event, start_time=I[0][0], end_time=I[0][1], date=I[1])
-            if pts.exists():
-                pts[0].participants.add(new_time_slot.creator)
-            else:
-                pts = PotentialTimeSlot.objects.create(event=event, start_time=I[0][0], end_time=I[0][1], date=I[1])
-                pts.participants.add(new_time_slot.creator)
-                pts.participants.add(ts.creator)
+def find_potential_time_slots(event):
+    riiseWoie(event)
 
     return
 
@@ -111,10 +100,67 @@ def refactor_potential_time_slots(event):
                 if pts.exists():
                     pts.participants.add(time_slot.creator)
                 else:
-                    pts = PotentialTimeSlot(event=event, start_time=I[0][0], end_time=I[0][1], date=I[1])
+                    pts = PotentialTimeSlot.objects.create(event=event, start_time=I[0][0], end_time=I[0][1], date=I[1])
                     pts.participants.add(time_slot.creator, ts.creator)
 
     return
+
+def riiseWoie(event):
+    def getKey(k):
+        return k[0]
+    def findMin(S):
+        m = S[0].end_time
+        for ts in S:
+            m = min(m, ts.end_time)
+        return m
+    def findMax(S):
+        m = S[0].start_time
+        for ts in S:
+            m = max(m, ts.start_time)
+        return m
+    def findTime(t):
+        print("T IS: ", end="")
+        print(t)
+        return dt.datetime.combine(dt.date(1,1,1),t)
+    time_slots = TimeSlot.objects.filter(event=event)
+    PotentialTimeSlot.objects.filter(event=event).delete()
+
+    tupleTable = []
+    for ts in time_slots:
+        tupleTable.append((ts.start_time, +1, ts))
+        tupleTable.append((ts.end_time, -1, ts))
+    tupleTable.sort(key=getKey)
+
+    print(tupleTable)
+    S = []
+    cnt = 0
+    start = dt.time(0)
+    end = dt.time(0)
+    for i, t in enumerate(tupleTable):
+        cnt += t[1]
+        if t[1] == +1: # step up
+            S.append(t[2])
+            start = t[0]
+            end = findMin(S)
+            
+        else: # step down
+            S.remove(t[2])
+            if findTime(end) - findTime(start) < event.duration:
+                start = findMax(S)
+            else:
+                start = t[1]
+            if i + 1 < len(tupleTable):
+                end = tupleTable[i + 1][0]
+            else:
+                return
+        if cnt > 1 and findTime(end) - findTime(start) >= event.duration:
+            pts = PotentialTimeSlot.objects.create(event=event, start_time=start, end_time=end, date=t[2].date)
+            for ts in S:
+                pts.participants.add(ts.creator)
+        
+
+
+
 
 # merges new timeslot to existing from same user if they overlap
 def check_overlap_ts(event, user, start, end, date, first):
@@ -147,7 +193,7 @@ def event(request, event_id):
             timeslotdata = timeslotform.cleaned_data
             if check_overlap_ts(this_event, creator, timeslotdata["start_time"], timeslotdata["end_time"], timeslotdata["date"], 1):
                 newtimeslot = TimeSlot.objects.create(event=this_event, creator=creator, **timeslotdata)
-                find_potential_time_slots(this_event, newtimeslot) # check for new potential ts with new ts
+                find_potential_time_slots(this_event) # check for new potential ts with new ts
 
 
     potentialtimeslots = PotentialTimeSlot.objects.filter(event=this_event)
@@ -175,6 +221,7 @@ def timeslot_delete(request, event_id, timeslot_id):
             return HttpResponseNotFound("404: not valid timeslot id")
 
         timeslot.delete()
+        refactor_potential_time_slots(this_event)
 
     return redirect(event, event_id)
 
