@@ -150,7 +150,7 @@ class TimeSlotTest(TestCase):
             "start_time" : dt.time(12,30,00),
             "end_time" : dt.time(14,00,00),
             "date" : dt.date(2020,1,1),
-            "users" : [self.users[0], self.users[1], self.users[2]],
+            "users" : [self.users[0], self.users[2]],
             },
             {
             "event" : event,
@@ -241,6 +241,6 @@ class TimeSlotTest(TestCase):
             self.assertEqual(time.date,expected[i]["date"] , msg="Date should be %s but got %s" % (expected[i]['date'], time.date))
             #Check users
             users = time.participants.all()
-            self.assertEqual(len(users), 2, msg="Should be 3 users in the timeslot got %s" % len(users))
+            self.assertEqual(len(users), len(expected[i]["users"]), msg="Should be %s users in the timeslot got %s" % (len(expected[i]["users"]),len(users)))
             for user in expected[i]["users"]:
                 self.assertIn(user, users)

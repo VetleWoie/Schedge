@@ -67,61 +67,30 @@ def create_event(request):
     context = {"form": form}
     return render(request, "createevent.html", context)
 
-def intersect(a, b, c, d): # find intersection 
-    """ 
-        a = timeslot1 
-        b = timeslot2 
-        c = minimum size of intersection (leave blank if no size)
-        d = True: won't allow same creator
-    """
-    if d and a.creator == b.creator:
-        return
-    if not (b == a or b.start_time > a.end_time or b.end_time < a.start_time or a.date != b.date): # Check if intersection exists
-        start = max(a.start_time, b.start_time)
-        end = min(a.end_time, b.end_time)
-        if not dt.datetime.combine(a.date, end) - dt.datetime.combine(a.date, start) < c: # chech if intersection is big enough
-            return ((start, end), a.date)
-    return # No valid intersection was found
-
 def find_potential_time_slots(event):
     riiseWoie(event)
-
-    return
-
-def refactor_potential_time_slots(event):
-    time_slots = TimeSlot.objects.filter(event=event)
-    PotentialTimeSlot.objects.filter(event=event).delete()
-
-    for i, time_slot in enumerate(time_slots):
-        for ts in time_slots[i:]:
-            I = intersect(time_slot, ts, event.duration, True)
-            if I:
-                pts = PotentialTimeSlot.objects.filter(event=event, start_time=I[0][0], end_time=I[0][1], date=I[1])
-                if pts.exists():
-                    pts.participants.add(time_slot.creator)
-                else:
-                    pts = PotentialTimeSlot.objects.create(event=event, start_time=I[0][0], end_time=I[0][1], date=I[1])
-                    pts.participants.add(time_slot.creator, ts.creator)
-
     return
 
 def riiseWoie(event):
     def getKey(k):
         return k[0]
     def findMin(S):
+        if not S:
+            return 
         m = S[0].end_time
         for ts in S:
             m = min(m, ts.end_time)
         return m
     def findMax(S):
+        if not S:
+            return 
         m = S[0].start_time
         for ts in S:
             m = max(m, ts.start_time)
         return m
     def findTime(t):
-        print("T IS: ", end="")
-        print(t)
         return dt.datetime.combine(dt.date(1,1,1),t)
+        
     time_slots = TimeSlot.objects.filter(event=event)
     PotentialTimeSlot.objects.filter(event=event).delete()
 
@@ -131,7 +100,6 @@ def riiseWoie(event):
         tupleTable.append((ts.end_time, -1, ts))
     tupleTable.sort(key=getKey)
 
-    print(tupleTable)
     S = []
     cnt = 0
     start = dt.time(0)
@@ -148,15 +116,19 @@ def riiseWoie(event):
             if findTime(end) - findTime(start) < event.duration:
                 start = findMax(S)
             else:
-                start = t[1]
+                start = t[2].end_time
             if i + 1 < len(tupleTable):
                 end = tupleTable[i + 1][0]
             else:
                 return
         if cnt > 1 and findTime(end) - findTime(start) >= event.duration:
-            pts = PotentialTimeSlot.objects.create(event=event, start_time=start, end_time=end, date=t[2].date)
-            for ts in S:
-                pts.participants.add(ts.creator)
+            pts = PotentialTimeSlot.objects.filter(event=event, start_time=start, end_time=end, date=t[2].date)
+            if pts.exists():
+                pts[0].participants.add(t[2].creator)
+            else:
+                pts = PotentialTimeSlot.objects.create(event=event, start_time=start, end_time=end, date=t[2].date)
+                for ts in S:
+                    pts.participants.add(ts.creator)
         
 
 
