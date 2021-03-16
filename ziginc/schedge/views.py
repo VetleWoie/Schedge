@@ -68,65 +68,64 @@ def create_event(request):
     return render(request, "createevent.html", context)
 
 def find_potential_time_slots(event):
-    riiseWoie(event)
-    return
+    riise_hofsøy(event)
 
-def riiseWoie(event):
-    def getKey(k):
+def riise_hofsøy(event):
+    def get_key(k):
         return k[0]
-    def findMin(S):
+    def find_min(S):
         if not S:
-            return 
-        m = S[0].end_time
+            return None
+        m = dt.datetime.combine(S[0].date,S[0].end_time)
         for ts in S:
-            m = min(m, ts.end_time)
+            m = min(m, dt.datetime.combine(ts.date, ts.end_time))
         return m
-    def findMax(S):
+    def find_max(S):
         if not S:
-            return 
-        m = S[0].start_time
+            return None
+        mx = dt.datetime.combine(S[0].date, S[0].start_time)
         for ts in S:
-            m = max(m, ts.start_time)
-        return m
-    def findTime(t):
-        return dt.datetime.combine(dt.date(1,1,1),t)
+            mx = max(mx, dt.datetime.combine(ts.date, ts.start_time))
+        return mx
+    def find_time(t):
+        return dt.datetime.strptime(dt.datetime.strftime(t, '%H:%M'), "%H:%M").time()        
         
     time_slots = TimeSlot.objects.filter(event=event)
     PotentialTimeSlot.objects.filter(event=event).delete()
 
-    tupleTable = []
+    tuple_table = []
     for ts in time_slots:
-        tupleTable.append((ts.start_time, +1, ts))
-        tupleTable.append((ts.end_time, -1, ts))
-    tupleTable.sort(key=getKey)
+        tuple_table.append((dt.datetime.combine(ts.date, ts.start_time), +1, ts))
+        tuple_table.append((dt.datetime.combine(ts.date, ts.end_time), -1, ts))
+    tuple_table.sort(key=get_key)
 
     S = []
     cnt = 0
-    start = dt.time(0)
-    end = dt.time(0)
-    for i, t in enumerate(tupleTable):
+    min_cnt = 2 # TODO replace with event.min_cnt or equivalent
+    start = dt.datetime(1,1,1,0,0,0)
+    end = dt.datetime(1,1,1,0,0,0)
+    for i, t in enumerate(tuple_table):
         cnt += t[1]
         if t[1] == +1: # step up
             S.append(t[2])
             start = t[0]
-            end = findMin(S)
-            
+            end = find_min(S)
         else: # step down
             S.remove(t[2])
-            if findTime(end) - findTime(start) < event.duration:
-                start = findMax(S)
+            if end - start < event.duration:
+                start = find_max(S)
             else:
-                start = t[2].end_time
-            if i + 1 < len(tupleTable):
-                end = tupleTable[i + 1][0]
+                start = dt.datetime.combine(t[2].date,t[2].end_time)
+            if i + 1 < len(tuple_table):
+                end = tuple_table[i + 1][0]
             else:
                 return
-        if cnt > 1 and findTime(end) - findTime(start) >= event.duration:
-            pts = PotentialTimeSlot.objects.filter(event=event, start_time=start, end_time=end, date=t[2].date)
+        if cnt >= min_cnt and end - start >= event.duration:
+            pts = PotentialTimeSlot.objects.filter(event=event, start_time=find_time(start), end_time=find_time(end), date=t[2].date)
             if pts.exists():
                 pts[0].participants.add(t[2].creator)
             else:
-                pts = PotentialTimeSlot.objects.create(event=event, start_time=start, end_time=end, date=t[2].date)
+                pts = PotentialTimeSlot.objects.create(event=event, start_time=find_time(start), end_time=find_time(end), date=t[2].date)
                 for ts in S:
                     pts.participants.add(ts.creator)
         
