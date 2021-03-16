@@ -338,34 +338,41 @@ class TimeSlotTest(TestCase):
             {
             "event" : self.event,
             "start_time" : dt.time(7,00,00),
-            "end_time" : dt.time(9,00,00),
+            "end_time" : dt.time(14,00,00),
             "date" : dt.date(2021,1,1),
             "users" : [self.users[0], self.users[1]],
             },
             {
             "event" : self.event,
             "start_time" : dt.time(9,00,00),
-            "end_time" : dt.time(11,00,00),
+            "end_time" : dt.time(14,00,00),
             "date" : dt.date(2021,1,1),
             "users" : [self.users[0], self.users[1], self.users[2]],
+            },
+            {
+            "event" : self.event,
+            "start_time" : dt.time(9,00,00),
+            "end_time" : dt.time(16,00,00),
+            "date" : dt.date(2021,1,1),
+            "users" : [self.users[1], self.users[2]],
             },
             {
             "event" : self.event,
             "start_time" : dt.time(11,00,00),
             "end_time" : dt.time(14,00,00),
             "date" : dt.date(2021,1,1),
-            "users" : [self.users[3], self.users[2], self.users[1], self.users[0]],
+            "users" : [self.users[3], self.users[2], self.users[1],self.users[0]],
             },
             {
             "event" : self.event,
-            "start_time" : dt.time(14,00,00),
+            "start_time" : dt.time(11,00,00),
             "end_time" : dt.time(16,00,00),
             "date" : dt.date(2021,1,1),
             "users" : [self.users[3], self.users[2], self.users[1]],
             },
             {
             "event" : self.event,
-            "start_time" : dt.time(16,00,00),
+            "start_time" : dt.time(11,00,00),
             "end_time" : dt.time(18,00,00),
             "date" : dt.date(2021,1,1),
             "users" : [self.users[3], self.users[2]],
@@ -471,6 +478,79 @@ class TimeSlotTest(TestCase):
                 break
             TimeSlot.objects.create(start_time = dt.time(11-i,00,00),
                                     end_time = dt.time(13+i,00,00),
+                                    date = dt.date(2021,1,1),
+                                    event = self.event,
+                                    creator = user)
+            find_potential_time_slots(self.event)
+        
+        #Get all potential timeslots from database
+        potTimeSlot = PotentialTimeSlot.objects.order_by("start_time")
+
+
+        #Check that it is four potential timeslots in the database
+        self.assertEqual(len(potTimeSlot), len(expected), msg="Should be %s potential timeslots, found %s" % (len(expected),len(potTimeSlot)))        
+        for i,time in enumerate(potTimeSlot):
+            #Check timeslot values
+            self.assertEqual(time.start_time,expected[i]["start_time"] , msg="Start time should be %s but got %s" % (expected[i]['start_time'], time.start_time))        
+            self.assertEqual(time.end_time,expected[i]["end_time"] , msg="End time should be %s but got %s" % (expected[i]['end_time'], time.end_time))
+            self.assertEqual(time.date,expected[i]["date"] , msg="Date should be %s but got %s" % (expected[i]['date'], time.date))
+            #Check users
+            users = time.participants.all()
+            self.assertEqual(len(users), len(expected[i]["users"]), msg="Should be %s users in the timeslot got %s" % (len(expected[i]["users"]),len(users)))
+            for user in expected[i]["users"]:
+                self.assertIn(user, users)
+
+def test_nested_time_slot_same_date_with_non_valid_length_overlap_and_first_in_first_out(self):
+        expected = [
+            {
+            "event" : self.event,
+            "start_time" : dt.time(7,00,00),
+            "end_time" : dt.time(14,00,00),
+            "date" : dt.date(2021,1,1),
+            "users" : [self.users[0], self.users[1]],
+            },
+            {
+            "event" : self.event,
+            "start_time" : dt.time(9,00,00),
+            "end_time" : dt.time(14,00,00),
+            "date" : dt.date(2021,1,1),
+            "users" : [self.users[0], self.users[1], self.users[2]],
+            },
+            {
+            "event" : self.event,
+            "start_time" : dt.time(9,00,00),
+            "end_time" : dt.time(15,00,00),
+            "date" : dt.date(2021,1,1),
+            "users" : [self.users[1], self.users[2]],
+            },
+            {
+            "event" : self.event,
+            "start_time" : dt.time(11,00,00),
+            "end_time" : dt.time(14,00,00),
+            "date" : dt.date(2021,1,1),
+            "users" : [self.users[3], self.users[2], self.users[1],self.users[0]],
+            },
+            {
+            "event" : self.event,
+            "start_time" : dt.time(11,00,00),
+            "end_time" : dt.time(15,00,00),
+            "date" : dt.date(2021,1,1),
+            "users" : [self.users[3], self.users[2], self.users[1]],
+            },
+            {
+            "event" : self.event,
+            "start_time" : dt.time(11,00,00),
+            "end_time" : dt.time(16,00,00),
+            "date" : dt.date(2021,1,1),
+            "users" : [self.users[3], self.users[2]],
+            },
+        ]
+
+        for i,user in enumerate(self.users):
+            if user == self.users[4]:
+                break
+            TimeSlot.objects.create(start_time = dt.time(5+2*i,00,00),
+                                    end_time = dt.time(14+i,00,00),
                                     date = dt.date(2021,1,1),
                                     event = self.event,
                                     creator = user)
