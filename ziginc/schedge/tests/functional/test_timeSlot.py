@@ -420,7 +420,7 @@ class TimeSlotTest(TestCase):
             "start_time" : dt.time(3,00,00),
             "end_time" : dt.time(21,00,00),
             "date" : dt.date(2021,1,1),
-            "users" : [self.users[9],self.users[8],],],
+            "users" : [self.users[9],self.users[8],],
             },
             {
             "event" : self.event,
