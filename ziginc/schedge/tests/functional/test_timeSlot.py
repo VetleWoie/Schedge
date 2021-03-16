@@ -148,7 +148,7 @@ class TimeSlotTest(TestCase):
             {
             "event" : event,
             "start_time" : dt.time(12,30,00),
-            "end_time" : dt.time(14,00,00),
+            "end_time" : dt.time(16,00,00),
             "date" : dt.date(2020,1,1),
             "users" : [self.users[0], self.users[2]],
             },
@@ -158,13 +158,6 @@ class TimeSlotTest(TestCase):
             "end_time" : dt.time(15,00,00),
             "date" : dt.date(2020,1,1),
             "users" : [self.users[0], self.users[2], self.users[3]],
-            },
-            {
-            "event" : event,
-            "start_time" : dt.time(15,00,00),
-            "end_time" : dt.time(16,00,00),
-            "date" : dt.date(2020,1,1),
-            "users" : [self.users[0], self.users[2]],
             },
             {
             "event" : event,
@@ -424,6 +417,62 @@ class TimeSlotTest(TestCase):
         expected = [
             {
             "event" : self.event,
+            "start_time" : dt.time(3,00,00),
+            "end_time" : dt.time(21,00,00),
+            "date" : dt.date(2021,1,1),
+            "users" : [self.users[9],self.users[8],],],
+            },
+            {
+            "event" : self.event,
+            "start_time" : dt.time(4,00,00),
+            "end_time" : dt.time(20,00,00),
+            "date" : dt.date(2021,1,1),
+            "users" : [self.users[9],self.users[8],self.users[7],],
+            },
+            {
+            "event" : self.event,
+            "start_time" : dt.time(5,00,00),
+            "end_time" : dt.time(19,00,00),
+            "date" : dt.date(2021,1,1),
+            "users" : [self.users[9],self.users[8],self.users[7],self.users[6],],
+            },
+            {
+            "event" : self.event,
+            "start_time" : dt.time(6,00,00),
+            "end_time" : dt.time(18,00,00),
+            "date" : dt.date(2021,1,1),
+            "users" : [self.users[9],self.users[8],self.users[7],self.users[6],self.users[5],],
+            },
+            {
+            "event" : self.event,
+            "start_time" : dt.time(7,00,00),
+            "end_time" : dt.time(17,00,00),
+            "date" : dt.date(2021,1,1),
+            "users" : [self.users[9],self.users[8],self.users[7],self.users[6],self.users[5],self.users[4],],
+            },
+            {
+            "event" : self.event,
+            "start_time" : dt.time(8,00,00),
+            "end_time" : dt.time(16,00,00),
+            "date" : dt.date(2021,1,1),
+            "users" : [self.users[9],self.users[8],self.users[7],self.users[6],self.users[5],self.users[4],self.users[3],],
+            },
+            {
+            "event" : self.event,
+            "start_time" : dt.time(9,00,00),
+            "end_time" : dt.time(15,00,00),
+            "date" : dt.date(2021,1,1),
+            "users" : [self.users[9],self.users[8],self.users[7],self.users[6],self.users[5],self.users[4],self.users[3],self.users[2],],
+            },
+            {
+            "event" : self.event,
+            "start_time" : dt.time(10,00,00),
+            "end_time" : dt.time(14,00,00),
+            "date" : dt.date(2021,1,1),
+            "users" : [self.users[9],self.users[8],self.users[7],self.users[6],self.users[5],self.users[4],self.users[3],self.users[2],self.users[1],],
+            },
+            {
+            "event" : self.event,
             "start_time" : dt.time(11,00,00),
             "end_time" : dt.time(13,00,00),
             "date" : dt.date(2021,1,1),
@@ -432,6 +481,8 @@ class TimeSlotTest(TestCase):
         ]
 
         for i,user in enumerate(self.users):
+            if user == self.users[5]:
+                break
             TimeSlot.objects.create(start_time = dt.time(11-i,00,00),
                                     end_time = dt.time(13+i,00,00),
                                     date = dt.date(2021,1,1),
