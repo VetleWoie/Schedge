@@ -48,7 +48,7 @@ class TimeSlotFunctionalTest(TestCase):
 
     @skip("Doesn't work right now")
     def test_create_timeslot_outside_range(self):
-        # even't time interval is 8:30 to 11:45
+        # even't time interval is 8:30 am to 11:45 am
         # posting timeslot at 13:00 should fail
         timeslot = {
             "date": self.tomorrow,

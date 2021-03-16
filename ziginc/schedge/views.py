@@ -231,7 +231,6 @@ def event_invite(request, event_id):
         if is_duplicate:
             # TODO: what do we do?
             return HttpResponseBadRequest("You have already invited this person!")
-            pass
         elif invitee == inviter:
             return HttpResponseBadRequest("You cannot invite yourself")
         else:
