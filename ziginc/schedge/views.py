@@ -93,34 +93,38 @@ def riise_hofsøy(event):
     time_slots = TimeSlot.objects.filter(event=event)
     PotentialTimeSlot.objects.filter(event=event).delete()
 
-    tuple_table = []
+    t_table = []
     for ts in time_slots:
-        tuple_table.append((dt.datetime.combine(ts.date, ts.start_time), +1, ts))
-        tuple_table.append((dt.datetime.combine(ts.date, ts.end_time), -1, ts))
-    tuple_table.sort(key=get_key)
+        t_table.append((dt.datetime.combine(ts.date, ts.start_time), +1, ts))
+        t_table.append((dt.datetime.combine(ts.date, ts.end_time), -1, ts))
+    t_table.sort(key=get_key)
 
     S = []
     cnt = 0
     min_cnt = 2 # TODO replace with event.min_cnt or equivalent
     start = dt.datetime(1,1,1,0,0,0)
     end = dt.datetime(1,1,1,0,0,0)
-    for i, t in enumerate(tuple_table):
+    for i, t in enumerate(t_table):
         cnt += t[1]
         if t[1] == +1: # step up
             S.append(t[2])
             start = t[0]
-            end = find_min(S)
+            if dt.datetime.combine(t[2].date,t[2].end_time) - t_table[i + 1][0] >= event.duration:
+                end = t_table[i + 1][0]
+            else:
+                end = find_min(S)
         else: # step down
+            if i + 1 >= len(t_table): # all tuples have been iterated
+                return
+            
             S.remove(t[2])
-            if end - start < event.duration:
+            if end - start < event.duration: # Last pts was of valid length
                 start = find_max(S)
             else:
                 start = dt.datetime.combine(t[2].date,t[2].end_time)
-            if i + 1 < len(tuple_table):
-                end = tuple_table[i + 1][0]
-            else:
-                return
-        if cnt >= min_cnt and end - start >= event.duration:
+            end = t_table[i + 1][0]
+
+        if cnt >= min_cnt and end - start >= event.duration: # Only add/update pts if new one is valid
             pts = PotentialTimeSlot.objects.filter(event=event, start_time=find_time(start), end_time=find_time(end), date=t[2].date)
             if pts.exists():
                 pts[0].participants.add(t[2].creator)
