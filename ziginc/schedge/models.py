@@ -97,7 +97,7 @@ class PotentialTimeSlot(models.Model):
 
     def __str__(self):
         return f"PotentialTimeSlot(id={self.id}, on={self.event.id}, start_time={self.start_time}, end_time={self.end_time}, date={self.date}, participants={self.participants}"
-    
+
 
 class Participant(models.Model):
     # One user can be included in several groups.

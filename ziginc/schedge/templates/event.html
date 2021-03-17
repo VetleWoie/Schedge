@@ -82,7 +82,7 @@
                 <table>
                     <tr>
                         <td>Time</td>
-                        <td>{{timeslot.time}}</td>
+                        <td>{{timeslot.start_time}} - {{timeslot.end_time}}</td>
                     </tr>
                     <tr>
                         <td>Date</td>
@@ -94,6 +94,22 @@
                     {% csrf_token %}
                     <input type="submit" value="🗑">
                 </form>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="centred">
+            {% for pt in pts %}
+            <div class="blob timeslot">
+                <table>
+                    <tr>
+                        <td>Time</td>
+                        <td>{{pt.start_time}} - {{pt.end_time}}</td>
+                    </tr>
+                    <tr>
+                        <td>Date</td>
+                        <td>{{pt.date }}</td>
+                    </tr>
+                </table>
             </div>
             {% endfor %}
         </div>

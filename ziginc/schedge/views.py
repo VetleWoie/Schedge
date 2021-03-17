@@ -18,7 +18,9 @@ from django.views import generic
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.models import User
+from collections import namedtuple
 
+from .utils import riise_hofsøy, create_time_slot
 
 @login_required(login_url="/login/")
 def mypage(request):
@@ -66,75 +68,7 @@ def create_event(request):
     context = {"form": form}
     return render(request, "createevent.html", context)
 
-def find_potential_time_slots(event):
-    riise_hofsøy(event)
 
-def riise_hofsøy(event):
-    def get_key(k):
-        return k[0]
-    def find_time(t):
-        return dt.datetime.strptime(dt.datetime.strftime(t, '%H:%M'), "%H:%M").time()        
-        
-    time_slots = TimeSlot.objects.filter(event=event)
-    PotentialTimeSlot.objects.filter(event=event).delete()
-
-    t_table = []
-    for ts in time_slots:
-        t_table.append((dt.datetime.combine(ts.date, ts.start_time), +1, ts))
-        t_table.append((dt.datetime.combine(ts.date, ts.end_time), -1, ts))
-    t_table.sort(key=get_key)
-
-    S = []
-    in_pts = []
-    cnt = 0
-    min_cnt = 2 # TODO replace with event.min_cnt or equivalent
-    start = dt.datetime(1,1,1,0,0,0)
-    end = dt.datetime(1,1,1,0,0,0)
-
-    for i, t in enumerate(t_table):
-        cnt += t[1]
-        if t[1] == 1: # step up
-            S.append(t[2])
-            start = t[0]
-            in_pts = S.copy()
-
-            for sub_t in t_table[i:]:
-                if sub_t[1] == 1 or not sub_t[2] in in_pts:
-                    continue
-                end = sub_t[0]
-
-                if len(in_pts) >= min_cnt and end - start >= event.duration: # Only add/update pts if new one is valid
-                    pts = PotentialTimeSlot.objects.filter(event=event, start_time=find_time(start), end_time=find_time(end), date=t[2].date)
-                    if pts.exists():
-                        pts[0].participants.add(t[2].creator)
-                    else:
-                        pts = PotentialTimeSlot.objects.create(event=event, start_time=find_time(start), end_time=find_time(end), date=t[2].date)
-                        for ts in in_pts:
-                            pts.participants.add(ts.creator)
-                if sub_t[2] == t[2]:
-                    break
-                in_pts.remove(sub_t[2])
-        else: #  step down
-            S.remove(t[2])
-
-
-
-
-# merges new timeslot to existing from same user if they overlap
-def check_overlap_ts(event, user, start, end, date, first):
-    time_slots = TimeSlot.objects.filter(event=event, creator=user)
-    for ts in time_slots:
-        if (ts.start_time >= end or ts.end_time >= start) and date == ts.date: # Check if intersection exists
-            ts_start = ts.start_time
-            ts_end = ts.end_time
-            ts.delete()
-            return check_overlap_ts(event, user, min(start, ts_start), max(end, ts_end), date, 0)
-    if not first:
-        TimeSlot.objects.create(event=event, start_time=start, end_time=end, date=date, creator=user)
-        riise_hofsøy(event)
-        return
-    return first
-    
 @login_required(login_url="/login/")
 def event(request, event_id):
     try:
@@ -144,14 +78,13 @@ def event(request, event_id):
         raise Http404("404: not valid event id")
 
     if request.method == "POST":
-        timeslotform = TimeSlotForm(request.POST)
+        timeslotform = TimeSlotForm(request.POST, duration=this_event.duration)
         creator = request.user
 
         if timeslotform.is_valid()  and creator.is_authenticated:
             timeslotdata = timeslotform.cleaned_data
-            if check_overlap_ts(this_event, creator, timeslotdata["start_time"], timeslotdata["end_time"], timeslotdata["date"], 1):
-                newtimeslot = TimeSlot.objects.create(event=this_event, creator=creator, **timeslotdata)
-                find_potential_time_slots(this_event) # check for new potential ts with new ts
+            create_time_slot(this_event, creator, timeslotdata)
+
         else:
             # TODO: rewrite maybe.
             # shouldn't be possible through the website though. only through manual post
@@ -177,7 +110,8 @@ def event(request, event_id):
         "timeslots": timeslots,
         "inviteform": inviteform,
         "participants": participants,
-        "invites": invites
+        "invites": invites,
+        "pts": potentialtimeslots,
     }
     return render(request, "event.html", context)
 
