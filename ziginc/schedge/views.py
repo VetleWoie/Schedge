@@ -145,7 +145,6 @@ def eventedit(request, event_id):
     except Event.DoesNotExist:
         return HttpResponseNotFound("404: not valid event id")
 
-
     if request.user != this_event.host:
         return HttpResponse("Unauthorized", status=401)
 
@@ -302,12 +301,12 @@ def invite_accept(request, invite_id):
     except Invite.DoesNotExist:
         return HttpResponseBadRequest("Unknown invite")
 
-    # does not work. create reverse relation?? how??
-    # try:
-    #     notif = Notification.objects.get(target=invite)
-    #     notif.mark_as_read()
-    # except Notification.DoesNotExist:
-    #     pass
+    try:
+        notif = Notification.objects.get(target_object_id=invite.id)
+    except Notification.DoesNotExist:
+        pass
+    else:
+        notif.mark_as_read()
 
     assert invite.invitee == request.user
     Participant.objects.create(event=invite.event, user=invite.invitee, ishost=False)
@@ -316,13 +315,38 @@ def invite_accept(request, invite_id):
         invite.invitee,
         recipient=invite.inviter,
         target=invite.event,
-        verb=f"invite accept",
+        verb=f"invite accepted",
         title=invite.event.title,
         url=f"/event/{invite.event.id}/",
     )
 
     invite.delete()
 
+    return redirect(mypage)
+
+
+def invite_reject(request, invite_id):
+    try:
+        invite = Invite.objects.get(id=invite_id)
+    except Invite.DoesNotExist:
+        return HttpResponseBadRequest("Unknown invite")
+
+    try:
+        notif = Notification.objects.get(target_object_id=invite.id)
+    except Notification.DoesNotExist:
+        pass
+    else:
+        notif.mark_as_read()
+
+    notify.send(
+        invite.invitee,
+        recipient=invite.inviter,
+        target=invite.event,
+        verb=f"invite rejected",
+        title=invite.event.title,
+        url=f"/event/{invite.event.id}/",
+    )
+    invite.delete()
     return redirect(mypage)
 
 
@@ -379,28 +403,3 @@ def mark_notification_as_read(request, notif_id):
         return HttpResponseNotFound("notification not found", status=404)
     notif.mark_as_read()
     return HttpResponse("ok", status=200)
-
-
-def invite_reject(request, invite_id):
-    try:
-        invite = Invite.objects.get(id=invite_id)
-    except Invite.DoesNotExist:
-        return HttpResponseBadRequest("Unknown invite")
-
-    # does not work. create reverse relation?? how??
-    # try:
-    #     notif = Notification.objects.get(target=invite)
-    #     notif.mark_as_read()
-    # except Notification.DoesNotExist:
-    #     pass
-
-    notify.send(
-        invite.invitee,
-        recipient=invite.inviter,
-        target=invite.event,
-        verb=f"invite reject",
-        title=invite.event.title,
-        url=f"/event/{invite.event.id}/",
-    )
-    invite.delete()
-    return redirect(mypage)

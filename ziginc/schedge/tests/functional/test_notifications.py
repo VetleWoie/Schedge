@@ -49,7 +49,7 @@ class NotificationTest(TestCase):
         self.assertEqual(notification.actor, self.inviter)
         self.assertEqual(notification.verb, "invite")
         self.assertEqual(notification.data["title"], "hiking")
-        self.assertEqual(notification.data["url"], str(self.event_id))
+        self.assertEqual(notification.data["url"], f"/event/{self.event_id}/")
         self.assertEqual(notification.target, Event.objects.get(id=self.event_id))
 
     def test_gets_notification_on_invite_accept(self):
@@ -64,9 +64,9 @@ class NotificationTest(TestCase):
 
         notification = notifications[0]
         self.assertEqual(notification.actor, self.invitee)
-        self.assertEqual(notification.verb, "invite accept")
+        self.assertEqual(notification.verb, "invite accepted")
         self.assertEqual(notification.data["title"], "hiking")
-        self.assertEqual(notification.data["url"], str(self.event_id))
+        self.assertEqual(notification.data["url"], f"/event/{self.event_id}/")
         self.assertEqual(notification.target, Event.objects.get(id=self.event_id))
     
     def test_gets_notification_on_invite_reject(self):
@@ -81,7 +81,7 @@ class NotificationTest(TestCase):
 
         notification = notifications[0]
         self.assertEqual(notification.actor, self.invitee)
-        self.assertEqual(notification.verb, "invite reject")
+        self.assertEqual(notification.verb, "invite rejected")
         self.assertEqual(notification.data["title"], "hiking")
-        self.assertEqual(notification.data["url"], str(self.event_id))
+        self.assertEqual(notification.data["url"], f"/event/{self.event_id}/")
         self.assertEqual(notification.target, Event.objects.get(id=self.event_id))
