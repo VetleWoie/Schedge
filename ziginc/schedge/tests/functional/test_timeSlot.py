@@ -474,8 +474,6 @@ class TimeSlotTest(TestCase):
         ]
 
         for i,user in enumerate(self.users):
-            if user == self.users[5]:
-                break
             TimeSlot.objects.create(start_time = dt.time(11-i,00,00),
                                     end_time = dt.time(13+i,00,00),
                                     date = dt.date(2021,1,1),

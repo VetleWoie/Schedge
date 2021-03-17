@@ -152,9 +152,6 @@ def event(request, event_id):
             if check_overlap_ts(this_event, creator, timeslotdata["start_time"], timeslotdata["end_time"], timeslotdata["date"], 1):
                 newtimeslot = TimeSlot.objects.create(event=this_event, creator=creator, **timeslotdata)
                 find_potential_time_slots(this_event) # check for new potential ts with new ts
-            newtimeslot = TimeSlot.objects.create(
-                event=this_event, creator=creator, **timeslotdata
-            )
         else:
             # TODO: rewrite maybe.
             # shouldn't be possible through the website though. only through manual post
