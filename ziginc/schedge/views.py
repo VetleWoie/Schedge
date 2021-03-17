@@ -7,7 +7,7 @@ from django.http import (
 )
 import datetime as dt
 from .forms import EventForm, TimeSlotForm, InviteForm
-from .models import Event, TimeSlot, Participant, Invite
+from .models import Event, TimeSlot, Participant, Invite, PotentialTimeSlot
 from django.shortcuts import render
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
@@ -18,7 +18,9 @@ from django.views import generic
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.models import User
+from collections import namedtuple
 
+from .utils import riise_hofsøy, create_time_slot
 
 from django.db.models.signals import post_save
 from notifications.signals import notify
@@ -82,22 +84,22 @@ def event(request, event_id):
         raise Http404("404: not valid event id")
 
     if request.method == "POST":
-        timeslotform = TimeSlotForm(request.POST)
+        timeslotform = TimeSlotForm(request.POST, duration=this_event.duration)
         creator = request.user
 
         if timeslotform.is_valid() and creator.is_authenticated:
             timeslotdata = timeslotform.cleaned_data
-            newtimeslot = TimeSlot.objects.create(
-                event=this_event, creator=creator, **timeslotdata
-            )
+            create_time_slot(this_event, creator, timeslotdata)
+
         else:
             # TODO: rewrite maybe.
             # shouldn't be possible through the website though. only through manual post
             return HttpResponseBadRequest("Invalid Form!")
 
-    # only timeslots from this event
-    timeslots = TimeSlot.objects.filter(event=this_event)
 
+    potentialtimeslots = PotentialTimeSlot.objects.filter(event=this_event)
+    # if not potentialtimeslots:
+    timeslots = TimeSlot.objects.filter(event=this_event)
     # new time slot form with this event's start date and end date
     timeslotform = TimeSlotForm()
     timeslotform.set_limits(this_event)
@@ -114,6 +116,7 @@ def event(request, event_id):
         "inviteform": inviteform,
         "participants": participants,
         "invites": invites,
+        "pts": potentialtimeslots,
     }
     return render(request, "event.html", context)
 
@@ -133,6 +136,7 @@ def timeslot_delete(request, event_id, timeslot_id):
             return HttpResponseNotFound("404: not valid timeslot id")
 
         timeslot.delete()
+        refactor_potential_time_slots(this_event)
 
     return redirect(event, event_id)
 

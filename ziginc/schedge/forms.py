@@ -70,15 +70,34 @@ class EventForm(forms.ModelForm):
 class TimeSlotForm(forms.ModelForm):
     class Meta:
         model = TimeSlot
-        fields = ["time", "date"]
+        fields = ["start_time", "end_time", "date"]
 
-        widgets = {"time": TimeInput(), "date": DateInput()}
+        widgets = {"start_time": TimeInput(), "end_time": TimeInput(), "date": DateInput()}
+    def __init__(self, *args, **kwargs):
+        self.duration = kwargs.pop("duration", None)
+        super().__init__(*args, **kwargs)
 
     def set_limits(self, event):
         self.fields["date"].widget.attrs["min"] = event.startdate
         self.fields["date"].widget.attrs["max"] = event.enddate
-        self.fields["time"].widget.attrs["min"] = event.starttime
-        self.fields["time"].widget.attrs["max"] = event.endtime
+        self.fields["start_time"].widget.attrs["min"] = event.starttime
+        self.fields["start_time"].widget.attrs["max"] = event.endtime
+        self.fields["end_time"].widget.attrs["min"] = event.starttime
+        self.fields["end_time"].widget.attrs["max"] = event.endtime
+    def clean(self):
+        start = dt.datetime.combine(self.cleaned_data.get("date"), self.cleaned_data.get("start_time"))
+        end = dt.datetime.combine(self.cleaned_data.get("date"), self.cleaned_data.get("end_time"))
+        if end - start < self.duration:
+            raise forms.ValidationError(
+                {
+                    "start_time": ["Time slot is too short"],
+                    "end_time": ["Time slot is too short"],
+                }
+            )
+        return self.cleaned_data
+        
+
+
 
 
 class NameForm(forms.Form):
@@ -105,7 +124,7 @@ class NameForm(forms.Form):
         # Check that username hasn't been used before
         username = self.cleaned_data["username"]
         if User.objects.filter(username=username).exists():
-            raise forms.ValidationError("Username allready taken.")
+            raise forms.ValidationError("Username already taken.")
         return username
 
     def clean_email(self):

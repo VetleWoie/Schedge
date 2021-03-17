@@ -32,7 +32,9 @@ class TimeSlotModelTest(TestCase):
             "event": self.golf,
             "creator": self.user,
             "date": dt.datetime.now() + dt.timedelta(days=2),
-            "time": dt.time(hour=9, minute=0)
+            "start_time": dt.time(hour=9, minute=0),
+            "end_time": dt.time(hour=11, minute=0)
+
         }
 
         timeslot = TimeSlot(**self.example_timeslot)
