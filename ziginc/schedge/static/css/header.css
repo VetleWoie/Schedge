@@ -23,6 +23,7 @@ main {
     padding-top: 30px;
     /* padding-bottom: 20px; */
     position: fixed;
+    z-index: 10000;
     margin-bottom: 60px;
 }
 
@@ -32,7 +33,6 @@ main {
     text-align: center;
     /* padding: 10px; */
     text-decoration: none;
-    
 }
 
 .header a.name {

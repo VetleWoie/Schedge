@@ -9,7 +9,7 @@ from django.http import JsonResponse
 username='Ola'
 email='ola@mail.com'
 password='ola123'
-class MypageTest(TestCase):
+class MyPageTest(TestCase):
     
     def setUp(self):
         user = User.objects.create_user(username, email, password)

@@ -18,8 +18,8 @@ class CreateEventSeleniumTest(StaticLiveServerTestCase):
     def setUp(self):
         options = webdriver.FirefoxOptions()
         options.add_argument("--headless")
+    
         self.driver = webdriver.Firefox(firefox_options=options)
-
         # create user and login
         user = User.objects.create_user("tester", "myemail@test.com", "Elias123")
         self.client.login(username="tester", password="Elias123")
@@ -67,7 +67,7 @@ class CreateEventSeleniumTest(StaticLiveServerTestCase):
         title_field = self.driver.find_element_by_id("id_title")
         title_field.send_keys("Test Event")
 
-        location_field = self.driver.find_element_by_id("loc")
+        location_field = self.driver.find_element_by_id("id_location")
         location_field.send_keys("Test Location")
 
         self.input_time("id_starttime", "0800AM")
@@ -81,7 +81,7 @@ class CreateEventSeleniumTest(StaticLiveServerTestCase):
         submit_btn.click()
 
         # wait for new site to load
-        sleep(0.5)
+        sleep(1)
 
         # url ends with /event/[some number]/
         self.assertRegex(self.driver.current_url, "^.*\/event\/\d+\/$")
