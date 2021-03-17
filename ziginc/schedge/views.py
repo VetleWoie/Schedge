@@ -73,20 +73,6 @@ def find_potential_time_slots(event):
 def riise_hofsøy(event):
     def get_key(k):
         return k[0]
-    def find_min(S):
-        if not S:
-            return None
-        m = dt.datetime.combine(S[0].date,S[0].end_time)
-        for ts in S:
-            m = min(m, dt.datetime.combine(ts.date, ts.end_time))
-        return m
-    def find_max(S):
-        if not S:
-            return None
-        mx = dt.datetime.combine(S[0].date, S[0].start_time)
-        for ts in S:
-            mx = max(mx, dt.datetime.combine(ts.date, ts.start_time))
-        return mx
     def find_time(t):
         return dt.datetime.strptime(dt.datetime.strftime(t, '%H:%M'), "%H:%M").time()        
         
@@ -100,39 +86,37 @@ def riise_hofsøy(event):
     t_table.sort(key=get_key)
 
     S = []
+    in_pts = []
     cnt = 0
     min_cnt = 2 # TODO replace with event.min_cnt or equivalent
     start = dt.datetime(1,1,1,0,0,0)
     end = dt.datetime(1,1,1,0,0,0)
+
     for i, t in enumerate(t_table):
         cnt += t[1]
-        if t[1] == +1: # step up
+        if t[1] == 1: # step up
             S.append(t[2])
             start = t[0]
-            if dt.datetime.combine(t[2].date,t[2].end_time) - t_table[i + 1][0] >= event.duration:
-                end = t_table[i + 1][0]
-            else:
-                end = find_min(S)
-        else: # step down
-            if i + 1 >= len(t_table): # all tuples have been iterated
-                return
-            
-            S.remove(t[2])
-            if end - start < event.duration: # Last pts was of valid length
-                start = find_max(S)
-            else:
-                start = dt.datetime.combine(t[2].date,t[2].end_time)
-            end = t_table[i + 1][0]
+            in_pts = S.copy()
 
-        if cnt >= min_cnt and end - start >= event.duration: # Only add/update pts if new one is valid
-            pts = PotentialTimeSlot.objects.filter(event=event, start_time=find_time(start), end_time=find_time(end), date=t[2].date)
-            if pts.exists():
-                pts[0].participants.add(t[2].creator)
-            else:
-                pts = PotentialTimeSlot.objects.create(event=event, start_time=find_time(start), end_time=find_time(end), date=t[2].date)
-                for ts in S:
-                    pts.participants.add(ts.creator)
-        
+            for sub_t in t_table[i:]:
+                if sub_t[1] == 1 or not sub_t[2] in in_pts:
+                    continue
+                end = sub_t[0]
+
+                if len(in_pts) >= min_cnt and end - start >= event.duration: # Only add/update pts if new one is valid
+                    pts = PotentialTimeSlot.objects.filter(event=event, start_time=find_time(start), end_time=find_time(end), date=t[2].date)
+                    if pts.exists():
+                        pts[0].participants.add(t[2].creator)
+                    else:
+                        pts = PotentialTimeSlot.objects.create(event=event, start_time=find_time(start), end_time=find_time(end), date=t[2].date)
+                        for ts in in_pts:
+                            pts.participants.add(ts.creator)
+                if sub_t[2] == t[2]:
+                    break
+                in_pts.remove(sub_t[2])
+        else: #  step down
+            S.remove(t[2])
 
 
 
@@ -148,7 +132,7 @@ def check_overlap_ts(event, user, start, end, date, first):
             return check_overlap_ts(event, user, min(start, ts_start), max(end, ts_end), date, 0)
     if not first:
         TimeSlot.objects.create(event=event, start_time=start, end_time=end, date=date, creator=user)
-        refactor_potential_time_slots(event)
+        riise_hofsøy(event)
         return
     return first
     
