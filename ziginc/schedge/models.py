@@ -73,20 +73,31 @@ class Event(models.Model):
 
 class TimeSlot(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    time = models.TimeField()
+    start_time = models.TimeField()
+    end_time = models.TimeField()
     date = models.DateField()
     creator = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, default=1)
 
     class Meta:
-        unique_together = ["event", "time", "date"]
+        unique_together = ["event", "start_time", "end_time", "date", "creator"]
 
     def clean(self):
         if self.date < dt.date.today():
             raise ValidationError({"date": ["Cannot create event in the past"]})
 
     def __str__(self):
-        return f"TimeSlot(id={self.id}, on={self.event.id}, time={self.time}, date={self.date}"
+        return f"TimeSlot(id={self.id}, on={self.event.id}, start_time={self.start_time}, end_time={self.end_time}, date={self.date}"
 
+class PotentialTimeSlot(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    date = models.DateField()
+    participants = models.ManyToManyField(get_user_model())
+
+    def __str__(self):
+        return f"PotentialTimeSlot(id={self.id}, on={self.event.id}, start_time={self.start_time}, end_time={self.end_time}, date={self.date}, participants={self.participants}"
+    
 
 class Participant(models.Model):
     # One user can be included in several groups.

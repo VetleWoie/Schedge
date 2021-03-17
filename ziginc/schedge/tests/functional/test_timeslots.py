@@ -28,7 +28,8 @@ class TimeSlotFunctionalTest(TestCase):
         self.tomorrow = (dt.datetime.now() + dt.timedelta(days=1)).strftime("%Y-%m-%d")
         self.example_timeslot = {
             "date": self.tomorrow,
-            "time": "09:10"
+            "start_time": "09:10",
+            "end_time" : "11:10",
         }
 
     def test_create_timeslot(self):
@@ -40,7 +41,9 @@ class TimeSlotFunctionalTest(TestCase):
     def test_create_timeslot_in_the_past(self):
         timeslot = {
             "date": "1969-07-20",
-            "time": "20:17",
+            "start_time": "20:17",
+            "end_time": "22:00"
+            
         }
         response = self.client.post(f"/event/{self.golf.id}/", timeslot)
         # there is a timeslot in the context
@@ -52,7 +55,7 @@ class TimeSlotFunctionalTest(TestCase):
         # posting timeslot at 13:00 should fail
         timeslot = {
             "date": self.tomorrow,
-            "time": "13:00",
+            "start_time": "13:00",
         }
         response = self.client.post(f"/event/{self.golf.id}/", timeslot)
         self.assertEqual(response.status_code, 400)
@@ -61,7 +64,7 @@ class TimeSlotFunctionalTest(TestCase):
         in_two_weeks = (dt.datetime.now() + dt.timedelta(days=14)).strftime("%Y-%m-%d")
         timeslot = {
             "date": in_two_weeks,
-            "time": "09:10",
+            "start_time": "09:10",
         }
         response = self.client.post(f"/event/{self.golf.id}/", timeslot)
         self.assertEqual(response.status_code, 400)
