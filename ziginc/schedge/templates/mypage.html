@@ -60,18 +60,18 @@
     {% endif %}
     <div class="title_sub">participant</div>
     {% if participant_as_guest %}
-    {% for participant in participant_as_guest %}
-    <a href="{% url 'event' event_id=participant.event.id %}" class="invislink">
+    {% for event in participant_as_guest %}
+    <a href="{% url 'event' event_id=event.id %}" class="invislink">
         <div class="box extra_bottom">
-            <div class="title"> {{participant.event.title}}</div>
+            <div class="title"> {{event.title}}</div>
             <table class="info_table extra_right">
                 <tr>
                     <td><img src="{% static 'icons/queue.png' %}" class="icons" width="25px"></td>
-                    <td class="info_text">{{participant.event.duration}} hours</td>
+                    <td class="info_text">{{event.duration}} hours</td>
                     <td><img src="{% static 'icons/placeholder.png' %}" class="icons" width="25px"></td>
-                    <td class="info_text">{{participant.event.location}}</td>
+                    <td class="info_text">{{event.location}}</td>
                     <td><img src="{% static 'icons/group.png' %}" class="icons" width="25px"></td>
-                    <td class="info_text">{{participant.event.n_attendees}}</td>
+                    <td class="info_text">{{event.n_attendees}}</td>
                 </tr>
             </table>
         </div>

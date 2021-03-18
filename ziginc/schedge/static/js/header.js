@@ -8,7 +8,7 @@ function my_fill_notification_badge(data) {
             if (data.unread_count > 0)
                 badges[i].innerHTML = "<span class=\"dot\"><p>" + data.unread_count + "</p></span>";
             else
-                badges[i].innerHTML = "";
+                badges[i].innerHTML = "<span></span>";
         }
     }
 }

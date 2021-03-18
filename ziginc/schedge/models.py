@@ -30,7 +30,11 @@ class Event(models.Model):
 
     image = models.ImageField(default="default.jpg", upload_to="images/")
     status = models.CharField(max_length=10, default="U", choices=STATUS_OPTIONS)
-    host = models.ForeignKey(get_user_model(), default=1, on_delete=models.CASCADE)
+    host = models.ForeignKey(
+        get_user_model(), default=1, on_delete=models.CASCADE, related_name="host"
+    )
+
+    participants = models.ManyToManyField(get_user_model(), related_name="participants")
 
     error_css_class = "error"
 
@@ -38,7 +42,7 @@ class Event(models.Model):
     def n_attendees(self):
         """returns the number of users who have accepted this event
         we use a property so that it can be used in templates"""
-        return len(Participant.objects.filter(event=self))
+        return self.participants.count()
 
     def __str__(self):
         return f"Event(id={self.id}, title={self.title}, ...)"
@@ -94,6 +98,7 @@ class TimeSlot(models.Model):
     def __str__(self):
         return f"TimeSlot(id={self.id}, on={self.event.id}, start_time={self.start_time}, end_time={self.end_time}, date={self.date}"
 
+
 class PotentialTimeSlot(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     start_time = models.TimeField()
@@ -103,17 +108,6 @@ class PotentialTimeSlot(models.Model):
 
     def __str__(self):
         return f"PotentialTimeSlot(id={self.id}, on={self.event.id}, start_time={self.start_time}, end_time={self.end_time}, date={self.date}, participants={self.participants}"
-
-
-class Participant(models.Model):
-    # One user can be included in several groups.
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, default=1)
-    # TODO: null=True needs to be removed before shippable product.
-    event = models.ForeignKey(Event, on_delete=models.CASCADE, null=True)
-    ishost = models.BooleanField(default=False)
-
-    def __str__(self):
-        return f"user={self.user}, event={self.event}"
 
 
 class Invite(models.Model):
@@ -128,4 +122,3 @@ class Invite(models.Model):
 
     def __str__(self):
         return f"Invite(inviter={self.inviter}, invitee={self.invitee}, event={self.event}, sent={self.senttime})"
-

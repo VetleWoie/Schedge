@@ -7,7 +7,7 @@ from django.http import (
 )
 import datetime as dt
 from .forms import EventForm, TimeSlotForm, InviteForm
-from .models import Event, TimeSlot, Participant, Invite, PotentialTimeSlot
+from .models import Event, TimeSlot, Invite, PotentialTimeSlot
 from django.shortcuts import render
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
@@ -32,10 +32,10 @@ def mypage(request):
     user = request.user
     host_undecided = Event.objects.filter(host=user, status="U")
     host_decided = Event.objects.filter(host=user, status="C")
-    participant_as_guest = Participant.objects.filter(user=user, ishost=False)
+
+    participant_as_guest = Event.objects.filter(participants=user).exclude(host=user)
 
     invites = Invite.objects.filter(invitee=user)
-    # participants = userevents.exclude(hostID=Simulated_user)
     context = {
         "host_undecided": host_undecided,
         "host_decided": host_decided,
@@ -60,9 +60,7 @@ def create_event(request):
                 # create new event with stuff in form
                 # because EventForm is model of Event, we can safely use kwarg
                 newevent = Event.objects.create(**data, host=host)
-                newparticipant = Participant.objects.create(
-                    event=newevent, user=host, ishost=True
-                )
+                newevent.participants.add(host)
                 return redirect(event, newevent.id)
             else:
                 return render(request, "createevent.html", {"form": form}, status=400)
@@ -86,7 +84,6 @@ def event(request, event_id):
     if request.method == "POST":
         timeslotform = TimeSlotForm(request.POST, duration=this_event.duration)
         creator = request.user
-
         if timeslotform.is_valid() and creator.is_authenticated:
             timeslotdata = timeslotform.cleaned_data
             create_time_slot(this_event, creator, timeslotdata)
@@ -97,13 +94,12 @@ def event(request, event_id):
             return HttpResponseBadRequest("Invalid Form!")
 
     potentialtimeslots = PotentialTimeSlot.objects.filter(event=this_event)
-    # if not potentialtimeslots:
     timeslots = TimeSlot.objects.filter(event=this_event)
     # new time slot form with this event's start date and end date
     timeslotform = TimeSlotForm()
     timeslotform.set_limits(this_event)
 
-    participants = Participant.objects.filter(event=this_event)
+    participants = this_event.participants.all()
     invites = Invite.objects.filter(event=this_event)
 
     inviteform = InviteForm(invites=invites, accepted=participants, user=request.user)
@@ -140,15 +136,13 @@ def timeslot_delete(request, event_id, timeslot_id):
     return redirect(event, event_id)
 
 
-def notify_if_change(event, newdata, user):
+def notify_if_changed(event, newdata, user):
     """sends notification from user to all participants
     if the new data is different than the event's old data"""
     if any(getattr(event, k) != newdata[k] for k in newdata):
         # there is at least one difference
         # send notifications to all attendees except ourselves.
-        participants = Participant.objects.filter(event=event, ishost=False)
-        user_ids = participants.values_list("user", flat=True)
-        users = User.objects.filter(id__in=user_ids)
+        users = event.participants.exclude(id=user.id)
 
         # send notifications
         notify.send(
@@ -178,21 +172,25 @@ def eventedit(request, event_id):
         if form.is_valid():
             data = form.cleaned_data
             oldimg = this_event.image
-            notify_if_change(this_event, data, request.user)
 
+            # notify only if the event was actually changed
+            notify_if_changed(this_event, data, request.user)
+            # update the event
             this_event.__dict__.update(data)
 
+            # update the image seperately. use oldimg if Key Error
             this_event.image = request.FILES.get("image", oldimg)
             this_event.save()
             return redirect(event, this_event.id)
         else:
             return HttpResponseBadRequest("Invalid Form!")
 
-    # create form with info from the current event¨
+    # create form with info from the current event
     seconds = this_event.duration.seconds
     initial_times = {
         "starttime": this_event.starttime.strftime("%H:%M"),
         "endtime": this_event.endtime.strftime("%H:%M"),
+        # [days, hours, minutes]
         "duration": [seconds // 86400, (seconds // 3600) % 24, (seconds // 60) % 60],
     }
 
@@ -215,9 +213,7 @@ def event_delete(request, event_id):
     if request.user != event_del.host:
         return HttpResponse("Unauthorized", status=401)
 
-    par = Participant.objects.filter(event=event_del, ishost=False)
-    user_ids = par.values_list("user", flat=True)
-    users = User.objects.filter(id__in=user_ids)
+    users = event_del.participants.exclude(id=request.user.id)
 
     timeslots = TimeSlot.objects.filter(id=event_id)
     timeslots.delete()
@@ -226,7 +222,7 @@ def event_delete(request, event_id):
     notify.send(
         request.user,
         recipient=users,
-        target=event_del,
+        target=None,
         verb="event deleted",
         title=event_del.title,
         url="/mypage/",
@@ -295,7 +291,7 @@ def event_invite(request, event_id):
             notify.send(
                 inviter,
                 recipient=invitee,
-                target=this_event,
+                target=invite,
                 verb="invite",
                 title=this_event.title,
                 url=f"/event/{invite.event.id}/",
@@ -321,12 +317,12 @@ def invite_accept(request, invite_id):
         notif.mark_as_read()
 
     assert invite.invitee == request.user
-    Participant.objects.create(event=invite.event, user=invite.invitee, ishost=False)
+    invite.event.participants.add(invite.invitee)
 
     notify.send(
         invite.invitee,
         recipient=invite.inviter,
-        target=invite.event,
+        target=invite,
         verb=f"invite accepted",
         title=invite.event.title,
         url=f"/event/{invite.event.id}/",
@@ -350,10 +346,11 @@ def invite_reject(request, invite_id):
     else:
         notif.mark_as_read()
 
+    # send invite to inviter that the invite was rejected
     notify.send(
         invite.invitee,
         recipient=invite.inviter,
-        target=invite.event,
+        target=None,
         verb=f"invite rejected",
         title=invite.event.title,
         url=f"/event/{invite.event.id}/",
@@ -375,43 +372,51 @@ def invite_delete(request, invite_id):
     if invite.event.host != request.user:
         return HttpResponse("Unauthorized", status=401)
 
+    # silently remove the notifications
     try:
         notification = Notification.objects.get(target_object_id=invite.id)
     except Notification.DoesNotExist:
         pass
     else:
         notification.delete()
-
+ 
     invite.delete()
     return redirect(event, invite.event.id)
 
 
-def participant_delete(request, participant_id):
-
+def participant_delete(request, event_id, user_id):
     try:
-        participant = Participant.objects.get(id=participant_id)
-    except Participant.DoesNotExist:
-        return HttpResponseNotFound("Unknown participant")
+        this_event = Event.objects.get(id=event_id)
+    except User.DoesNotExist:
+        return HttpResponseNotFound("Unknown event")
 
     if request.method != "POST":
         return HttpResponseBadRequest("Bad request")
 
-    if participant.event.host != request.user or participant.ishost:
+    try:
+        user = this_event.participants.get(id=user_id)
+    except User.DoesNotExist:
+        return HttpResponseNotFound("Unknown User")
+
+    if this_event.host != request.user or this_event.host == user:
         return HttpResponse("Unauthorized", status=401)
 
-    TimeSlot.objects.filter(event=participant.event, creator=participant.user).delete()
-    participant.delete()
+    # remove the timeslots created by this user
+    TimeSlot.objects.filter(event=this_event, creator=user).delete()
+    # remove user from the event's participants
+    this_event.participants.remove(user)
 
+    # send notification to deleted user
     notify.send(
         request.user,
-        recipient=participant.user,
-        target=participant.event,
+        recipient=user,
+        target=this_event,
         verb=f"participant deleted",
-        title=participant.event.title,
-        url=f"/event/{participant.event.id}/",
+        title=this_event.title,
+        url=f"/mypage/",
     )
 
-    return redirect(event, participant.event.id)
+    return redirect(event, this_event.id)
 
 
 def mark_notification_as_read(request, notif_id):

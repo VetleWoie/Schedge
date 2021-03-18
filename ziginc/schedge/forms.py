@@ -94,6 +94,7 @@ class TimeSlotForm(forms.ModelForm):
                     "end_time": ["Time slot is too short"],
                 }
             )
+        
         return self.cleaned_data
         
 
@@ -148,8 +149,8 @@ class InviteForm(forms.Form):
         
         accepted = kwargs.pop("accepted", None)
         if accepted is not None:
-            accepted_ids = accepted.values_list("user", flat=True)
-            accepted_names = User.objects.filter(id__in=accepted_ids).values_list("username", flat=True)
+            # accepted_ids = accepted.values_list("id", flat=True)
+            accepted_names = accepted.values_list("username", flat=True)
 
         user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)

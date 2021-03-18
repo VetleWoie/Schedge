@@ -9,11 +9,11 @@ def riise_hofsøy(event):
 
     time_slots = TimeSlot.objects.filter(event=event)
     PotentialTimeSlot.objects.filter(event=event).delete()
-    timetuple = namedtuple("timetuple", ["dt", "state", "ts"])
+    TimeTuple = namedtuple("TimeTuple", ["dt", "state", "ts"])
     t_table = []
     for ts in time_slots:
-        t_table.append(timetuple(dt.datetime.combine(ts.date, ts.start_time), +1, ts))
-        t_table.append(timetuple(dt.datetime.combine(ts.date, ts.end_time), -1, ts))
+        t_table.append(TimeTuple(dt.datetime.combine(ts.date, ts.start_time), +1, ts))
+        t_table.append(TimeTuple(dt.datetime.combine(ts.date, ts.end_time), -1, ts))
     t_table.sort(key=get_key)
 
     S = []
@@ -78,7 +78,6 @@ def create_time_slot(event, user, timeslotdata):
             return check_overlap_ts(
                 event, user, min(start, ts_start), max(end, ts_end), date
             )
-    # if recursive_call:
     TimeSlot.objects.create(
         event=event, start_time=start, end_time=end, date=date, creator=user
     )
