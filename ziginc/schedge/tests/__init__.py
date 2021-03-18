@@ -1,3 +1,4 @@
+from .scenario.test_notifications_selenium import *
 from .scenario.test_createevent_selenium import *
 
 from .functional.test_notifications import * 

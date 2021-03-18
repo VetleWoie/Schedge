@@ -22,8 +22,8 @@ function parse_invitation_list(data) {
             switch (item.verb) {
                 case "invite":
                     message += item.actor + " has <span style=\"color:green;\">invited</span> you to join an event:</br><i>" + item.data.title + "</i></br>"
-                    message += "<button type=\"button\" onclick=\"invitation_respond('accept', " + item.data.invite_id + ", " + item.id + ")\">✓</button>"
-                    message += "<button type=\"button\" onclick=\"invitation_respond('reject', " + item.data.invite_id + ", " + item.id + ")\">✗</button>"
+                    message += "<button id=\"id_notif_invite_accept\" type=\"button\" onclick=\"invitation_respond('accept', " + item.data.invite_id + ", " + item.id + ")\">✓</button>"
+                    message += "<button id=\"id_notif_invite_reject\" type=\"button\" onclick=\"invitation_respond('reject', " + item.data.invite_id + ", " + item.id + ")\">✗</button>"
 
                     break;
                 case "invite accepted":
