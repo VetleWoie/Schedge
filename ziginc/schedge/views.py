@@ -96,7 +96,6 @@ def event(request, event_id):
             # shouldn't be possible through the website though. only through manual post
             return HttpResponseBadRequest("Invalid Form!")
 
-
     potentialtimeslots = PotentialTimeSlot.objects.filter(event=this_event)
     # if not potentialtimeslots:
     timeslots = TimeSlot.objects.filter(event=this_event)
@@ -141,6 +140,27 @@ def timeslot_delete(request, event_id, timeslot_id):
     return redirect(event, event_id)
 
 
+def notify_if_change(event, newdata, user):
+    """sends notification from user to all participants
+    if the new data is different than the event's old data"""
+    if any(getattr(event, k) != newdata[k] for k in newdata):
+        # there is at least one difference
+        # send notifications to all attendees except ourselves.
+        participants = Participant.objects.filter(event=event, ishost=False)
+        user_ids = participants.values_list("user", flat=True)
+        users = User.objects.filter(id__in=user_ids)
+
+        # send notifications
+        notify.send(
+            user,
+            recipient=users,
+            target=event,
+            verb="event edited",
+            title=event.title,
+            url=f"/event/{event.id}/",
+        )
+
+
 @login_required(login_url="/login/")
 def eventedit(request, event_id):
     try:
@@ -158,11 +178,12 @@ def eventedit(request, event_id):
         if form.is_valid():
             data = form.cleaned_data
             oldimg = this_event.image
+            notify_if_change(this_event, data, request.user)
+
             this_event.__dict__.update(data)
 
             this_event.image = request.FILES.get("image", oldimg)
             this_event.save()
-
             return redirect(event, this_event.id)
         else:
             return HttpResponseBadRequest("Invalid Form!")
@@ -177,19 +198,6 @@ def eventedit(request, event_id):
 
     form = EventForm(instance=this_event, initial=initial_times)
     context = {"event": this_event, "form": form}
-
-    par = Participant.objects.filter(event=this_event, ishost=False)
-    user_ids = par.values_list("user", flat=True)
-    users = User.objects.filter(id__in=user_ids)
-
-    notify.send(
-        request.user,
-        recipient=users,
-        target=this_event,
-        verb="event edited",
-        title=this_event.title,
-        url=f"/event/{this_event.id}/",
-    )
 
     return render(request, "eventedit.html", context)
 
@@ -367,6 +375,13 @@ def invite_delete(request, invite_id):
     if invite.event.host != request.user:
         return HttpResponse("Unauthorized", status=401)
 
+    try:
+        notification = Notification.objects.get(target_object_id=invite.id)
+    except Notification.DoesNotExist:
+        pass
+    else:
+        notification.delete()
+
     invite.delete()
     return redirect(event, invite.event.id)
 
@@ -375,7 +390,6 @@ def participant_delete(request, participant_id):
 
     try:
         participant = Participant.objects.get(id=participant_id)
-
     except Participant.DoesNotExist:
         return HttpResponseNotFound("Unknown participant")
 

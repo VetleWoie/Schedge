@@ -63,7 +63,9 @@
                     <td>{{ event.description }}</td>
                 </tr>
             </table>
-            <a href="/event/{{ event.id}}/edit/" class="editbtn">Edit</a>
+            {% if user == event.host %}
+                <a href="/event/{{ event.id}}/edit/" class="editbtn">Edit</a>
+            {% endif %}
         </div>
 
     </div>
@@ -132,6 +134,17 @@
                     <td>
                         {{participant.user.first_name}} {{participant.user.last_name}}
                     </td>
+                    <td>
+                    {% if participant.user == user %}
+                        (you)
+                    {% elif user == event.host %}
+                        <form action="{% url 'participant_delete' participant_id=participant.id %}" method="POST"
+                        enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="submit" value="🗑">
+                    </form>
+                    {% endif %}
+                </td>
                 </tr>
                 {% endfor %}
             </table>
@@ -143,6 +156,17 @@
                 <tr>
                     <td>
                         {{invite.invitee.first_name}} {{invite.invitee.last_name}}
+                    </td>
+                    <td>
+                        {% if invite.user == user %}
+                            (you)
+                        {% elif user == event.host %}
+                            <form action="{% url 'invite_delete' invite_id=invite.id %}" method="POST"
+                            enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="submit" value="🗑">
+                        </form>
+                        {% endif %}
                     </td>
                 </tr>
                 {% endfor %}
