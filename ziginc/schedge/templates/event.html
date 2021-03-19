@@ -132,13 +132,13 @@
                 {% for participant in participants %}
                 <tr>
                     <td>
-                        {{participant.user.first_name}} {{participant.user.last_name}}
+                        {{participant.first_name}} {{participant.last_name}}
                     </td>
                     <td>
-                    {% if participant.user == user %}
+                    {% if participant == user %}
                         (you)
                     {% elif user == event.host %}
-                        <form action="{% url 'participant_delete' participant_id=participant.id %}" method="POST"
+                        <form action="{% url 'participant_delete' event_id=event.id user_id=participant.id %}" method="POST"
                         enctype="multipart/form-data">
                         {% csrf_token %}
                         <input type="submit" value="🗑">
