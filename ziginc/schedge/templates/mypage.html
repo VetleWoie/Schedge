@@ -11,8 +11,8 @@
 
 <div id="box_myevents">
     <div class="title_main">m&nbsp;y&nbsp;&nbsp;e&nbsp;v&nbsp;e&nbsp;n&nbsp;t&nbsp;s</div>
-    {% if hostUndecided %}
-    {% for event in hostUndecided %}
+    {% if host_undecided %}
+    {% for event in host_undecided %}
     <a href="{% url 'event' event_id=event.id %}" class="invislink">
         <div class="box">
             <div class="title"> {{event.title}}</div>
@@ -27,7 +27,7 @@
             </table>
             <!-- <div class="description_text">{{event.description}}</div> -->
             <div class="n_partic"><img src="{% static 'icons/group.png' %}" class="group_icon" width="25px"></div>
-            <div class="n_text">{{ forloop.counter }}&nbsp;/&nbsp;5</div>
+            <div class="n_text">{{ event.n_attendees }}</div>
             <div class="event_btn result_btn">see replies</div>
         </div>
     </a>
@@ -44,8 +44,8 @@
         u&nbsp;p&nbsp;c&nbsp;o&nbsp;m&nbsp;i&nbsp;n&nbsp;g&nbsp;&nbsp;e&nbsp;v&nbsp;e&nbsp;n&nbsp;t&nbsp;s&nbsp;
     </div>
     <div class="title_sub">host</div>
-    {% if upcomingHost %}
-    {% for event in upcomingHost %}
+    {% if host_decided %}
+    {% for event in host_decided %}
     <div class="box">
         <ul>
             <li class="title"> {{event.title}}</li>
@@ -59,8 +59,8 @@
     <div class="nothing">you are not a host for any upcoming events</div>
     {% endif %}
     <div class="title_sub">participant</div>
-    {% if upcomingParticipant %}
-    {% for participant in upcomingParticipant %}
+    {% if participant_as_guest %}
+    {% for participant in participant_as_guest %}
     <a href="{% url 'event' event_id=participant.event.id %}" class="invislink">
         <div class="box extra_bottom">
             <div class="title"> {{participant.event.title}}</div>
@@ -71,10 +71,8 @@
                     <td><img src="{% static 'icons/placeholder.png' %}" class="icons" width="25px"></td>
                     <td class="info_text">{{participant.event.location}}</td>
                     <td><img src="{% static 'icons/group.png' %}" class="icons" width="25px"></td>
-                    <td class="info_text">3</td>
-
+                    <td class="info_text">{{participant.event.n_attendees}}</td>
                 </tr>
-
             </table>
         </div>
     </a>

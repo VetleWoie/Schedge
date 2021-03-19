@@ -64,16 +64,22 @@ class InviteTest(TestCase):
         # the invitation is on the mypage
         self.assertIn(self.inv, response.context["invites"])
 
-    @skip("doesn't work yet")
     def test_accept_invitation(self):
         # other invites me
         response = self.client.get(f"/invite_accept/{self.inv.id}/")
         # the accepting should redirect
         self.assertEqual(response.status_code, 302)
 
-    @skip("doesn't work yet")
     def test_reject_invitation(self):
         # other invites me
         response = self.client.get(f"/invite_reject/{self.inv.id}/")
         # the accepting should redirect
         self.assertEqual(response.status_code, 302)
+
+    def test_delete_invitation(self):
+        
+        response = self.client.post(f"/invite_delete/{self.inv.id}/")
+        self.assertEqual(response.status_code, 302)
+        
+        with self.assertRaises(Invite.DoesNotExist):
+            Invite.objects.get(id=self.inv.id)

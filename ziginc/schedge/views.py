@@ -18,20 +18,28 @@ from django.views import generic
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.models import User
+from collections import namedtuple
+
+from .utils import riise_hofsøy, create_time_slot
+
+from django.db.models.signals import post_save
+from notifications.signals import notify
+from notifications.models import Notification
 
 
 @login_required(login_url="/login/")
 def mypage(request):
     user = request.user
-    hostUndecided = Event.objects.filter(host=user, status="U")
-    hostDecided = Event.objects.filter(host=user, status="C")
-    upcomingParticipant = Participant.objects.filter(user=user, ishost=False)
+    host_undecided = Event.objects.filter(host=user, status="U")
+    host_decided = Event.objects.filter(host=user, status="C")
+    participant_as_guest = Participant.objects.filter(user=user, ishost=False)
+
     invites = Invite.objects.filter(invitee=user)
-    # upcomingParticipant = userevents.exclude(hostID=Simulated_user)
+    # participants = userevents.exclude(hostID=Simulated_user)
     context = {
-        "hostUndecided": hostUndecided,
-        "upcomingHost": hostDecided,
-        "upcomingParticipant": upcomingParticipant,
+        "host_undecided": host_undecided,
+        "host_decided": host_decided,
+        "participant_as_guest": participant_as_guest,
         "invites": invites,
     }
     return render(request, "mypage.html", context)
@@ -66,75 +74,7 @@ def create_event(request):
     context = {"form": form}
     return render(request, "createevent.html", context)
 
-def find_potential_time_slots(event):
-    riise_hofsøy(event)
 
-def riise_hofsøy(event):
-    def get_key(k):
-        return k[0]
-    def find_time(t):
-        return dt.datetime.strptime(dt.datetime.strftime(t, '%H:%M'), "%H:%M").time()        
-        
-    time_slots = TimeSlot.objects.filter(event=event)
-    PotentialTimeSlot.objects.filter(event=event).delete()
-
-    t_table = []
-    for ts in time_slots:
-        t_table.append((dt.datetime.combine(ts.date, ts.start_time), +1, ts))
-        t_table.append((dt.datetime.combine(ts.date, ts.end_time), -1, ts))
-    t_table.sort(key=get_key)
-
-    S = []
-    in_pts = []
-    cnt = 0
-    min_cnt = 2 # TODO replace with event.min_cnt or equivalent
-    start = dt.datetime(1,1,1,0,0,0)
-    end = dt.datetime(1,1,1,0,0,0)
-
-    for i, t in enumerate(t_table):
-        cnt += t[1]
-        if t[1] == 1: # step up
-            S.append(t[2])
-            start = t[0]
-            in_pts = S.copy()
-
-            for sub_t in t_table[i:]:
-                if sub_t[1] == 1 or not sub_t[2] in in_pts:
-                    continue
-                end = sub_t[0]
-
-                if len(in_pts) >= min_cnt and end - start >= event.duration: # Only add/update pts if new one is valid
-                    pts = PotentialTimeSlot.objects.filter(event=event, start_time=find_time(start), end_time=find_time(end), date=t[2].date)
-                    if pts.exists():
-                        pts[0].participants.add(t[2].creator)
-                    else:
-                        pts = PotentialTimeSlot.objects.create(event=event, start_time=find_time(start), end_time=find_time(end), date=t[2].date)
-                        for ts in in_pts:
-                            pts.participants.add(ts.creator)
-                if sub_t[2] == t[2]:
-                    break
-                in_pts.remove(sub_t[2])
-        else: #  step down
-            S.remove(t[2])
-
-
-
-
-# merges new timeslot to existing from same user if they overlap
-def check_overlap_ts(event, user, start, end, date, first):
-    time_slots = TimeSlot.objects.filter(event=event, creator=user)
-    for ts in time_slots:
-        if (ts.start_time >= end or ts.end_time >= start) and date == ts.date: # Check if intersection exists
-            ts_start = ts.start_time
-            ts_end = ts.end_time
-            ts.delete()
-            return check_overlap_ts(event, user, min(start, ts_start), max(end, ts_end), date, 0)
-    if not first:
-        TimeSlot.objects.create(event=event, start_time=start, end_time=end, date=date, creator=user)
-        riise_hofsøy(event)
-        return
-    return first
-    
 @login_required(login_url="/login/")
 def event(request, event_id):
     try:
@@ -144,19 +84,17 @@ def event(request, event_id):
         raise Http404("404: not valid event id")
 
     if request.method == "POST":
-        timeslotform = TimeSlotForm(request.POST)
+        timeslotform = TimeSlotForm(request.POST, duration=this_event.duration)
         creator = request.user
 
-        if timeslotform.is_valid()  and creator.is_authenticated:
+        if timeslotform.is_valid() and creator.is_authenticated:
             timeslotdata = timeslotform.cleaned_data
-            if check_overlap_ts(this_event, creator, timeslotdata["start_time"], timeslotdata["end_time"], timeslotdata["date"], 1):
-                newtimeslot = TimeSlot.objects.create(event=this_event, creator=creator, **timeslotdata)
-                find_potential_time_slots(this_event) # check for new potential ts with new ts
+            create_time_slot(this_event, creator, timeslotdata)
+
         else:
             # TODO: rewrite maybe.
             # shouldn't be possible through the website though. only through manual post
             return HttpResponseBadRequest("Invalid Form!")
-
 
     potentialtimeslots = PotentialTimeSlot.objects.filter(event=this_event)
     # if not potentialtimeslots:
@@ -165,10 +103,9 @@ def event(request, event_id):
     timeslotform = TimeSlotForm()
     timeslotform.set_limits(this_event)
 
-
     participants = Participant.objects.filter(event=this_event)
     invites = Invite.objects.filter(event=this_event)
-    
+
     inviteform = InviteForm(invites=invites, accepted=participants, user=request.user)
 
     context = {
@@ -177,7 +114,8 @@ def event(request, event_id):
         "timeslots": timeslots,
         "inviteform": inviteform,
         "participants": participants,
-        "invites": invites
+        "invites": invites,
+        "pts": potentialtimeslots,
     }
     return render(request, "event.html", context)
 
@@ -202,6 +140,27 @@ def timeslot_delete(request, event_id, timeslot_id):
     return redirect(event, event_id)
 
 
+def notify_if_change(event, newdata, user):
+    """sends notification from user to all participants
+    if the new data is different than the event's old data"""
+    if any(getattr(event, k) != newdata[k] for k in newdata):
+        # there is at least one difference
+        # send notifications to all attendees except ourselves.
+        participants = Participant.objects.filter(event=event, ishost=False)
+        user_ids = participants.values_list("user", flat=True)
+        users = User.objects.filter(id__in=user_ids)
+
+        # send notifications
+        notify.send(
+            user,
+            recipient=users,
+            target=event,
+            verb="event edited",
+            title=event.title,
+            url=f"/event/{event.id}/",
+        )
+
+
 @login_required(login_url="/login/")
 def eventedit(request, event_id):
     try:
@@ -210,17 +169,21 @@ def eventedit(request, event_id):
     except Event.DoesNotExist:
         return HttpResponseNotFound("404: not valid event id")
 
+    if request.user != this_event.host:
+        return HttpResponse("Unauthorized", status=401)
+
     if request.method == "POST":
         # get info in the form
         form = EventForm(request.POST, request.FILES)
         if form.is_valid():
             data = form.cleaned_data
             oldimg = this_event.image
+            notify_if_change(this_event, data, request.user)
+
             this_event.__dict__.update(data)
 
             this_event.image = request.FILES.get("image", oldimg)
             this_event.save()
-
             return redirect(event, this_event.id)
         else:
             return HttpResponseBadRequest("Invalid Form!")
@@ -232,20 +195,44 @@ def eventedit(request, event_id):
         "endtime": this_event.endtime.strftime("%H:%M"),
         "duration": [seconds // 86400, (seconds // 3600) % 24, (seconds // 60) % 60],
     }
-    
+
     form = EventForm(instance=this_event, initial=initial_times)
-    
     context = {"event": this_event, "form": form}
+
     return render(request, "eventedit.html", context)
 
 
 @login_required(login_url="/login/")
 def event_delete(request, event_id):
-    if request.method == "POST":
-        Event.objects.get(id=event_id).delete()
-        timeslots = TimeSlot.objects.filter(id=event_id)
-        timeslots.delete()
+    try:
+        event_del = Event.objects.get(id=event_id)
+    except Event.DoesNotExist:
+        return HttpResponseNotFound("Event not found")
 
+    if request.method != "POST":
+        return HttpResponseBadRequest("Bad request")
+
+    if request.user != event_del.host:
+        return HttpResponse("Unauthorized", status=401)
+
+    par = Participant.objects.filter(event=event_del, ishost=False)
+    user_ids = par.values_list("user", flat=True)
+    users = User.objects.filter(id__in=user_ids)
+
+    timeslots = TimeSlot.objects.filter(id=event_id)
+    timeslots.delete()
+
+    Notification.objects.filter(target_object_id=event_del.id).delete()
+    notify.send(
+        request.user,
+        recipient=users,
+        target=event_del,
+        verb="event deleted",
+        title=event_del.title,
+        url="/mypage/",
+    )
+
+    event_del.delete()
     return redirect(mypage)
 
 
@@ -288,24 +275,33 @@ def event_invite(request, event_id):
     if form.is_valid():
         data = form.cleaned_data
         invitee = data["invitee"]
-        invirer = request.user
+        inviter = request.user
         is_duplicate = Invite.objects.filter(
-            event=this_event, inviter=invirer, invitee=invitee
+            event=this_event, inviter=inviter, invitee=invitee
         ).exists()
 
         if is_duplicate:
             # TODO: what do we do?
             return HttpResponseBadRequest("You have already invited this person!")
-            pass
-        elif invitee == request.user:
+        elif invitee == inviter:
             return HttpResponseBadRequest("You cannot invite yourself")
         else:
             invite = Invite.objects.create(
                 event=this_event,
-                inviter=invirer,
+                inviter=inviter,
                 invitee=invitee,
                 senttime=django.utils.timezone.now(),
             )
+            notify.send(
+                inviter,
+                recipient=invitee,
+                target=this_event,
+                verb="invite",
+                title=this_event.title,
+                url=f"/event/{invite.event.id}/",
+                invite_id=invite.id,
+            )
+
     else:
         return HttpResponseBadRequest("Invalid Form!")
     return redirect(event, event_id)
@@ -317,8 +313,24 @@ def invite_accept(request, invite_id):
     except Invite.DoesNotExist:
         return HttpResponseBadRequest("Unknown invite")
 
+    try:
+        notif = Notification.objects.get(target_object_id=invite.id)
+    except Notification.DoesNotExist:
+        pass
+    else:
+        notif.mark_as_read()
+
     assert invite.invitee == request.user
     Participant.objects.create(event=invite.event, user=invite.invitee, ishost=False)
+
+    notify.send(
+        invite.invitee,
+        recipient=invite.inviter,
+        target=invite.event,
+        verb=f"invite accepted",
+        title=invite.event.title,
+        url=f"/event/{invite.event.id}/",
+    )
 
     invite.delete()
 
@@ -331,5 +343,81 @@ def invite_reject(request, invite_id):
     except Invite.DoesNotExist:
         return HttpResponseBadRequest("Unknown invite")
 
+    try:
+        notif = Notification.objects.get(target_object_id=invite.id)
+    except Notification.DoesNotExist:
+        pass
+    else:
+        notif.mark_as_read()
+
+    notify.send(
+        invite.invitee,
+        recipient=invite.inviter,
+        target=invite.event,
+        verb=f"invite rejected",
+        title=invite.event.title,
+        url=f"/event/{invite.event.id}/",
+    )
     invite.delete()
     return redirect(mypage)
+
+
+def invite_delete(request, invite_id):
+    try:
+        invite = Invite.objects.get(id=invite_id)
+
+    except Invite.DoesNotExist:
+        return HttpResponseBadRequest("Unknown invite")
+
+    if request.method != "POST":
+        return HttpResponseBadRequest("Bad request")
+
+    if invite.event.host != request.user:
+        return HttpResponse("Unauthorized", status=401)
+
+    try:
+        notification = Notification.objects.get(target_object_id=invite.id)
+    except Notification.DoesNotExist:
+        pass
+    else:
+        notification.delete()
+
+    invite.delete()
+    return redirect(event, invite.event.id)
+
+
+def participant_delete(request, participant_id):
+
+    try:
+        participant = Participant.objects.get(id=participant_id)
+    except Participant.DoesNotExist:
+        return HttpResponseNotFound("Unknown participant")
+
+    if request.method != "POST":
+        return HttpResponseBadRequest("Bad request")
+
+    if participant.event.host != request.user or participant.ishost:
+        return HttpResponse("Unauthorized", status=401)
+
+    TimeSlot.objects.filter(event=participant.event, creator=participant.user).delete()
+    participant.delete()
+
+    notify.send(
+        request.user,
+        recipient=participant.user,
+        target=participant.event,
+        verb=f"participant deleted",
+        title=participant.event.title,
+        url=f"/event/{participant.event.id}/",
+    )
+
+    return redirect(event, participant.event.id)
+
+
+def mark_notification_as_read(request, notif_id):
+    try:
+        notif = Notification.objects.get(id=notif_id)
+    except Notification.DoesNotExist:
+        return HttpResponseNotFound("notification not found", status=404)
+    notif.mark_as_read()
+    return HttpResponse("ok", status=200)

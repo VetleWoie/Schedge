@@ -6,7 +6,7 @@ from django.contrib.auth.models import User, UserManager
 import datetime as dt
 from django.http import JsonResponse
 
-from schedge.views import find_potential_time_slots
+from schedge.utils import riise_hofsøy
 
 
 class TimeSlotTest(TestCase):
@@ -48,7 +48,7 @@ class TimeSlotTest(TestCase):
                                         date= dt.date(2020,1,1),
                                         event = self.event,
                                         creator = user)
-            find_potential_time_slots(self.event)
+            riise_hofsøy(self.event)
 
         #Get all potential timeslots from database
         potTimeSlot = PotentialTimeSlot.objects.all()
@@ -78,14 +78,14 @@ class TimeSlotTest(TestCase):
                                     date= dt.date(2020,1,1),
                                     event = self.event,
                                     creator = self.users[0])
-        find_potential_time_slots(self.event)
+        riise_hofsøy(self.event)
 
         t2 = TimeSlot.objects.create(start_time = dt.time(12,00,00),
                                     end_time = dt.time(18,00,00),
                                     date= dt.date(2020,1,1),
                                     event = self.event,
                                     creator = self.users[1])
-        find_potential_time_slots(self.event)
+        riise_hofsøy(self.event)
         
         #Get all potential timeslots from database
         potTimeSlot = PotentialTimeSlot.objects.all()
@@ -173,49 +173,49 @@ class TimeSlotTest(TestCase):
                                     date= dt.date(2020,1,1),
                                     event = event,
                                     creator = self.users[0])
-        find_potential_time_slots(event)
+        riise_hofsøy(event)
 
         t1 = TimeSlot.objects.create(start_time = dt.time(11,00,00),
                                     end_time = dt.time(13,00,00),
                                     date= dt.date(2020,1,1),
                                     event = event,
                                     creator = self.users[1])
-        find_potential_time_slots(event)
+        riise_hofsøy(event)
 
         t2 = TimeSlot.objects.create(start_time = dt.time(12,30,00),
                                     end_time = dt.time(18,00,00),
                                     date= dt.date(2020,1,1),
                                     event = event,
                                     creator = self.users[2])
-        find_potential_time_slots(event)
+        riise_hofsøy(event)
 
         t3 = TimeSlot.objects.create(start_time = dt.time(14,00,00),
                                     end_time = dt.time(15,00,00),
                                     date= dt.date(2020,1,1),
                                     event = event,
                                     creator = self.users[3])
-        find_potential_time_slots(event)
+        riise_hofsøy(event)
 
         t4 = TimeSlot.objects.create(start_time = dt.time(16,00,00),
                                     end_time = dt.time(17,00,00),
                                     date= dt.date(2020,1,1),
                                     event = event,
                                     creator = self.users[4])
-        find_potential_time_slots(event)
+        riise_hofsøy(event)
 
         t5 = TimeSlot.objects.create(start_time = dt.time(17,30,00),
                                     end_time = dt.time(18,30,00),
                                     date= dt.date(2020,1,1),
                                     event = event,
                                     creator = self.users[5])
-        find_potential_time_slots(event)
+        riise_hofsøy(event)
 
         t6 = TimeSlot.objects.create(start_time = dt.time(20,00,00),
                                     end_time = dt.time(21,00,00),
                                     date= dt.date(2020,1,1),
                                     event = event,
                                     creator = self.users[6])
-        find_potential_time_slots(event)
+        riise_hofsøy(event)
         
         #Get all potential timeslots from database
         potTimeSlot = PotentialTimeSlot.objects.order_by("start_time")
@@ -263,7 +263,7 @@ class TimeSlotTest(TestCase):
                                     date = date,
                                     event = self.event,
                                     creator = user)
-            find_potential_time_slots(self.event)
+            riise_hofsøy(self.event)
         #Get all potential timeslots from database
         potTimeSlot = PotentialTimeSlot.objects.order_by("date")
 
@@ -314,7 +314,7 @@ class TimeSlotTest(TestCase):
                                     date = dt.date(2021,1,1),
                                     event = self.event,
                                     creator = user)
-            find_potential_time_slots(self.event)
+            riise_hofsøy(self.event)
         
         #Get all potential timeslots from database
         potTimeSlot = PotentialTimeSlot.objects.order_by("start_time")
@@ -387,7 +387,7 @@ class TimeSlotTest(TestCase):
                                     date = dt.date(2021,1,1),
                                     event = self.event,
                                     creator = user)
-            find_potential_time_slots(self.event)
+            riise_hofsøy(self.event)
         
         #Get all potential timeslots from database
         potTimeSlot = PotentialTimeSlot.objects.order_by("start_time")
@@ -479,7 +479,7 @@ class TimeSlotTest(TestCase):
                                     date = dt.date(2021,1,1),
                                     event = self.event,
                                     creator = user)
-            find_potential_time_slots(self.event)
+            riise_hofsøy(self.event)
         
         #Get all potential timeslots from database
         potTimeSlot = PotentialTimeSlot.objects.order_by("start_time")
@@ -552,7 +552,7 @@ def test_nested_time_slot_same_date_with_non_valid_length_overlap_and_first_in_f
                                     date = dt.date(2021,1,1),
                                     event = self.event,
                                     creator = user)
-            find_potential_time_slots(self.event)
+            riise_hofsøy(self.event)
         
         #Get all potential timeslots from database
         potTimeSlot = PotentialTimeSlot.objects.order_by("start_time")
@@ -604,7 +604,7 @@ def test_nested_time_slot_same_date_with_valid_length_overlap_and_same_end(self)
                                     date = dt.date(2021,1,1),
                                     event = self.event,
                                     creator = user)
-            find_potential_time_slots(self.event)
+            riise_hofsøy(self.event)
         
         #Get all potential timeslots from database
         potTimeSlot = PotentialTimeSlot.objects.order_by("start_time")
@@ -656,14 +656,14 @@ def test_nested_time_slot_same_date_with_valid_length_overlap_and_same_end_and_o
                                     date = dt.date(2021,1,1),
                                     event = self.event,
                                     creator = user)
-            find_potential_time_slots(self.event)
+            riise_hofsøy(self.event)
 
         TimeSlot.objects.create(start_time = dt.time(11,00,00),
                                     end_time = dt.time(13,00,00),
                                     date = dt.date(2021,1,1),
                                     event = self.event,
                                     creator = self.users[3])
-        find_potential_time_slots(self.event)
+        riise_hofsøy(self.event)
 
         #Get all potential timeslots from database
         potTimeSlot = PotentialTimeSlot.objects.order_by("start_time")
