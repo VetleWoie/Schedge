@@ -32,12 +32,13 @@ class ParticipantTest(TestCase):
         # Make guest
         self.guest = User.objects.create_user("guest", "guest@test.com", "Elias123")
         self.date.participants.add(self.guest)
-          
-        
+
     def test_delete_guest_participant(self):
         """ Test for host deleting guest. """
 
-        response = self.client.post(f"/event/{self.date.id}/participant_delete/{self.guest.id}/")
+        response = self.client.post(
+            f"/event/{self.date.id}/participant_delete/{self.guest.id}/"
+        )
         self.assertEqual(response.status_code, 302)
 
         # Checking that the guest participant is deleted
@@ -47,13 +48,15 @@ class ParticipantTest(TestCase):
     def test_delete_hosting_participant(self):
         """ Test for the host trying to delete itself. """
 
-        response = self.client.post(f"/event/{self.date.id}/participant_delete/{self.host.id}/")
+        response = self.client.post(
+            f"/event/{self.date.id}/participant_delete/{self.host.id}/"
+        )
         self.assertEqual(response.status_code, 401)
 
         # Checking that the hosting participant is not deleted
         host = self.date.participants.get(id=self.host.id)
         self.assertTrue(host)
-    
+
     def test_unauthorized_guest_delete_guest(self):
         """ Test for one guest trying to delete another guest. """
 
@@ -65,7 +68,9 @@ class ParticipantTest(TestCase):
         self.client.login(username=self.guest.username, password="Elias123")
 
         # Deleting second guest
-        response = self.client.post(f"/event/{self.date.id}/participant_delete/{self.guest.id}/")
+        response = self.client.post(
+            f"/event/{self.date.id}/participant_delete/{self.guest.id}/"
+        )
         self.assertEqual(response.status_code, 401)
 
         # Checking that the second guest is not deleted
@@ -80,7 +85,9 @@ class ParticipantTest(TestCase):
         self.client.login(username=self.guest.username, password="Elias123")
 
         # Post request to delete host
-        response = self.client.post(f"/event/{self.date.id}/participant_delete/{self.host.id}/")
+        response = self.client.post(
+            f"/event/{self.date.id}/participant_delete/{self.host.id}/"
+        )
         self.assertEqual(response.status_code, 401)
 
         # Checking that the hosting participant is not deleted

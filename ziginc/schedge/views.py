@@ -213,12 +213,12 @@ def event_delete(request, event_id):
     if request.user != event_del.host:
         return HttpResponse("Unauthorized", status=401)
 
-    users = event_del.participants.exclude(id=request.user.id)
-
     timeslots = TimeSlot.objects.filter(id=event_id)
     timeslots.delete()
 
     Notification.objects.filter(target_object_id=event_del.id).delete()
+    
+    users = event_del.participants.exclude(id=request.user.id)
     notify.send(
         request.user,
         recipient=users,
@@ -267,6 +267,11 @@ def event_invite(request, event_id):
         return HttpResponseBadRequest(
             "invite view does not support other than post method"
         )
+
+    # only participants are allowed to invite others
+    if not this_event.participants.filter(id=request.user.id).exists():
+        return HttpResponse("Unautherized", status=401)
+
     form = InviteForm(request.POST, user=request.user)
     if form.is_valid():
         data = form.cleaned_data
@@ -309,6 +314,9 @@ def invite_accept(request, invite_id):
     except Invite.DoesNotExist:
         return HttpResponseBadRequest("Unknown invite")
 
+    if invite.invitee != request.user:
+        return HttpResponse("Unautherized", status=401)
+
     try:
         notif = Notification.objects.get(target_object_id=invite.id)
     except Notification.DoesNotExist:
@@ -316,7 +324,6 @@ def invite_accept(request, invite_id):
     else:
         notif.mark_as_read()
 
-    assert invite.invitee == request.user
     invite.event.participants.add(invite.invitee)
 
     notify.send(
@@ -338,6 +345,9 @@ def invite_reject(request, invite_id):
         invite = Invite.objects.get(id=invite_id)
     except Invite.DoesNotExist:
         return HttpResponseBadRequest("Unknown invite")
+
+    if invite.invitee != request.user:
+        return HttpResponse("Unautherized", status=401)
 
     try:
         notif = Notification.objects.get(target_object_id=invite.id)
@@ -379,7 +389,7 @@ def invite_delete(request, invite_id):
         pass
     else:
         notification.delete()
- 
+
     invite.delete()
     return redirect(event, invite.event.id)
 
