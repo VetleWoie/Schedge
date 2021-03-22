@@ -131,7 +131,7 @@ def timeslot_delete(request, event_id, timeslot_id):
             return HttpResponseNotFound("404: not valid timeslot id")
 
         timeslot.delete()
-        refactor_potential_time_slots(this_event)
+        riise_hofsøy(this_event)
 
     return redirect(event, event_id)
 
