@@ -5,6 +5,7 @@ from schedge.forms import EventForm
 import datetime as dt
 from django.http import JsonResponse
 from django.contrib.auth.models import User
+import os
 
 PASSWORD = "Elias123"
 
@@ -38,3 +39,22 @@ class EventEditTest(TestCase):
         response = self.client.get(f"/event/{self.event_id}/")
 
         self.assertEqual(response.context["event"].title, "climbing")
+
+    def test_edit_image(self):
+        with open("schedge/tests/mandrill.jpg", "rb") as fp:
+            edited_event_form = self.example_form.copy()
+            edited_event_form["image"] = fp
+            response = self.client.post(
+                f"/event/{self.event_id}/edit/", edited_event_form
+            )
+
+        self.assertEqual(response.status_code, 302)
+
+        response = self.client.get(f"/event/{self.event_id}/")
+
+        imgurl = response.context["event"].image.url
+        self.assertRegex(imgurl, r"^\/media\/images\/mandrill.*\.jpe?g$")
+
+        # delete the new file
+        # remove the initial slash to make it a relative path
+        os.remove(imgurl[1:])
