@@ -47,6 +47,8 @@ function parse_invitation_list(data) {
                 case "event edited":
                     message += item.actor + " has <span style=\"color:blue;\">edited</span> the event:</br>" + item.data.title
                     break;
+                case "time selected":
+                    message += item.actor + " has <span style=\"color:green;\"> picked a time </span> for the event:</br>" + item.data.title
                 default:
                     break;
             }

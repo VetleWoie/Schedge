@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.core.exceptions import ValidationError
-from schedge.models import Event, TimeSlot, Invite
+from schedge.models import Event, TimeSlot, Invite, PotentialTimeSlot
 from schedge.forms import EventForm
 from django.contrib.auth.models import User
 import datetime as dt
@@ -36,6 +36,7 @@ class NotificationTest(TestCase):
         self.client.post(f"/event/{self.event_id}/invite/", self.invite_form)
 
     def test_gets_notification_on_invite(self):
+        """ Test that a user gets notification when intived to event"""
         # assert invitee has an invitation
         notifications = Notification.objects.filter(recipient=self.invitee)
         # invitee should have 1 notification
@@ -52,6 +53,8 @@ class NotificationTest(TestCase):
         )
 
     def test_gets_notification_on_invite_accept(self):
+        """ Test that host gets notification when participant accepts invite to event"""
+        
         invite = Invite.objects.get(inviter=self.inviter)
         self.client.logout()
         self.client.login(username=self.invitee.username, password=PASSWORD)
@@ -70,6 +73,9 @@ class NotificationTest(TestCase):
         self.assertIs(notification.target, None)
 
     def test_gets_notification_on_invite_reject(self):
+        """ Test that host get notification when participant rejects invite to event"""
+        
+        
         invite = Invite.objects.get(inviter=self.inviter)
         self.client.logout()
         self.client.login(username=self.invitee.username, password=PASSWORD)
@@ -87,6 +93,7 @@ class NotificationTest(TestCase):
         self.assertIs(notification.target, None)
 
     def test_accept_marks_notification_as_read(self):
+        """ Test for marking the notification as read for accept notifications"""
         invite = Invite.objects.get(inviter=self.inviter)
         self.client.login(username=self.invitee.username, password=PASSWORD)
         response = self.client.post(f"/invite_accept/{invite.id}/")
@@ -98,6 +105,7 @@ class NotificationTest(TestCase):
         )
 
     def test_reject_marks_notification_as_read(self):
+        """ Test for marking the notification as read for reject notifications"""
         invite = Invite.objects.get(inviter=self.inviter)
         self.client.login(username=self.invitee.username, password=PASSWORD)
         response = self.client.post(f"/invite_reject/{invite.id}/")
@@ -109,6 +117,7 @@ class NotificationTest(TestCase):
         )
 
     def test_gets_notification_on_event_edit(self):
+        """ Test that a user gets notification when event is edited by host"""
         edited_event_form = self.example_form.copy()
         edited_event_form["title"] = "climbing"
 
@@ -127,6 +136,7 @@ class NotificationTest(TestCase):
         self.assertFalse(notifications.exists())
 
     def test_gets_notification_on_event_delete(self):
+        """ Test that users get notification if host deletes event"""
         # invitee is an attendee to the event.
         # they should therefore get a notif if it is deleted
         Event.objects.get(id=self.event_id).participants.add(self.invitee)
@@ -142,6 +152,7 @@ class NotificationTest(TestCase):
         self.assertFalse(notifications.exists())
 
     def test_gets_notification_on_participant_delete(self):
+        """ Test that participant gets notification if host removed them from an event"""
         # invitee is an attendee to the event.
         # they should therefore get a notif if it is deleted
         Event.objects.get(id=self.event_id).participants.add(self.invitee)
@@ -151,3 +162,47 @@ class NotificationTest(TestCase):
         notifications = Notification.objects.filter(recipient=self.invitee, verb="participant deleted")
         self.assertEqual(len(notifications), 1)
         self.assertTrue(notifications.exists())
+
+    def test_gets_notification_on_participant_leave(self):  
+        """ Test notification when a participant leaves"""
+        Event.objects.get(id=self.event_id).participants.add(self.invitee)
+
+        # Log into guest participants account
+        self.client.logout()
+        self.client.login(username=self.invitee.username, password=PASSWORD)
+
+        # Post a leave request
+        response = self.client.post(f"/event/{self.event_id}/participant_leave/{self.invitee.id}/")
+       
+        # Assert that there is a notification
+        notifications = Notification.objects.filter(recipient=self.inviter, verb="participant left")
+        self.assertEqual(len(notifications), 1)
+        self.assertTrue(notifications.exists())
+
+    def test_gets_notification_on_time_selected(self):
+        """ Test notification when the host decides the time for an event"""
+
+        Event.objects.get(id=self.event_id).participants.add(self.invitee)
+
+        # create timeslot
+        form = {"start_time": "06:00:00", "end_time": "20:00:00", "date":self.tomorrow}
+        self.client.post(f"/event/{self.event_id}/", form)
+
+        self.client.login(username=self.invitee.username, password=PASSWORD)
+
+        form = {"start_time": "07:00:00", "end_time": "22:00:00", "date": self.tomorrow}
+        self.client.post(f"/event/{self.event_id}/", form)
+
+        self.client.login(username=self.inviter.username, password=PASSWORD)
+
+        self.assertEqual(2, TimeSlot.objects.all().count())
+        event = Event.objects.get(id=self.event_id)
+        pts = PotentialTimeSlot.objects.get(event=event)
+        # Post a leave request
+        response = self.client.post(f"/event/{self.event_id}/select/{pts.id}/")
+       
+        # Assert that there is a notification
+        notifications = Notification.objects.filter(recipient=self.invitee, verb="time selected")
+        self.assertEqual(len(notifications), 1)
+        self.assertTrue(notifications.exists())
+        

@@ -153,6 +153,18 @@ def timeslot_select(request, event_id, pt_id):
 
     this_event.status = "C"
     this_event.save()
+    p_timeslot.chosen = True
+    p_timeslot.save()
+
+    users = this_event.participants.exclude(id=request.user.id)
+    notify.send(
+        request.user,
+        recipient=users,
+        target=this_event,
+        verb="time selected",
+        title=this_event.title,
+        url=f"/event/{this_event.id}/",
+    )
 
     return redirect(event, event_id)
 

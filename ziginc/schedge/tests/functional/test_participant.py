@@ -7,11 +7,26 @@ import datetime as dt
 from django.utils.timezone import now
 from unittest import skip
 
+PASSWORD = "Elias123"
+
+
+def as_guest(func):
+    """Log into bob before the method and login back to alice after.
+    In case the test is from Bob's perspective"""
+
+    def wrapper(*args, **kwargs):
+        self = args[0]
+        self.client.login(username=self.guest.username, password=PASSWORD)
+        func(*args, **kwargs)
+        self.client.login(username=self.host.username, password=PASSWORD)
+
+    return wrapper
+
 
 class ParticipantTest(TestCase):
     def setUp(self):
 
-        self.host = User.objects.create_user("host", "host@test.com", "Elias123")
+        self.host = User.objects.create_user("host", "host@test.com", PASSWORD)
 
         self.example_model = {
             "title": "date night",
@@ -27,10 +42,10 @@ class ParticipantTest(TestCase):
         self.date = Event.objects.create(**self.example_model)
 
         self.date.participants.add(self.host)
-        self.client.login(username=self.host.username, password="Elias123")
+        self.client.login(username=self.host.username, password=PASSWORD)
 
         # Make guest
-        self.guest = User.objects.create_user("guest", "guest@test.com", "Elias123")
+        self.guest = User.objects.create_user("guest", "guest@test.com", PASSWORD)
         self.date.participants.add(self.guest)
 
     def test_delete_guest_participant(self):
@@ -61,11 +76,11 @@ class ParticipantTest(TestCase):
         """ Test for one guest trying to delete another guest. """
 
         # Making a second guest
-        self.guest2 = User.objects.create_user("guest2", "guest2@test.com", "Elias123")
+        self.guest2 = User.objects.create_user("guest2", "guest2@test.com", PASSWORD)
         self.date.participants.add(self.guest2)
 
         self.client.logout()
-        self.client.login(username=self.guest.username, password="Elias123")
+        self.client.login(username=self.guest.username, password=PASSWORD)
 
         # Deleting second guest
         response = self.client.post(
@@ -82,7 +97,7 @@ class ParticipantTest(TestCase):
 
         # Logging into guest account
         self.client.logout()
-        self.client.login(username=self.guest.username, password="Elias123")
+        self.client.login(username=self.guest.username, password=PASSWORD)
 
         # Post request to delete host
         response = self.client.post(
@@ -93,3 +108,9 @@ class ParticipantTest(TestCase):
         # Checking that the hosting participant is not deleted
         host = self.date.participants.get(id=self.host.id)
         self.assertTrue(host)
+
+    @as_guest
+    def test_participant_leave(self):
+        self.client.post(f"/event/{self.date.id}/participant_leave/{self.guest.id}/")
+        response = self.client.get(f"/event/{self.date.id}/")
+        self.assertNotIn(self.guest, response.context["participants"])

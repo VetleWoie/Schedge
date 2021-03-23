@@ -33,7 +33,6 @@ class Event(models.Model):
     host = models.ForeignKey(
         get_user_model(), default=1, on_delete=models.CASCADE, related_name="host"
     )
-
     participants = models.ManyToManyField(get_user_model(), related_name="participants")
 
     error_css_class = "error"
@@ -105,6 +104,7 @@ class PotentialTimeSlot(models.Model):
     end_time = models.TimeField()
     date = models.DateField()
     participants = models.ManyToManyField(get_user_model())
+    chosen = models.BooleanField(default=False)
 
     def __str__(self):
         return f"PotentialTimeSlot(id={self.id}, on={self.event.id}, start_time={self.start_time}, end_time={self.end_time}, date={self.date}, participants={self.participants}"
