@@ -13,7 +13,7 @@ class Event(models.Model):
     """The event model
     TODO: Add more stuff"""
 
-    STATUS_OPTIONS = (("C", "Concluded"), ("U", "Unresolved"))
+    STATUS_OPTIONS = (("C", "Chosen"), ("U", "Unresolved"), ("F", "Finished"))
     title = models.CharField(max_length=100)
     location = models.CharField(max_length=300)
     description = models.TextField(blank=True, max_length=5000)

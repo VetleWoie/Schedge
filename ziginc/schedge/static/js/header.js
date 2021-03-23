@@ -35,6 +35,9 @@ function parse_invitation_list(data) {
                 case "participant deleted":
                     message += item.actor + " has <span style=\"color:red;\">removed</span> you from the event:</br>" + item.data.title
                     break;
+                case "participant left":
+                        message += item.actor + " has <span style=\"color:red;\">left</span> your event:</br>" + item.data.title
+                        break;
                 case "invite deleted":
                     message += item.actor + " has <span style=\"color:red;\">removed</span> you from the event:</br>" + item.data.title
                     break;

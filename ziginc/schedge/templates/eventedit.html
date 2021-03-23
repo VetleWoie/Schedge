@@ -22,16 +22,9 @@
     <form method="POST" action="/event/{{ event.id }}/edit/delete/" enctype="multipart/form-data" id="delete_form">
         {% csrf_token %}
         <!-- Make pop up work -->
-        <input type="submit" value="Delete event" class="btn" onclick="validateSubmit();return false;">
+        <input type="submit" value="Delete event" class="btn" onclick="validateSubmit('Are you sure you want to delete?', 'delete_form');return false;">
     </form>
-    <script>
-        function validateSubmit() {
-            result = confirm("Are you sure you want to delete?");
-            if (result) {
-                $('#delete_form').submit();
-            }
-        }
-    </script>
+    <script src="{% static 'js/event.js' %}"></script>
 </body>
 
 </html>

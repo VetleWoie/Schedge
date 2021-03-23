@@ -64,12 +64,21 @@
                 </tr>
             </table>
             {% if user == event.host %}
-                <a href="/event/{{ event.id}}/edit/" class="editbtn">Edit</a>
+            <form action="{% url 'eventedit' event_id=event.id %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="submit" value="Edit" class="eventbtn">
+            </form>
+            {% else %}
+            <form action="{% url 'participant_leave' event_id=event.id user_id=user.id %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="submit" value="Leave event" class="eventbtn">
+            </form>
             {% endif %}
         </div>
 
     </div>
     <div class="right_box">
+        {% if event.status == "U"%}
         <div class="centred blob">
             <h2>Pick a Time</h2>
             <form action="{% url 'event' event_id=event.id %}" method="post" enctype="multipart/form-data">
@@ -111,10 +120,23 @@
                         <td>Date</td>
                         <td>{{pt.date }}</td>
                     </tr>
+                    <tr>
+                        <td>
+                            {% if user == event.host%}
+                            <form action="{% url 'timeslot_select' event_id=event.id pt_id=pt.id %}" method="POST"
+                                enctype="multipart/form-data" id='select_time'>
+                                {% csrf_token %}
+                                <input type="submit" value="choose"
+                                    onclick="validateSubmit('Are you sure you want to choose this time?', 'select_time');return false;">
+                            </form>
+                            {% endif%}
+                        </td>
+                    </tr>
                 </table>
             </div>
             {% endfor %}
         </div>
+        {% endif %}
         <div class="centred blob">
             <h2>Invite Someone</h2>
             <form action="{% url 'event_invite' event_id=event.id%}" method="post" enctype="multipart/form-data">
@@ -135,20 +157,21 @@
                         {{participant.first_name}} {{participant.last_name}}
                     </td>
                     <td>
-                    {% if participant == user %}
+                        {% if participant == user %}
                         (you)
-                    {% elif user == event.host %}
-                        <form action="{% url 'participant_delete' event_id=event.id user_id=participant.id %}" method="POST"
-                        enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <input type="submit" value="🗑">
-                    </form>
-                    {% endif %}
-                </td>
+                        {% elif user == event.host %}
+                        <form action="{% url 'participant_delete' event_id=event.id user_id=participant.id %}"
+                            method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="submit" value="🗑">
+                        </form>
+                        {% endif %}
+                    </td>
                 </tr>
                 {% endfor %}
             </table>
         </div>
+        {% if invites %}
         <div class="centred blob">
             <h2>Pending Invitations</h2>
             <table class="centred people">
@@ -159,9 +182,9 @@
                     </td>
                     <td>
                         {% if invite.user == user %}
-                            (you)
+                        (you)
                         {% elif user == event.host %}
-                            <form action="{% url 'invite_delete' invite_id=invite.id %}" method="POST"
+                        <form action="{% url 'invite_delete' invite_id=invite.id %}" method="POST"
                             enctype="multipart/form-data">
                             {% csrf_token %}
                             <input type="submit" value="🗑">
@@ -172,6 +195,8 @@
                 {% endfor %}
             </table>
         </div>
+        {% endif %}
     </div>
 </div>
+<script src="{% static 'js/event.js' %}"></script>
 {% endblock %}

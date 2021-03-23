@@ -68,7 +68,7 @@ textarea {
     min-height: 2em;
 }
 
-.editbtn {
+.eventbtn {
     text-align: right;
     float: right;
     /* padding: 3% 3% 3% 3%; */
@@ -88,7 +88,7 @@ textarea {
     font-size: 20px;
 }
 
-.editbtn:hover {
+.eventbtn:hover {
     cursor: pointer;
     /* margin-top: 20px; */
     box-shadow: 2.5px 2.5px 0px gray;

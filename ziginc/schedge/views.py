@@ -136,6 +136,26 @@ def timeslot_delete(request, event_id, timeslot_id):
     return redirect(event, event_id)
 
 
+def timeslot_select(request, event_id, pt_id):
+
+    if request.method != "POST":
+        return HttpResponseBadRequest("Request method not allowed")
+
+    try:
+        this_event = Event.objects.get(id=event_id)
+    except Event.DoesNotExist:
+        raise Http404("Not valid event id")
+
+    try:
+        p_timeslot = PotentialTimeSlot.objects.get(id=pt_id, event=this_event)
+    except TimeSlot.DoesNotExist:
+        return HttpResponseNotFound("404: not valid timeslot id")
+
+    this_event.status = "C"
+    this_event.save()
+
+    return redirect(event, event_id)
+
 def notify_if_changed(event, newdata, user):
     """sends notification from user to all participants
     if the new data is different than the event's old data"""
@@ -153,6 +173,7 @@ def notify_if_changed(event, newdata, user):
             title=event.title,
             url=f"/event/{event.id}/",
         )
+
 
 
 @login_required(login_url="/login/")
@@ -427,6 +448,37 @@ def participant_delete(request, event_id, user_id):
     )
 
     return redirect(event, this_event.id)
+
+
+def participant_leave(request, event_id, user_id):
+    try:
+        this_event = Event.objects.get(id=event_id)
+    except User.DoesNotExist:
+        return HttpResponseNotFound("Unknown event")
+
+    if request.method != "POST":
+        return HttpResponseBadRequest("Bad request")
+
+    try:
+        user = this_event.participants.get(id=user_id)
+    except User.DoesNotExist:
+        return HttpResponseNotFound("Unknown User")
+
+    # remove the timeslots created by this user
+    TimeSlot.objects.filter(event=this_event, creator=user).delete()
+    # remove user from the event's participants
+    this_event.participants.remove(user)
+
+    # notify host that user left
+    notify.send(
+        user,
+        recipient=this_event.host,
+        target=this_event,
+        verb=f"participant left",
+        title=this_event.title,
+        url=f"/event/{this_event.id}",
+    )
+    return redirect(mypage)
 
 
 def mark_notification_as_read(request, notif_id):
