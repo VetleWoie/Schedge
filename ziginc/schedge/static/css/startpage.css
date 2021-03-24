@@ -1,0 +1,18 @@
+.main_tit {
+    font-size: 50px;
+    margin-top: 30vh;
+    color: #343a40;
+}
+
+
+.si_btn {
+    padding: 10px 40px;
+    font-size: 25px;
+    border-radius: 20px;
+    background-color: #343a40;
+}
+
+.sub_txt {
+    font-size: 20px;
+}
+
