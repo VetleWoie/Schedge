@@ -2,7 +2,6 @@
 {% load static %}
 {% block title %}Schedge{% endblock %}
 {% block stylesheet %}
-<link rel="stylesheet" href="{% static 'css/help_styles.css' %}" />
 <link rel="stylesheet" href="{% static 'css/startpage.css' %}" />
 {% endblock %}
 
@@ -30,13 +29,15 @@
       </div>
   </div>
   <div class="row justify-content-center m_top_l">
+    <a href="{% url 'login' %}" id="sign-in">
       <button type="button" class="btn btn-secondary si_btn txt_large">Sign in</button>
+    </a>
   </div>
   <div class="row">
       <div class="col txt_center m_top_xsmall txt_bold">OR</div>
   </div>
   <div class="row justify-content-center m_top_xsmall">
-      <a class="simple_link" href="#">Create an account</a>
+      <a href="{% url 'signup' %}" class="simple_link txt_large">Create an account</a>
   </div>
 
 </div>
