@@ -79,7 +79,7 @@ def create_time_slot(event, user, timeslotdata):
             ts_end = ts.end_time
             ts.delete()
             return create_time_slot(
-                event, user, {"start_timem":min(start, ts_start), "end_time": max(end, ts_end), "date": date}
+                event, user, {"start_time":min(start, ts_start), "end_time": max(end, ts_end), "date": date}
             )
     TimeSlot.objects.create(
         event=event, start_time=start, end_time=end, date=date, creator=user
