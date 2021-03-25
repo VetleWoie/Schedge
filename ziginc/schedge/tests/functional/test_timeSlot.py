@@ -7,6 +7,7 @@ import datetime as dt
 from django.http import JsonResponse
 
 from schedge.utils import riise_hofsøy, create_time_slot
+from schedge.forms import TimeSlotForm
 
 
 class TimeSlotTest(TestCase):
@@ -71,6 +72,36 @@ class TimeSlotTest(TestCase):
         self.assertEqual(timeslots.end_time,expected["end_time"] , msg="End time should be %s but got %s" % (expected['end_time'], timeslots.end_time))
         self.assertEqual(timeslots.date,expected["date"] , msg="Date should be %s but got %s" % (expected['date'], timeslots.date))
         self.assertEqual(timeslots.creator,expected["creator"], msg="Creator should be %s but got %s" % (expected["creator"], timeslots.creator))    
+
+    def test_rollover_time_slot(self):
+        t1 = {
+            "start_time": dt.time(23,00,00),
+            "end_time": dt.time(1,00,00),
+            "date": dt.date(2020,1,1),
+        }
+        
+        form = TimeSlotForm(duration=self.event.duration,data=t1)
+        #Check errors in start time
+        with self.assertRaises(KeyError,msg="Expected no errors but got error(s) in starttime."):
+            print("\nExpected no errors in start time but got %d \n Errors: \n %s" % (len(form.errors["start_time"]),form.errors["start_time"]))
+            
+        #Check errors in end time    
+        with self.assertRaises(KeyError,msg="Expected no errors but got error(s) in end time."):
+            print("\nExpected no errors in end time but got %d \n Errors: \n %s" % (len(form.errors["end_time"]),form.errors["end_time"]))
+    
+    def test_rollover_time_slot(self):
+        t1 = {
+            "start_time": dt.time(23,30,00),
+            "end_time": dt.time(00,30,00),
+            "date": dt.date(2020,1,1),
+        }
+        
+        form = TimeSlotForm(duration=self.event.duration,data=t1)
+        #Check errors in start time
+        self.assertEqual(len(form.errors["start_time"]), 1, msg="Expected 1 error in start time got %d" % len(form.errors["start_time"]))            
+        #Check errors in end time    
+        self.assertEqual(len(form.errors["end_time"]), 1, msg="Expected 1 error in end_time got %d" % len(form.errors["end_time"]))            
+
 
     def test_same_time_slot(self):
         expected = {
