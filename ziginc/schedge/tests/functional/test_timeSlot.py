@@ -6,7 +6,7 @@ from django.contrib.auth.models import User, UserManager
 import datetime as dt
 from django.http import JsonResponse
 
-from schedge.utils import riise_hofsøy
+from schedge.utils import riise_hofsøy, create_time_slot
 
 
 class TimeSlotTest(TestCase):
@@ -34,7 +34,44 @@ class TimeSlotTest(TestCase):
         }
         self.event = Event.objects.create(**e, host=self.users[0])
         
-    
+    def test_create_time_slot(self):
+        expected = {
+            "event": self.event,
+            "start_time": dt.time(8,00,00),
+            "end_time": dt.time(14,00,00),
+            "date": dt.date(2020, 1, 1),
+            "creator": self.users[0],
+        }
+
+        t1 = {
+            "start_time": dt.time(8,00,00),
+            "end_time": dt.time(10,00,00),
+            "date": dt.date(2020,1,1),
+        }
+        t2 = {
+            "start_time": dt.time(12,00,00),
+            "end_time": dt.time(14,00,00),
+            "date": dt.date(2020,1,1),
+        }
+        t3 = {
+            "start_time": dt.time(10,00,00),
+            "end_time": dt.time(12,00,00),
+            "date": dt.date(2020,1,1),
+        }
+        
+        create_time_slot(self.event, self.users[0], t1)
+        create_time_slot(self.event, self.users[0], t2)
+        create_time_slot(self.event, self.users[0], t3)
+
+        timeslots = TimeSlot.objects.all()
+        self.assertEqual(len(timeslots), 1, msg="Should only be one timeslot found %s" % len(timeslots))        
+        timeslots = timeslots[0]
+        #Check timeslot values
+        self.assertEqual(timeslots.start_time,expected["start_time"] , msg="Start time should be %s but got %s" % (expected['start_time'], timeslots.start_time))        
+        self.assertEqual(timeslots.end_time,expected["end_time"] , msg="End time should be %s but got %s" % (expected['end_time'], timeslots.end_time))
+        self.assertEqual(timeslots.date,expected["date"] , msg="Date should be %s but got %s" % (expected['date'], timeslots.date))
+        self.assertEqual(timeslots.creator,expected["creator"], msg="Creator should be %s but got %s" % (expected["creator"], timeslots.creator))    
+
     def test_same_time_slot(self):
         expected = {
             "event" : self.event,
