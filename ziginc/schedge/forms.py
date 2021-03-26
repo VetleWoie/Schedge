@@ -87,7 +87,10 @@ class TimeSlotForm(forms.ModelForm):
     def clean(self):
         start = dt.datetime.combine(self.cleaned_data.get("date"), self.cleaned_data.get("start_time"))
         end = dt.datetime.combine(self.cleaned_data.get("date"), self.cleaned_data.get("end_time"))
-        if end - start < self.duration:
+        if end < start: # is rollover timeslot
+            end += dt.timedelta(1)
+
+        if end - start < self.duration: # time slot is too short
             raise forms.ValidationError(
                 {
                     "start_time": ["Time slot is too short"],
