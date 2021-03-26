@@ -1,0 +1,128 @@
+#login_box {
+    width: 45%;
+    margin: auto;
+    /*text-align: center;*/
+    margin-top: 2%;
+    background-color: white;
+    padding: 50px 0px 50px 0px;
+    box-shadow: 15px 15px 0px #2F323A;
+    border-radius: 50px;
+}
+
+.center {
+    text-align: center;
+}
+
+#sign-in-form {
+    font-size: 20px;
+}
+
+h2 {
+    font-family: 'Calibri', sans-serif;
+    
+    font-size: 75px;
+    color: #F36000;
+    /* font-weight: 700; */
+    text-shadow: 4px 4px 0px #F79F66;
+    letter-spacing: 10px;
+    padding-left: 10px;
+    margin-bottom: 2.5%;
+    margin-top: 0;
+}
+
+button[type=submit]{
+    width: 17.5%;
+    font-size: 15px;
+    /* z-index:-2; */
+    /* position: fixed; */
+    padding: 1.5% 0%;
+    height: auto;
+    /* top: 72.5%;
+    left: 52.5%;
+    margin-top: -2.5%; */
+
+    font-size: 150%;
+    border: none;
+    /* box-shadow: 15px 10px 0px #F0B5B3; */
+
+    /* transition: text .5s ease-in-out; */
+    font-weight: bold;
+    /* background-color: #FFF4F4; */
+    background-color: white;
+    background-color: #2F323A;
+    color: white;
+    margin-top: 2%;
+    margin-bottom: 4%;
+    border-radius: 50px;
+    
+}
+
+button[type=submit]:hover{
+    cursor: pointer;
+    background-color: #F36000;
+    color: white;
+}
+
+/* #id_username {
+   
+   
+}
+
+#id_password {
+   
+} */
+
+label {
+    letter-spacing: 2px;
+    font-size: 20px;
+}
+
+input[type=submit]{
+    width: 17.5%;
+    font-size: 15px;
+    /* z-index:-2; */
+    /* position: fixed; */
+    padding: 1.5% 0%;
+    height: auto;
+    /* top: 72.5%;
+    left: 52.5%;
+    margin-top: -2.5%; */
+
+    font-size: 100%;
+    border: none;
+    /* box-shadow: 15px 10px 0px #F0B5B3; */
+
+    /* transition: text .5s ease-in-out; */
+    font-weight: bold;
+    /* background-color: #FFF4F4; */
+    background-color: white;
+    background-color: #2F323A;
+    color: white;
+    margin-top: 2%;
+    margin-bottom: 4%;
+    border-radius: 50px;
+    
+}
+
+input[type=submit]:hover{
+    cursor: pointer;
+    background-color: #F36000;
+    color: white;
+}
+
+.psw_a {
+    color: black;
+}
+
+.wrapper {
+    display: inline-block;
+}
+
+.centerish {
+    margin-left: 30%;
+}
+
+.smaller {
+    font-size: 50px;
+    text-shadow: 2px 2px 0px #F79F66;
+}
