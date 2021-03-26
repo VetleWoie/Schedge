@@ -10,7 +10,7 @@ from schedge.utils import riise_hofsøy, create_time_slot
 from schedge.forms import TimeSlotForm
 
 
-class TimeSlotTest(TestCase):
+class PotentialTimeSlotTest(TestCase):
     def setUp(self):
 
         self.users = []
