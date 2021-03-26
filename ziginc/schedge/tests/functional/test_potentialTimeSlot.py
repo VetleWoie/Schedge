@@ -89,7 +89,7 @@ class PotentialTimeSlotTest(TestCase):
         with self.assertRaises(KeyError,msg="Expected no errors but got error(s) in end time."):
             print("\nExpected no errors in end time but got %d \n Errors: \n %s" % (len(form.errors["end_time"]),form.errors["end_time"]))
     
-    def test_rollover_time_slot(self):
+    def test_rollover_time_slot_with_invalid_length(self):
         t1 = {
             "start_time": dt.time(23,30,00),
             "end_time": dt.time(00,30,00),
