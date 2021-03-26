@@ -6,8 +6,7 @@ from django.contrib.auth.models import User, UserManager
 import datetime as dt
 from django.http import JsonResponse
 
-from schedge.utils import riise_hofsøy, create_time_slot
-from schedge.forms import TimeSlotForm
+from schedge.utils import riise_hofsøy
 
 
 class PotentialTimeSlotTest(TestCase):
@@ -33,74 +32,7 @@ class PotentialTimeSlotTest(TestCase):
             "endtime" : dt.time(00,00,00),
             "duration" : dt.timedelta(hours=2),
         }
-        self.event = Event.objects.create(**e, host=self.users[0])
-        
-    def test_create_time_slot(self):
-        expected = {
-            "event": self.event,
-            "start_time": dt.time(8,00,00),
-            "end_time": dt.time(14,00,00),
-            "date": dt.date(2020, 1, 1),
-            "creator": self.users[0],
-        }
-
-        t1 = {
-            "start_time": dt.time(8,00,00),
-            "end_time": dt.time(10,00,00),
-            "date": dt.date(2020,1,1),
-        }
-        t2 = {
-            "start_time": dt.time(12,00,00),
-            "end_time": dt.time(14,00,00),
-            "date": dt.date(2020,1,1),
-        }
-        t3 = {
-            "start_time": dt.time(10,00,00),
-            "end_time": dt.time(12,00,00),
-            "date": dt.date(2020,1,1),
-        }
-        
-        create_time_slot(self.event, self.users[0], t1)
-        create_time_slot(self.event, self.users[0], t2)
-        create_time_slot(self.event, self.users[0], t3)
-
-        timeslots = TimeSlot.objects.all()
-        self.assertEqual(len(timeslots), 1, msg="Should only be one timeslot found %s" % len(timeslots))        
-        timeslots = timeslots[0]
-        #Check timeslot values
-        self.assertEqual(timeslots.start_time,expected["start_time"] , msg="Start time should be %s but got %s" % (expected['start_time'], timeslots.start_time))        
-        self.assertEqual(timeslots.end_time,expected["end_time"] , msg="End time should be %s but got %s" % (expected['end_time'], timeslots.end_time))
-        self.assertEqual(timeslots.date,expected["date"] , msg="Date should be %s but got %s" % (expected['date'], timeslots.date))
-        self.assertEqual(timeslots.creator,expected["creator"], msg="Creator should be %s but got %s" % (expected["creator"], timeslots.creator))    
-
-    def test_rollover_time_slot(self):
-        t1 = {
-            "start_time": dt.time(23,00,00),
-            "end_time": dt.time(1,00,00),
-            "date": dt.date(2020,1,1),
-        }
-        
-        form = TimeSlotForm(duration=self.event.duration,data=t1)
-        #Check errors in start time
-        with self.assertRaises(KeyError,msg="Expected no errors but got error(s) in starttime."):
-            print("\nExpected no errors in start time but got %d \n Errors: \n %s" % (len(form.errors["start_time"]),form.errors["start_time"]))
-            
-        #Check errors in end time    
-        with self.assertRaises(KeyError,msg="Expected no errors but got error(s) in end time."):
-            print("\nExpected no errors in end time but got %d \n Errors: \n %s" % (len(form.errors["end_time"]),form.errors["end_time"]))
-    
-    def test_rollover_time_slot_with_invalid_length(self):
-        t1 = {
-            "start_time": dt.time(23,30,00),
-            "end_time": dt.time(00,30,00),
-            "date": dt.date(2020,1,1),
-        }
-        
-        form = TimeSlotForm(duration=self.event.duration,data=t1)
-        #Check errors in start time
-        self.assertEqual(len(form.errors["start_time"]), 1, msg="Expected 1 error in start time got %d" % len(form.errors["start_time"]))            
-        #Check errors in end time    
-        self.assertEqual(len(form.errors["end_time"]), 1, msg="Expected 1 error in end_time got %d" % len(form.errors["end_time"]))            
+        self.event = Event.objects.create(**e, host=self.users[0])        
 
 
     def test_same_time_slot(self):
