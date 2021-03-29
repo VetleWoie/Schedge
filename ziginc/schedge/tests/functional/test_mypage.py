@@ -8,7 +8,7 @@ from django.http import JsonResponse
 
 username='Ola'
 email='ola@mail.com'
-password='ola123'
+password='Elias123'
 class MyPageTest(TestCase):
     
     def setUp(self):
