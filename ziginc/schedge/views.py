@@ -37,7 +37,7 @@ def mypage(request):
 
     invites = Invite.objects.filter(invitee=user)
 
-    # Get events that will happen inbetween today and within the next seven days
+    # Get events that will happen in between today and within the next seven days
     today = dt.date.today()
     in_seven_days = today + dt.timedelta(7)
     this_weeks_events = Event.objects.filter(participants=user, status="C", startdate__gte=today, enddate__lte=in_seven_days)
