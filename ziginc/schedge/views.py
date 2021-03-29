@@ -27,6 +27,14 @@ from notifications.signals import notify
 from notifications.models import Notification
 
 
+def home(request):
+
+    user_count = User.objects.count()
+    context = {"user_count": user_count}
+
+    return render(request, "home.html", context)
+
+
 @login_required(login_url="/login/")
 def mypage(request):
     user = request.user

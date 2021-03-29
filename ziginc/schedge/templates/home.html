@@ -11,34 +11,41 @@
 
 
 <div class="container-fluid">
-  <div class="row txt_ls_med m_top_small">
-      <div class="col logo txt_large p_side_m">
-          Schedge
-      </div>
-      <div class="col txt_right txt_large p_side_m au_txt">
-          <a class="simple_link" href="#">about us</a>
-      </div>
-  </div>
-  <div class="row">
-      <div class="col txt_center main_tit txt_ls_l m_top_med">Schedge</div>
-  </div>
-  <div class="row">
-      <div class="col txt_center sub_txt m_top_med txt_ls_small">
-          Find the time that works for <span class="txt_large txt_cursive txt_bold">all</span> of you<br>
-          Do the same as <span class="n_users txt_large txt_cursive txt_bold">0</span> other people, join today!
-      </div>
-  </div>
-  <div class="row justify-content-center m_top_l">
-    <a href="{% url 'login' %}" id="sign-in">
-      <button type="button" class="btn btn-secondary si_btn txt_large">Sign in</button>
-    </a>
-  </div>
-  <div class="row">
-      <div class="col txt_center m_top_xsmall txt_bold">OR</div>
-  </div>
-  <div class="row justify-content-center m_top_xsmall">
-      <a href="{% url 'signup' %}" class="simple_link txt_large">Create an account</a>
-  </div>
+    <div class="row txt_ls_med m_top_small">
+        <div class="col logo txt_large p_side_m">
+            Schedge
+        </div>
+        <div class="col txt_right txt_large p_side_m au_txt">
+            <a class="simple_link" href="#">about us</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col txt_center main_tit txt_ls_l m_top_med">Schedge</div>
+    </div>
+    <div class="row">
+        <div class="col txt_center sub_txt m_top_med txt_ls_small">
+            Find the time that works for <span class="txt_large txt_cursive txt_bold">all</span> of you<br>
+            Do the same as <span class="n_users txt_large txt_cursive txt_bold">{{user_count}}</span> other
+            {%if user_count == 1%}
+            person,
+            {%else%}
+            people,
+            {%endif%}
+            join today!
+
+        </div>
+    </div>
+    <div class="row justify-content-center m_top_l">
+        <a href="{% url 'login' %}" id="sign-in">
+            <button type="button" class="btn btn-secondary si_btn txt_large">Sign in</button>
+        </a>
+    </div>
+    <div class="row">
+        <div class="col txt_center m_top_xsmall txt_bold">OR</div>
+    </div>
+    <div class="row justify-content-center m_top_xsmall">
+        <a href="{% url 'signup' %}" class="simple_link txt_large">Create an account</a>
+    </div>
 
 </div>
 
