@@ -36,11 +36,18 @@ def mypage(request):
     participant_as_guest = Event.objects.filter(participants=user).exclude(host=user)
 
     invites = Invite.objects.filter(invitee=user)
+
+    # Get events that will happen in between today and within the next seven days
+    today = dt.date.today()
+    in_seven_days = today + dt.timedelta(days=7)
+    this_weeks_events = Event.objects.filter(participants=user, status="C", startdate__gte=today, enddate__lte=in_seven_days)
+
     context = {
         "host_undecided": host_undecided,
         "host_decided": host_decided,
         "participant_as_guest": participant_as_guest,
         "invites": invites,
+        "this_week": this_weeks_events
     }
     return render(request, "mypage.html", context)
 
@@ -372,7 +379,7 @@ def invite_delete(request, invite_id):
     if invite.event.host != request.user:
         return HttpResponse("Unauthorized", status=401)
 
-    # silently remove the notifications
+    #  silently remove the notifications
     try:
         notification = Notification.objects.get(target_object_id=invite.id)
     except Notification.DoesNotExist:
