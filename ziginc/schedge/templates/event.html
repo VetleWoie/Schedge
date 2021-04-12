@@ -149,29 +149,31 @@
                 {% endfor %}
             </table>
         </div>
-        <div class="centred blob">
-            <h2>Pending Invitations</h2>
-            <table class="centred people">
-                {% for invite in invites %}
-                <tr>
-                    <td>
-                        {{invite.invitee.first_name}} {{invite.invitee.last_name}}
-                    </td>
-                    <td>
-                        {% if invite.user == user %}
-                            (you)
-                        {% elif user == event.host %}
-                            <form action="{% url 'invite_delete' invite_id=invite.id %}" method="POST"
-                            enctype="multipart/form-data">
-                            {% csrf_token %}
-                            <input type="submit" value="🗑">
-                        </form>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </table>
-        </div>
+        {% if user == event.host %}
+            <div id='pending_invites' class="centred blob">
+                <h2>Pending Invitations</h2>
+                <table class="centred people">
+                    {% for invite in invites %}
+                    <tr>
+                        <td>
+                            {{invite.invitee.first_name}} {{invite.invitee.last_name}}
+                        </td>
+                        <td>
+                            {% if invite.user == user %}
+                                (you)
+                            {% elif user == event.host %}
+                                <form action="{% url 'invite_delete' invite_id=invite.id %}" method="POST"
+                                enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="submit" value="🗑">
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
