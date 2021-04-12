@@ -91,7 +91,7 @@ class InviteTest(TestCase):
         self.assertContains(response, "id='pending_invites'")
     
     def test_invisible_pending_invites_as_guest(self):
-        # Check that an attendee is not able to see pending invites
+        # Check that an attendee is not able to see pending invites.
         self.client.logout()
         self.client.login(username=self.other.username, password='Elias123')
         response = self.client.get(f"/event/{self.hiking.id}/")
