@@ -116,7 +116,7 @@
             {% endfor %}
         </div>
         {% if user == event.host %}
-            <div class="centred blob">
+            <div class="centred blob" id="Invite_box">
                 <h2>Invite Someone</h2>
                 <form action="{% url 'event_invite' event_id=event.id%}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}

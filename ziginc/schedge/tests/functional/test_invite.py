@@ -83,3 +83,18 @@ class InviteTest(TestCase):
         
         with self.assertRaises(Invite.DoesNotExist):
             Invite.objects.get(id=self.inv.id)
+    
+    def test_invite_only_as_host(self):
+        response = self.client.get(f"/event/{self.hiking.id}/")
+        self.assertContains(response, 'id="Invite_box"')
+    
+    def test_try_invite_as_invitee(self):
+        self.client.logout()
+        self.client.login(username=self.other.username, password="Elias123")
+
+        response = self.client.get(f"/event/{self.hiking.id}/")
+        self.assertNotContains(response, 'id="Invite_box')
+        
+        self.client.logout
+        self.client.login(username=self.me.username, password='Elias123')
+
