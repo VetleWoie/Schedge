@@ -89,9 +89,11 @@ class InviteTest(TestCase):
         self.assertContains(response, 'id="Invite_box"')
     
     def test_try_invite_as_invitee(self):
+        # Logout as host user and log in as another invitee.
         self.client.logout()
         self.client.login(username=self.other.username, password="Elias123")
 
+        # Make sure the invited person does not have access to invite others.
         response = self.client.get(f"/event/{self.hiking.id}/")
         self.assertNotContains(response, 'id="Invite_box')
         
