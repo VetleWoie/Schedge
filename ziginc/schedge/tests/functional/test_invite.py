@@ -97,6 +97,6 @@ class InviteTest(TestCase):
         response = self.client.get(f"/event/{self.hiking.id}/")
         self.assertNotContains(response, 'id="Invite_box')
         
-        self.client.logout
+        self.client.logout()
         self.client.login(username=self.me.username, password='Elias123')
 
