@@ -17,7 +17,7 @@ urlpatterns = [
         views.timeslot_delete,
         name="timeslot_delete",
     ),
-    path("event/<int:event_id>/select/<int:pt_id>/", views.timeslot_select, name="timeslot_select"),
+    path("event/<int:event_id>/select/", views.timeslot_select, name="timeslot_select"),
     path("event/<int:event_id>/edit/", views.eventedit, name="eventedit"),
     path("event/<int:event_id>/edit/delete/", views.event_delete, name="event_delete"),
     path("event/<int:event_id>/invite/", views.event_invite, name="event_invite"),

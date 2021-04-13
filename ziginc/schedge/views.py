@@ -19,6 +19,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from collections import namedtuple
+import re
 
 from .utils import riise_hofsøy, create_time_slot
 
@@ -143,7 +144,7 @@ def timeslot_delete(request, event_id, timeslot_id):
     return redirect(event, event_id)
 
 
-def timeslot_select(request, event_id, pt_id):
+def timeslot_select(request, event_id):
 
     if request.method != "POST":
         return HttpResponseBadRequest("Request method not allowed")
@@ -153,10 +154,39 @@ def timeslot_select(request, event_id, pt_id):
     except Event.DoesNotExist:
         raise Http404("Not valid event id")
 
-    try:
-        p_timeslot = PotentialTimeSlot.objects.get(id=pt_id, event=this_event)
-    except TimeSlot.DoesNotExist:
-        return HttpResponseNotFound("404: not valid timeslot id")
+    print(request.POST)
+    time = request.POST["options"].replace("\r\n", "")
+    start, end = time.split("-")
+    start = start.strip()
+    end = end.strip()
+    # 10:15 a.m. -\r\n 1:15 p.m.
+    # noon -\r\n 2:00 pm
+    # start = re.match(r"^(noon|midnight|\d{1,2}(:\d{2}|) (a|p)\.m\.)", time)
+    # end = re.match(r"(noon|midnight|\d{1,2}(:\d{2}|) (a|p)\.m\.)$", time)
+
+    def fix_dt(raw_date):
+        """Replace 'midnight', 'noon', etc."""
+        if ":" not in raw_date and raw_date != "noon" and raw_date != "midnight":
+            if raw_date[1] == " ":
+                raw_date = raw_date[0] + ":00" + raw_date[1:]
+            else:
+                raw_date = raw_date[:1] + ":00" + raw_date[2:]
+        return raw_date.replace('midnight', '12:00 AM').replace('noon', '12:00 PM').replace(".", "")
+
+    def parse_dt(raw_date):
+        """Parse the fuzzy timestamps."""
+        return dt.datetime.strptime(fix_dt(raw_date), '%I:%M %p').time()
+
+    print(start, end)
+    print(parse_dt(start))
+    print(parse_dt(end))
+
+    return redirect(event, event_id)
+
+    # try:
+    #     p_timeslot = PotentialTimeSlot.objects.get(id=pt_id, event=this_event)
+    # except TimeSlot.DoesNotExist:
+    #     return HttpResponseNotFound("404: not valid timeslot id")
 
     this_event.status = "C"
     this_event.save()
