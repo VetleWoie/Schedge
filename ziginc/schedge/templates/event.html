@@ -69,7 +69,8 @@
                 <input type="submit" value="Edit" class="eventbtn">
             </form>
             {% else %}
-            <form action="{% url 'participant_leave' event_id=event.id user_id=user.id %}" method="post" enctype="multipart/form-data">
+            <form action="{% url 'participant_leave' event_id=event.id user_id=user.id %}" method="post"
+                enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="submit" value="Leave event" class="eventbtn">
             </form>
@@ -110,7 +111,9 @@
         </div>
         <div class="centred">
             {% for pt in pts %}
-            <div class="blob timeslot">
+            {% if user == event.host%}
+            <button type="button" data-toggle="modal" data-target="#exampleModalCenter">
+                {% endif%}
                 <table>
                     <tr>
                         <td>Time</td>
@@ -120,20 +123,10 @@
                         <td>Date</td>
                         <td>{{pt.date }}</td>
                     </tr>
-                    <tr>
-                        <td>
-                            {% if user == event.host%}
-                            <form action="{% url 'timeslot_select' event_id=event.id pt_id=pt.id %}" method="POST"
-                                enctype="multipart/form-data" id='select_time'>
-                                {% csrf_token %}
-                                <input type="submit" value="choose"
-                                    onclick="validateSubmit('Are you sure you want to choose this time?', 'select_time');return false;">
-                            </form>
-                            {% endif%}
-                        </td>
-                    </tr>
                 </table>
-            </div>
+                {% if user == event.host%}
+            </button>
+            {% endif%}
             {% endfor %}
         </div>
         {% endif %}
@@ -198,5 +191,34 @@
         {% endif %}
     </div>
 </div>
+
+
+<!-- To get popup -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {% for starttime, endtime in pt.split %}
+                <tr>
+                    <td>{{starttime}} - {{endtime}}</td>
+                </tr>
+                {% endfor %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary">Choose</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 <script src="{% static 'js/event.js' %}"></script>
 {% endblock %}

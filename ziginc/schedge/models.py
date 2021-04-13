@@ -9,6 +9,8 @@ from django.core.exceptions import ValidationError
 # Create your models here.
 
 
+
+
 class Event(models.Model):
     """The event model
     TODO: Add more stuff"""
@@ -109,6 +111,37 @@ class PotentialTimeSlot(models.Model):
     def __str__(self):
         return f"PotentialTimeSlot(id={self.id}, on={self.event.id}, start_time={self.start_time}, end_time={self.end_time}, date={self.date}, participants={self.participants}"
 
+    @property
+    def split(self):
+        """returns a list of the possible times within this potential time slot
+        which have the same duration as the event. the times are 15 min appart, and always
+        start at either 00, 15, 30 or 45.
+        F.ex: pts between 11:50am and 1pm, duration is 30 min
+        return [12:00 - 12:30, 12:15 - 12:45, 12:30 - 13:00]"""
+
+        def time_add(time, delta):
+            """adds a timedelta to a time object"""
+            return (dt.datetime.combine(dt.date.today(), time) + delta).time()
+
+        interval = 15
+        startmin = self.start_time.minute
+        duration = self.event.duration
+        # round up to next quarter of an hour
+        start = time_add(self.start_time, dt.timedelta(minutes=(startmin + interval - 1) & (-interval)))
+        # start = self.start_time + dt.timedelta(minutes=interval - startmin % interval)
+        interval_mins = dt.timedelta(minutes=interval)
+
+        times = []
+        current = start
+        end = time_add(current, duration)
+        print(end, self.end_time)
+        while end <= self.end_time:
+            times.append((current, end))
+
+            current = time_add(current, interval_mins)
+            end = time_add(current, duration)
+        print(times)
+        return times
 
 class Invite(models.Model):
     inviter = models.ForeignKey(
