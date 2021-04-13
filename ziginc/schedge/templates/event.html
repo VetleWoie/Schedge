@@ -163,11 +163,11 @@
                         <td>
                             {% if invite.user == user %}
                                 (you)
-                            {% elif user == event.host %}
-                                <form action="{% url 'invite_delete' invite_id=invite.id %}" method="POST"
-                                enctype="multipart/form-data">
-                                {% csrf_token %}
-                                <input type="submit" value="🗑">
+                            {% else %}
+                            <form action="{% url 'invite_delete' invite_id=invite.id %}" method="POST"
+                            enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="submit" value="🗑">
                             </form>
                             {% endif %}
                         </td>
