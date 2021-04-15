@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load nicedelta %}
 {% block title %}Event{% endblock %}
 {% block stylesheet %}
 <link rel="stylesheet" href="{% static 'css/eventbase.css' %}" />
@@ -40,11 +41,11 @@
                 </tr>
                 <tr>
                     <td>Start Time</td>
-                    <td>{{ event.starttime }}</td>
+                    <td>{{ event.starttime|time:'H:i' }}</td>
                 </tr>
                 <tr>
                     <td>End Time</td>
-                    <td>{{ event.endtime }}</td>
+                    <td>{{ event.endtime|time:'H:i' }}</td>
                 </tr>
                 <tr>
                     <td>Start Date</td>
@@ -56,7 +57,7 @@
                 </tr>
                 <tr>
                     <td>Duration</td>
-                    <td>{{ event.duration }}</td>
+                    <td>{{ event.duration|nicedelta }}</td>
                 </tr>
                 <tr>
                     <td>Description</td>
@@ -95,7 +96,7 @@
                 <table>
                     <tr>
                         <td>Time</td>
-                        <td>{{timeslot.start_time}} - {{timeslot.end_time}}</td>
+                        <td>{{timeslot.start_time|time:"H:i"}} - {{timeslot.end_time|time:"H:i"}}</td>
                     </tr>
                     <tr>
                         <td>Date</td>
@@ -117,11 +118,11 @@
                 {% endif%}
                 <table>
                     <tr>
-                        <td>Time</td>
-                        <td>{{pt.start_time}} - {{pt.end_time}}</td>
+                        <td>Time: </td>
+                        <td>{{pt.start_time|time:"H:i"}} - {{pt.end_time|time:"H:i"}}</td>
                     </tr>
                     <tr>
-                        <td>Date</td>
+                        <td>Date: </td>
                         <td>{{pt.date }}</td>
                     </tr>
                     <tr>
@@ -143,24 +144,24 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <form action="{% url 'timeslot_select' event_id=event.id %}" method="post">
+                            <form action="{% url 'timeslot_select' event_id=event.id %}" method="post" id="selectform{{pt.id}}">
                                 {% csrf_token %}
                                 <ul>
                                     {% for starttime, endtime in pt.split %}
                                     <li>
                                         <input type="radio" class="btn-check" name="options" id="option{{starttime}}"
-                                            autocomplete="off" value="{{starttime}} -
-                                            {{endtime}}">
-                                        <label class="btn btn-secondary" for="option{{starttime}}">{{starttime}} -
-                                            {{endtime}}</label>
+                                            autocomplete="off" value="{{starttime|time:'H:i'}} -
+                                            {{endtime|time:'H:i'}}">
+                                        <label class="btn btn-secondary" for="option{{starttime}}">{{starttime|time:"H:i"}} -
+                                            {{endtime|time:"H:i"}}</label>
                                     </li>
                                     {% endfor %}
-                                    <input type="submit" value="Submit" >
+                                    <!-- <input type="submit" value="Submit" > -->
                                 </ul>
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-primary">Choose</button>
+                            <button type="submit" class="btn btn-primary" form="selectform{{pt.id}}">Choose</button>
                         </div>
                     </div>
                 </div>
