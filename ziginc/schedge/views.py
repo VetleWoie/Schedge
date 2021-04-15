@@ -175,7 +175,7 @@ def timeslot_select(request, event_id):
 
     def parse_dt(raw_date):
         """Parse the fuzzy timestamps."""
-        return dt.datetime.strptime(fix_dt(raw_date), '%I:%M %p').time()
+        return dt.datetime.strptime(raw_date, '%H:%M').time()
 
     print(start, end)
     print(parse_dt(start))
