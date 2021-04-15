@@ -35,6 +35,8 @@ class Event(models.Model):
     )
     participants = models.ManyToManyField(get_user_model(), related_name="participants")
 
+    chosen_time = models.DateTimeField(null=True)
+
     error_css_class = "error"
 
     @property

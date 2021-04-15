@@ -39,6 +39,7 @@
                     <td>Location</td>
                     <td>{{ event.location }}</td>
                 </tr>
+                {%if event.status == "U"%}
                 <tr>
                     <td>Start Time</td>
                     <td>{{ event.starttime|time:'H:i' }}</td>
@@ -59,6 +60,15 @@
                     <td>Duration</td>
                     <td>{{ event.duration|nicedelta }}</td>
                 </tr>
+                {%else%}
+                <tr>
+                    <td><img src="{% static 'icons/clock.svg' %}" width="20px"/></td>
+                    <td>{{ event.chosen_time|date:"l d. F Y" }}
+                        {{ event.chosen_time|date:"H:i" }} - {{ event.chosen_time|add:event.duration|date:"H:i" }}</td>
+
+                </tr>
+                {%endif%}
+
                 <tr>
                     <td>Description</td>
                     <td>{{ event.description }}</td>
@@ -150,8 +160,7 @@
                                     {% for starttime, endtime in pt.split %}
                                     <li>
                                         <input type="radio" class="btn-check" name="options" id="option{{starttime}}"
-                                            autocomplete="off" value="{{starttime|time:'H:i'}} -
-                                            {{endtime|time:'H:i'}}">
+                                            autocomplete="off" value="{{starttime|time:'H:i'}},{{endtime|time:'H:i'}},{{pt.date|date:'Y/m/d'}}">
                                         <label class="btn btn-secondary" for="option{{starttime}}">{{starttime|time:"H:i"}} -
                                             {{endtime|time:"H:i"}}</label>
                                     </li>

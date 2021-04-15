@@ -155,33 +155,20 @@ def timeslot_select(request, event_id):
         raise Http404("Not valid event id")
 
     print(request.POST)
-    time = request.POST["options"].replace("\r\n", "")
-    start, end = time.split("-")
-    start = start.strip()
-    end = end.strip()
-    # 10:15 a.m. -\r\n 1:15 p.m.
-    # noon -\r\n 2:00 pm
-    # start = re.match(r"^(noon|midnight|\d{1,2}(:\d{2}|) (a|p)\.m\.)", time)
-    # end = re.match(r"(noon|midnight|\d{1,2}(:\d{2}|) (a|p)\.m\.)$", time)
+    time = request.POST["options"]
+    start, end, date = time.split(",")
 
-    def fix_dt(raw_date):
-        """Replace 'midnight', 'noon', etc."""
-        if ":" not in raw_date and raw_date != "noon" and raw_date != "midnight":
-            if raw_date[1] == " ":
-                raw_date = raw_date[0] + ":00" + raw_date[1:]
-            else:
-                raw_date = raw_date[:1] + ":00" + raw_date[2:]
-        return raw_date.replace('midnight', '12:00 AM').replace('noon', '12:00 PM').replace(".", "")
-
-    def parse_dt(raw_date):
+    def parse_timestring(time):
         """Parse the fuzzy timestamps."""
-        return dt.datetime.strptime(raw_date, '%H:%M').time()
+        return dt.datetime.strptime(time, '%H:%M').time()
+    def parse_datestring(time):
+        """Parse the fuzzy timestamps."""
+        return dt.datetime.strptime(time, '%Y/%m/%d').date()
 
     print(start, end)
-    print(parse_dt(start))
-    print(parse_dt(end))
-
-    return redirect(event, event_id)
+    start = parse_timestring(start)
+    end = parse_timestring(end)
+    date = parse_datestring(date)
 
     # try:
     #     p_timeslot = PotentialTimeSlot.objects.get(id=pt_id, event=this_event)
@@ -189,9 +176,8 @@ def timeslot_select(request, event_id):
     #     return HttpResponseNotFound("404: not valid timeslot id")
 
     this_event.status = "C"
+    this_event.chosen_time = dt.datetime.combine(date, start)
     this_event.save()
-    p_timeslot.chosen = True
-    p_timeslot.save()
 
     users = this_event.participants.exclude(id=request.user.id)
     notify.send(
