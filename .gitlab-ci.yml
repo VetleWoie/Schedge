@@ -13,6 +13,9 @@ functional:
     - python3 -m pip install django-notifications-hq
     - cd ziginc
     - python3 manage.py test schedge/tests/functional
+  only:
+    - merge_requests
+    - master
 #Run scenario tests.
 scenario:
   stage: test
@@ -23,3 +26,6 @@ scenario:
     - python3 -m pip install selenium
     - cd ziginc
     - python3 manage.py test schedge/tests/scenario
+  only:
+    - merge_requests
+    - master
