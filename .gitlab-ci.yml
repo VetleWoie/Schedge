@@ -1,4 +1,4 @@
-image: ubuntu:latest
+image: ato058/schedge:latest
 stages:
   #Jobs in the same stage run in parallel so we only need one stage but several jobs.
   - test
