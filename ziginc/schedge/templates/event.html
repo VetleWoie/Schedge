@@ -36,7 +36,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Location</td>
+                    <td><img src="{% static 'icons/placeholder.png' %}" width="20px"/></td>
                     <td>{{ event.location }}</td>
                 </tr>
                 {%if event.status == "U"%}
@@ -65,7 +65,6 @@
                     <td><img src="{% static 'icons/clock.svg' %}" width="20px"/></td>
                     <td>{{ event.chosen_time|date:"l d. F Y" }}
                         {{ event.chosen_time|date:"H:i" }} - {{ event.chosen_time|add:event.duration|date:"H:i" }}</td>
-
                 </tr>
                 {%endif%}
 
