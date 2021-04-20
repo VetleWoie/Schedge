@@ -2,146 +2,255 @@
 {% load static %}
 
 {% block stylesheet %}
-<link rel="stylesheet" href="{% static 'css/mypage.css' %}">
+<link rel="stylesheet" href="{% static 'css/nav_bar.css' %}">
+<link rel="stylesheet" href="{% static 'css/content.css' %}">
 {% endblock %}
 
 {% block title%}My Page{%endblock%}
+{% block header%}{%endblock%}
 
 {% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 nav_bar txt_center">
 
-<div id="box_myevents">
-    <div class="title_main">m&nbsp;y&nbsp;&nbsp;e&nbsp;v&nbsp;e&nbsp;n&nbsp;t&nbsp;s</div>
-    {% if host_undecided %}
-    {% for event in host_undecided %}
-    <a href="{% url 'event' event_id=event.id %}" class="invislink">
-        <div class="box">
-            <div class="title"> {{event.title}}</div>
-            <table class="info_table">
-                <tr>
-                    <td><img src="{% static 'icons/queue.png' %}" class="icons" width="25px"></td>
-                    <td class="info_text">{{event.duration}} hours</td>
-                    <td><img src="{% static 'icons/placeholder.png' %}" class="icons" width="25px"></td>
-                    <td class="info_text">{{event.location}}</td>
-                </tr>
+            <div class="m_left_small m_right_small m_btm_small row m_top_med dash justify-content-center">
 
-            </table>
-            <!-- <div class="description_text">{{event.description}}</div> -->
-            <div class="n_partic"><img src="{% static 'icons/group.png' %}" class="group_icon" width="25px"></div>
-            <div class="n_text">{{ event.n_attendees }}</div>
-            <div class="event_btn result_btn">see replies</div>
-        </div>
-    </a>
-
-
-    {% endfor %}
-    {% else %}
-    <div class="nothing">you have no events of your own to determine</div>
-    {% endif %}
-</div>
-
-<div id="box_upcoming">
-    <div class="title_main">
-        u&nbsp;p&nbsp;c&nbsp;o&nbsp;m&nbsp;i&nbsp;n&nbsp;g&nbsp;&nbsp;e&nbsp;v&nbsp;e&nbsp;n&nbsp;t&nbsp;s&nbsp;
-    </div>
-    <div class="title_sub">host</div>
-    {% if host_decided %}
-    {% for event in host_decided %}
-    <div class="box">
-        <ul>
-            <li class="title"> {{event.title}}</li>
-            <li> {{event.duration}} hours</li>
-            <li> {{event.description}}</li>
-            <li> {{event.location}}</li>
-        </ul>
-    </div>
-    {% endfor %}
-    {% else %}
-    <div class="nothing">you are not a host for any upcoming events</div>
-    {% endif %}
-    <div class="title_sub">participant</div>
-    {% if participant_as_guest %}
-    {% for event in participant_as_guest %}
-    <a href="{% url 'event' event_id=event.id %}" class="invislink">
-        <div class="box extra_bottom">
-            <div class="title"> {{event.title}}</div>
-            <table class="info_table extra_right">
-                <tr>
-                    <td><img src="{% static 'icons/queue.png' %}" class="icons" width="25px"></td>
-                    <td class="info_text">{{event.duration}} hours</td>
-                    <td><img src="{% static 'icons/placeholder.png' %}" class="icons" width="25px"></td>
-                    <td class="info_text">{{event.location}}</td>
-                    <td><img src="{% static 'icons/group.png' %}" class="icons" width="25px"></td>
-                    <td class="info_text">{{event.n_attendees}}</td>
-                </tr>
-            </table>
-        </div>
-    </a>
-    {% endfor %}
-    {% else %}
-    <div class="nothing">you do not participate in any upcoming events</div>
-    {% endif %}
-</div>
-
-
-<div id="box_participant">
-
-    <div class="title_main">
-        invitations
-    </div>
-    {% if invites %}
-    {% for invite in invites %}
-    <a href="{% url 'event' event_id=invite.event.id %}" class="invislink">
-        <div class="box extra_bottom">
-            <div class="title"> {{invite.event.title}}</div>
-            <div class="left_inv">
-                <table>
-                    <tr>
-                        <td><img src="{% static 'icons/queue.png' %}" class="icons" width="25px"></td>
-                        <td class="info_text">{{invite.event.duration}} hours</td>
-                        <td><img src="{% static 'icons/placeholder.png' %}" class="icons" width="25px"></td>
-                        <td class="info_text">{{invite.event.location}}</td>
-                    </tr>
-                </table>
+                <span class="txt_ls_med">Dashboard</span>
             </div>
-            <div class="right_inv">
-                <a href="{% url 'invite_accept' invite_id=invite.id%}" class="invislink yes_btn">✓</a>
-                <a href="{% url 'invite_reject' invite_id=invite.id%}" class="invislink no_btn">✗</a>
+            <div class="row">
+
+                <button class="nav_btn" onclick="toggle('home')">Home</button>
+            </div>
+            <div class="row">
+                <button class="nav_btn" onclick="toggle('host')">Host</button>
+
+            </div>
+            <div class="row">
+                <button class="nav_btn" onclick="toggle('parti')">Participant</button>
+            </div>
+
+            <a href="/createevent" class="m_top_small btn btn-dark ce_btn"><span class="plus">+</span> create event</a>
+            <div class="so m_top_l txt_ls_small">
+                <a class="simple_link" href="{% url 'logout' %}">Sign out</a>
+            </div>
+
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="col displayright">
+            <div dir="home">
+                <div class="homeTxt">
+                    <!-- SECTION 1: WELCOME MESSAGE -->
+                    <div class="row">
+                        <div class="col welcome_message m_top_med">Good day, {{user.first_name}}!</div>
+                    </div>
+
+                    <!-- SECTION 2: INBOX/INVITES -->
+                    <div class="row">
+                        <div class="col sub_title  m_btm_small txt_large txt_center">invites</div>
+                    </div>
+
+                    {%if invites%}
+                    {% for invite in invites%}
+                    <!-- for loop -->
+                    <div class="row inbox_box p_all_small">
+
+                        <div class="col inbox_event">{{invite.event.title}}</div>
+                        <div class="col inbox_host">From {{invite.event.host.first_name}}
+                            {{invite.event.host.last_name}}</div>
+                        <div class="col inbox_popbtn txt_right">
+                            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#myModal">
+                                Open
+                            </button>
+                        </div>
+
+                    </div>
+                    {%endfor%}
+                    {% else %}
+                    <div class="row justify-content-center nothing">Your inbox is empty</div>
+                    {% endif %}
+
+
+                    <!-- SECTION 3: THIS WEEK'S EVENTS -->
+                    <div class="row">
+                        <div class="col sub_title m_top_med m_btm_med txt_large txt_center">this week's events</div>
+                    </div>
+
+                    <div class="row p_side_m">
+                        <!-- for loop -->
+                        <div class="col-sm-4">
+                            <div class="card">
+                                <!-- <img class="card-img-top" src="img_avatar1.png" alt="Card image" style="width:100%"> -->
+                                <div class="card-body">
+                                    <h4 class="card-title">Event title</h4>
+                                    <p class="card-text">Some example text some example text.</p>
+                                    <a href="#" class="btn btn-secondary stretched-link">See event</a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- HOST SECTION -->
+
+                <div class="hostTxt">
+                    <div class="row">
+                        <div class="col sub_title m_top_med m_btm_small m_left_small txt_large">undecided *skal endre*
+                        </div>
+                    </div>
+
+                    {%if host_undecided%}
+                    <div class="row">
+                        {% for event in host_undecided%}
+                        <!-- for loop -->
+                        <div class="col-sm-4">
+
+                            <div class="card">
+                                <!-- <img class="card-img-top" src="img_avatar1.png" alt="Card image" style="width:100%"> -->
+                                <div class="card-body">
+                                    <h4 class="card-title">{{event.title}}</h4>
+                                    <p class="card-text">{{event.description}}</p>
+                                    <a href="{% url 'event' event_id=event.id %}"
+                                        class="btn btn-secondary stretched-link">See event</a>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        {%endfor%}
+                    </div>
+                    {% else %}
+                    <div class="row justify-content-center nothing">Your inbox is empty</div>
+                    {% endif %}
+
+                    <div class="row">
+                        <div class="col sub_title m_top_med m_btm_small m_left_small txt_large">decided *skal endre*
+                        </div>
+                    </div>
+
+                    {%if host_decided%}
+                    <div class="row">
+                        {% for event in host_decided%}
+                        <!-- for loop -->
+                        <div class="col-sm-4">
+                            <a href="{% url 'event' event_id=event.id %}" class="invislink">
+                                <div class="card">
+                                    <!-- <img class="card-img-top" src="img_avatar1.png" alt="Card image" style="width:100%"> -->
+                                    <div class="card-body">
+                                        <h4 class="card-title">{{event.title}}</h4>
+                                        <p class="card-text">Some example text some example text.</p>
+                                        <a href="#" class="btn btn-secondary stretched-link">See event</a>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+
+                        {%endfor%}
+                    </div>
+                    {% else %}
+                    <div class="row m_left_small nothing">No events</div>
+                    {% endif %}
+                </div>
+
+
+                <!-- PARTICIPANT -->
+                <div class="partiTxt">
+                    <div class="row">
+                        <div class="col sub_title m_top_med m_btm_small m_left_small txt_large"> attending
+                        </div>
+                    </div>
+
+                    {%if participant_as_guest%}
+                    <div class="row">
+                        {% for event in participant_as_guest%}
+                        <!-- for loop -->
+                        <div class="col-sm-4">
+
+                            <div class="card">
+                                <!-- <img class="card-img-top" src="img_avatar1.png" alt="Card image" style="width:100%"> -->
+                                <div class="card-body">
+                                    <h4 class="card-title">{{event.title}}</h4>
+                                    <p class="card-text">Some example text some example text.</p>
+                                    <a href="{% url 'event' event_id=event.id %}"
+                                        class="btn btn-secondary stretched-link">See event</a>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        {%endfor%}
+                    </div>
+                    {% else %}
+                    <div class="row justify-content-center nothing">you do not participate in any upcoming events</div>
+                    {% endif %}
+                </div>
             </div>
         </div>
-    </a>
-    {% endfor %}
-    {% else %}
-    <div class="nothing">you don't have any event invitations</div>
-    {% endif %}
-    <div class="title_main">
-        RSVP
     </div>
-    {% if upcomingParticipant %}
-    {% for participant in upcomingParticipant %}
-    <a href="{% url 'event' event_id=participant.event.id %}" class="invislink">
-        <div class="box">
-            <div class="title"> {{participant.event.title}}</div>
-            <table class="info_table">
-                <tr>
-                    <td><img src="{% static 'icons/queue.png' %}" class="icons" width="25px"></td>
-                    <td class="info_text">{{participant.event.duration}} hours</td>
-                    <td><img src="{% static 'icons/placeholder.png' %}" class="icons" width="25px"></td>
-                    <td class="info_text">{{participant.event.location}}</td>
-                </tr>
 
-            </table>
-            <div class="description_text">{{participant.event.description}}</div>
 
-            <div class="event_btn result_btn">reply</div>
-        </div>
-    </a>
-    {% endfor %}
-    {% else %}
-    <div class="nothing">you don't have any event RSVPs</div>
-    {% endif %}
+
+
 
 </div>
 
 
+
+
+<!-- invite popup -->
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">{{invite.event.title}}</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                Event details
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-success" data-dismiss="modal">Accept</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Decline</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/mypage.js' %}"></script>
 
 {%endblock%}

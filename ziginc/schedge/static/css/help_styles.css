@@ -52,6 +52,9 @@ body {
     padding-left: 10px;
 }
 
+.txt_upcase {
+    text-transform: uppercase;
+}
 
 /* PADDING */
 
@@ -170,4 +173,10 @@ body {
 .simple_link_no_:hover {
     /* color: inherit; */
     text-decoration: none;
+}
+
+
+.invislink {
+    color:black !important;
+    text-decoration: inherit;
 }

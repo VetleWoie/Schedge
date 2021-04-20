@@ -1,0 +1,46 @@
+[dir="home"] > :not(.homeTxt),
+[dir="host"] > :not(.hostTxt),
+[dir="parti"] > :not(.partiTxt) {
+  display: none;
+
+}
+
+.welcome_message {
+    text-align: center;
+    letter-spacing: 10px;
+    padding-left: 10px;
+    font-size: 50px;
+    margin-bottom: 40px;
+    text-shadow: 1px 1px 0px white;
+    color: #343a40;
+}
+
+.sub_title {
+    text-transform: uppercase;
+    padding: 10px;
+    padding-left: 15px;
+    letter-spacing: 5px;
+    text-shadow: 1px 1px 0px white;
+}
+
+
+
+/* INBOX / INVITES */
+.inbox_box {
+    width: 60%;
+    margin: auto;
+    border: 1px solid #6c757d;
+}
+
+.card {
+    margin-bottom: 20px;
+}
+
+.nothing {
+    text-align: center;
+    color: 848484;
+    font-style: italic;
+    font-size: 15px;
+    margin-bottom: 40px;
+    margin-top: -10px;
+}
