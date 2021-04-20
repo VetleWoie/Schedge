@@ -128,7 +128,7 @@ class PotentialTimeSlot(models.Model):
         startmin = self.start_time.minute
         duration = self.event.duration
         # round up to next quarter of an hour
-        start = time_add(self.start_time, dt.timedelta(minutes=(startmin + interval - 1) // interval * interval)
+        start = time_add(self.start_time, dt.timedelta(minutes=(startmin + interval - 1) // interval * interval))
         # start = self.start_time + dt.timedelta(minutes=interval - startmin % interval)
         interval_mins = dt.timedelta(minutes=interval)
 
