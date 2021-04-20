@@ -319,6 +319,11 @@ def event_invite(request, event_id):
         this_event = Event.objects.get(id=event_id)
     except Event.DoesNotExist:
         return HttpResponseNotFound("404: not valid event id")
+    
+    # Only the host can invite people:
+    if request.user != this_event.host:
+        return HttpResponse("Unauthorized", status=401)
+    
     if request.method != "POST":
         return HttpResponseBadRequest(
             "invite view does not support other than post method"

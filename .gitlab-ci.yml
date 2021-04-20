@@ -1,3 +1,4 @@
+image: ato058/schedge:latest
 stages:
   #Jobs in the same stage run in parallel so we only need one stage but several jobs.
   - test
@@ -5,8 +6,7 @@ stages:
 #Run functional tests.
 functional:
   stage: test
-  tags:
-    - django
+
   script:
     - apt-get update
     - python3 -m pip install Pillow
@@ -16,25 +16,16 @@ functional:
   only:
     - merge_requests
     - master
-
 #Run scenario tests.
 scenario:
   stage: test
-  tags:
-    - django
   script:
     - apt-get update
-    - apt -y install wget
-    - apt -y install firefox
     - python3 -m pip install Pillow
     - python3 -m pip install django-notifications-hq
     - python3 -m pip install selenium
-    - wget https://github.com/mozilla/geckodriver/releases/download/v0.29.0/geckodriver-v0.29.0-linux64.tar.gz
-    - tar -xf geckodriver-v0.29.0-linux64.tar.gz
-    - chmod 777 geckodriver
-    - export PATH=$PATH:$(pwd)
     - cd ziginc
     - python3 manage.py test schedge/tests/scenario
   only:
-    - merge_request
+    - merge_requests
     - master

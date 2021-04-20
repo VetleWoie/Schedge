@@ -156,3 +156,32 @@ class InviteTest(TestCase):
         form = {"invitee": self.bob.id}
         response = self.client.get(f"/event/{self.climbing.id}/invite/", form)
         self.assertEqual(response.status_code, 400)
+    def test_invite_only_as_host(self):
+        response = self.client.get(f"/event/{self.hiking.id}/")
+        self.assertContains(response, 'id="Invite_box"')
+    
+    def test_try_invite_as_invitee(self):
+        # Logout as host user and log in as another invitee.
+        self.client.logout()
+        self.client.login(username=self.other.username, password="Elias123")
+
+        # Make sure the invited person does not have access to invite others.
+        response = self.client.get(f"/event/{self.hiking.id}/")
+        self.assertNotContains(response, 'id="Invite_box')
+        
+        self.client.logout()
+        self.client.login(username=self.me.username, password='Elias123')
+    
+    def test_pending_invites_as_host(self):
+        # Check that the host is able to see pending invites
+        response = self.client.get(f"/event/{self.hiking.id}/")
+        self.assertContains(response, "id='pending_invites'")
+    
+    def test_invisible_pending_invites_as_guest(self):
+        # Check that an attendee is not able to see pending invites.
+        self.client.logout()
+        self.client.login(username=self.other.username, password='Elias123')
+        response = self.client.get(f"/event/{self.hiking.id}/")
+        self.assertNotContains(response, "id='pending_invites'")
+    
+
