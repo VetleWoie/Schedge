@@ -1,5 +1,6 @@
 <!-- templates/registration/signup.html -->
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Sign Up{% endblock %}
 {% block auth %}{% endblock %}
@@ -8,11 +9,15 @@
 <form action="{% url 'signup' %}" method="post">
   {% csrf_token %}
   {{ form.as_p }}
-  <button type='submit'>Sign up</button>
+  <p>This is a checkbox</p>
+  <input id='check' name='checkbox' type='checkbox' onclick="checkbox_clicked()">
+  
+  <button type='submit' id='signupbtn' disabled>Sign up</button>
 </form>
 </break>
 Already have an account? 
 <form action="{% url 'login' %}">
   <input type="submit" value="Sign in" />
 </form>
+<script src='{%static "js/signup.js"%}'></script>
 {% endblock %}
