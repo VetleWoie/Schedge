@@ -438,3 +438,6 @@ def mark_notification_as_read(request, notif_id):
         return HttpResponseNotFound("notification not found", status=404)
     notif.mark_as_read()
     return HttpResponse("ok", status=200)
+
+def termsandservices(request):
+    return render(request, "termsandservices.html")

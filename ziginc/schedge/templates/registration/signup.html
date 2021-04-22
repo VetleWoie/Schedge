@@ -10,7 +10,10 @@
   {% csrf_token %}
   {{ form.as_p }}
   <input id='check' name='checkbox' type='checkbox' onclick="checkbox_clicked()">
-  <span>By clicking Sign up, you agree to our Terms.</span> 
+  <span>
+    By clicking Sign up, you agree to our
+    <a class="terms" href={% url 'tands' %} data-toogle="tooltip" data-placement="top" title="">Terms.</a>
+  </span> 
   <br>
   
   <button type='submit' id='signupbtn' disabled>Sign up</button>
