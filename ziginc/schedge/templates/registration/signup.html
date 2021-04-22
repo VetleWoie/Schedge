@@ -9,8 +9,9 @@
 <form action="{% url 'signup' %}" method="post">
   {% csrf_token %}
   {{ form.as_p }}
-  <p>This is a checkbox</p>
   <input id='check' name='checkbox' type='checkbox' onclick="checkbox_clicked()">
+  <span>By clicking Sign up, you agree to our Terms.</span> 
+  <br>
   
   <button type='submit' id='signupbtn' disabled>Sign up</button>
 </form>
