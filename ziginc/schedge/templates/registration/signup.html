@@ -9,6 +9,8 @@
 <form action="{% url 'signup' %}" method="post">
   {% csrf_token %}
   {{ form.as_p }}
+
+ <!-- Checkbox to opt in to our terms and services to be able ot use our service. -->
   <input id='check' name='checkbox' type='checkbox' onclick="checkbox_clicked()">
   <span>
     By clicking Sign up, you agree to our
