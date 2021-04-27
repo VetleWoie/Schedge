@@ -80,6 +80,11 @@
     {% else %}
     <div class="nothing">you do not participate in any upcoming events</div>
     {% endif %}
+    {% comment%} Below is how the 'delete user' functionality is used. {% endcomment %}
+    <form action="{% url 'delete_user_account'%}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="submit" value="Delete me">
+    </form>
 </div>
 
 

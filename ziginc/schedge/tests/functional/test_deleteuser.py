@@ -15,7 +15,19 @@ class DeleteUserTest(TestCase):
             "password2" : "Elias123",
         }
 
-    def test_deleteuser(self):
+    def test_deluser(self):
+        response = self.client.post("/signup/", self.userGood)
+        self.assertEqual(response.status_code, 302)
+
+        self.client.login(username=self.userGood["username"], password=self.userGood["password"])
+
+        self.client.post("/mypage/delete_user_account/")
+
+        usr_exists = User.objects.filter(username=self.userGood["username"]).exists()
+        self.assertEqual(usr_exists, False)
+
+
+    def test_deluser_redirect(self):
         response = self.client.post("/signup/", self.userGood)
         self.assertEqual(response.status_code, 302)
 
