@@ -443,8 +443,11 @@ def mark_notification_as_read(request, notif_id):
 def termsandservices(request):
     return render(request, "termsandservices.html")
 
-@login_required(login_url="/login/")
+@login_required
 def delete_user(request):
+    if request.method != "POST":
+        return HttpResponseBadRequest("Bad request")
+    
     user = request.user
     user.delete()        
     return redirect(signUpView)
