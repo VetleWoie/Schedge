@@ -439,8 +439,6 @@ def mark_notification_as_read(request, notif_id):
     notif.mark_as_read()
     return HttpResponse("ok", status=200)
 
-@login_required(login_url="/login/")
-def delete_user(request):
-    user = request.user
-    
 
+def termsandservices(request):
+    return render(request, "termsandservices.html")
