@@ -442,3 +442,11 @@ def mark_notification_as_read(request, notif_id):
 
 def termsandservices(request):
     return render(request, "termsandservices.html")
+
+@login_required(login_url="/login/")
+def delete_user(request):
+    user = request.user
+    user.delete()        
+    return redirect(signUpView)
+
+

@@ -12,4 +12,5 @@ from .functional.test_mypage import *
 from .functional.test_signup import *
 from .functional.test_login import *
 from .functional.tests import *
+from .functional.test_deleteuser import *
 from .modeltests.test_timeslots import *

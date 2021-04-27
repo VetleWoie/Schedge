@@ -43,7 +43,6 @@ class MyPageTest(TestCase):
     def test_this_weeks_events(self):
         # TODO: Change this out for somehitng that checks the webpage and not just the logic for how to find these events.
         # Might want to add more thourough test as well. With logged in user etc.
-        
         today = dt.date.today()
         in_seven_days = today + dt.timedelta(days=7)
         this_weeks_events = Event.objects.filter(status="C", startdate__gte=today, enddate__lte=in_seven_days).count()
