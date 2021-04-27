@@ -22,39 +22,39 @@
   </div>
   <div class="signup_box">
 
-  <div class="row ">
-    <div class="col d-flex justify-content-center signup_title m_top_med m_btm_small">
-      Sign up
+    <div class="row ">
+      <div class="col d-flex justify-content-center signup_title m_top_med m_btm_small">
+        Sign up
+      </div>
     </div>
-  </div>
 
-  <div class="row ">
-    <div class="col d-flex justify-content-center">
+    <div class="row ">
+      <div class="col d-flex justify-content-center">
 
-      <form action="{% url 'signup' %}" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <div class="txt_center">
+        <form action="{% url 'signup' %}" method="post">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <div class="txt_center">
 
-          <button type='submit' class="btn btn-dark txt_large m_top_xsmall p_btn">Sign up</button>
-        </div>
-      </form>
-    </div>
-  </div>
-  <div class="row m_top_med">
-    <div class="col d-flex justify-content-center">
-      <div class="txt_center">
-        <!-- </break> -->
-        <span class="txt_large">
-          Do you already have an account?
-        </span> 
-        <form action="{% url 'login' %}">
-          <input type="submit" class="btn btn-dark m_btm_med m_top_small p_side_m" value="Sign in" />
+            <button type='submit' class="btn btn-dark txt_large m_top_xsmall p_btn">Sign up</button>
+          </div>
         </form>
       </div>
-
     </div>
-  </div>
+    <div class="row m_top_med">
+      <div class="col d-flex justify-content-center">
+        <div class="txt_center">
+          <!-- </break> -->
+          <span class="txt_large">
+            Do you already have an account?
+          </span>
+          <form action="{% url 'login' %}">
+            <input type="submit" class="btn btn-dark m_btm_med m_top_small p_side_m" value="Sign in" />
+          </form>
+        </div>
+
+      </div>
+    </div>
 
   </div>
 

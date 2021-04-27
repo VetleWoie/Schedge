@@ -1,17 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    {% load static %}
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}" />
-    <link rel="stylesheet" href="{% static 'css/eventbase.css' %}">
-    <title>Edit Event</title>
-</head>
-
-<body>
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Edit event{% endblock %}
+{% block stylesheet %}
+<!-- <link rel="stylesheet" href="{% static 'css/eventbase.css' %}" /> -->
+<!-- <link rel="stylesheet" href="{% static 'css/event.css' %}" /> -->
+<!-- <link rel="stylesheet" href="{% static 'css/event_style.css' %}" /> -->
+<!-- <meta http-equiv="refresh" content="5"> -->
+{% endblock %}
+{% block header%}{%endblock%}
+{% block content %}
     <form method="POST" action="/event/{{ event.id }}/edit/#/" enctype="multipart/form-data" class="blob">
         {% csrf_token %}
         {{form.as_p}}
@@ -22,7 +19,7 @@
     <form method="POST" action="/event/{{ event.id }}/edit/delete/" enctype="multipart/form-data" id="delete_form">
         {% csrf_token %}
         <!-- Make pop up work -->
-        <input type="submit" value="Delete event" class="btn" onclick="validateSubmit();return false;">
+        <input type="submit" value="Delete event" class="btn btn-dark" onclick="validateSubmit();return false;">
     </form>
     <script>
         function validateSubmit() {
@@ -32,6 +29,4 @@
             }
         }
     </script>
-</body>
-
-</html>
+{% endblock %}

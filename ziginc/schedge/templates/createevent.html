@@ -4,40 +4,46 @@
 {% block stylesheet%}
 <link rel="stylesheet" href="{% static 'css/eventbase.css' %}" />
 <link rel="stylesheet" href="{% static 'css/createevent.css' %}" />
+<link rel="stylesheet" href="{% static 'css/startpage.css' %}" />
+<link rel="stylesheet" href="{% static 'css/signup.css' %}" />
 {%endblock%}
 
 {%block title%}Create Event{%endblock%}
-
+{% block header%}{%endblock%}
 {% block content %}
 
 <div class="wrap">
     <form action="/createevent/" method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <h1>CREATE AN EVENT</h1>
-        <table class="createevent blob">
-            {% for field in form %}
-            <tr>
-                <td>{{field.label}}</td>
-                <div class="field">
-                    <td>
-                        {% if field.errors %}
-                        <div class="errormsg invalid">{{ field }}
-                            <span class="errormsgtext">{{field.errors}}</span>
-                        </div>
-                        {%else%}
-                        {{ field }}
-                        {% endif %}
-                        {% if field.label == "Location" %}
-                        <div id="loc-div"><button onclick="getLocation()" type="button" id="curlocbutton" class="smallbtn">Current
-                                Location</button>
-                            <span class="invis" id="loc-err-msg"></span>
-                        </div>
-                        {% endif %}
-                    </td>
-                </div>
-            </tr>
-            {% endfor %}
-            <!-- <tr>
+        <div class="ce">
+            <h1>CREATE AN EVENT</h1>
+
+
+            <table class="">
+                {% for field in form %}
+                <tr>
+                    <td>{{field.label}}</td>
+                    <div class="field">
+                        <td>
+                            {% if field.errors %}
+                            <div class="errormsg invalid">{{ field }}
+                                <span class="errormsgtext">{{field.errors}}</span>
+                            </div>
+                            {%else%}
+                            {{ field }}
+                            {% endif %}
+                            {% if field.label == "Location" %}
+                            <div id="loc-div"><button onclick="getLocation()" type="button" id="curlocbutton"
+                                    class="smallbtn">Current
+                                    Location</button>
+                                <span class="invis" id="loc-err-msg"></span>
+                            </div>
+                            {% endif %}
+                        </td>
+                    </div>
+                </tr>
+                {% endfor %}
+                <!-- <tr>
                 <td>Title</td>
                 <td>{{ form.title }}</td>
             </tr>
@@ -79,9 +85,13 @@
                 <td>{{ form.image }}</td>
             </tr> -->
 
-        </table>
-        <input type="submit" value="Submit" class="btn wrap" id="id_submit_btn">
+            </table>
+            <div class="test">
+
+                <input type="submit" value="Submit" class="btn btn-secondary" id="id_submit_btn">
+            </div>
     </form>
+</div>
 </div>
 
 <script src="{% static 'js/event.js' %}"></script>
