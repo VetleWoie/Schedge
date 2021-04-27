@@ -34,6 +34,12 @@ class DeleteUserTest(TestCase):
         
 
     def test_delete_user(self):
+        """
+        1. Create a user
+        2. Login user
+        3. Delete user
+        4. Assert that user is deleted from database.
+        """
         response = self.client.post("/signup/", self.userGood)
         self.assertEqual(response.status_code, 302)
 
@@ -41,12 +47,17 @@ class DeleteUserTest(TestCase):
 
         self.client.post("/mypage/delete_user_account/")
 
-        # Check that user does not exists after deletion.
         usr_exists = User.objects.filter(username=self.userGood["username"]).exists()
         self.assertEqual(usr_exists, False)
 
     @skip("Need the home view which is not present in this version of master, but which is implemented in another branch.")
     def test_delete_user_redirect(self):
+        """
+        1. Create a user
+        2. Login user
+        3. Delete user
+        4. Assert that the redirection takes us to home page (not yet implemented)
+        """
         response = self.client.post("/signup/", self.userGood)
         self.assertEqual(response.status_code, 302)
 
@@ -56,15 +67,19 @@ class DeleteUserTest(TestCase):
         self.assertEqual(response2.url, "/home/")
 
     def test_delete_event_host(self):
-        # CREATE USER
+        """
+        1. Create a user
+        2. Login user
+        3. Create event where user is host
+        4. Delete user
+        5. Assert that the event is no longer present due to cascade.
+        """
         response = self.client.post("/signup/", self.userGood)
         self.assertEqual(response.status_code, 302)
         
         usr = User.objects.get(username=self.userGood['username'])
-        # LOGIN USER
         self.client.login(username=self.userGood["username"], password=self.userGood["password"])
 
-        # CREATE EVENT
         self.example_model = {
             "title": "date night",
             "location": "the lightning route",
@@ -76,33 +91,33 @@ class DeleteUserTest(TestCase):
             "duration": dt.timedelta(hours=2),
             "host": usr,
         }
-        
         self.date = Event.objects.create(**self.example_model)
-
         self.date.participants.add(usr)
 
-        # DELETE USER/HOST
         self.client.post("/mypage/delete_user_account/")
 
         del_event = Event.objects.filter(id=self.date.id).exists()
-
         self.assertEqual(del_event, False)
 
     def test_delete_event_host_with_timeslot(self):
-        # CREATE USER
+        """
+        1. Create a user1
+        2. Create user2
+        3. Login user1
+        4. Create event where user1 is host
+        5. Invite user2
+        6. Create and add timeslot from user2 to event.
+        7. Assert that the timeslot is present on the event.
+        8. Logout user1 and login user 2.
+        9. Delete user2 (The owner of the timeslot)
+        5. Assert that the timeslot is no longer present in the event due to cascading.
+        """
         response = self.client.post("/signup/", self.userGood)
         self.assertEqual(response.status_code, 302)
         usr = User.objects.get(username=self.userGood['username'])
         
-        # CREATE OTHER USER
-        response_other = self.client.post("/signup/", self.other)
-        self.assertEqual(response_other.status_code, 302)
-        other = User.objects.get(username=self.other['username'])
-        
-        # LOGIN USER
-        self.client.login(username=self.userGood["username"], password=self.userGood["password"])
+        self.client.login(username="host", password="Elias123")
 
-        # CREATE EVENT
         self.example_model = {
             "title": "date night",
             "location": "the lightning route",
@@ -112,33 +127,30 @@ class DeleteUserTest(TestCase):
             "startdate": now(),
             "enddate": now() + dt.timedelta(days=1),
             "duration": dt.timedelta(hours=2),
-            "host": usr,
+            "host": self.host,
         }
         self.date = Event.objects.create(**self.example_model)
 
         self.date.participants.add(usr)
 
-        # INVITE OTHER USER
-        form = {"invitee": other.id}
+        form = {"invitee": usr.id}
         response = self.client.post(f"/event/{self.date.id}/invite/", form)
         self.assertEqual(response.status_code, 302)
 
-        # CREATE TIMESLOT FOR 'OTHER'
         t1 = {
             "start_time": dt.time(8,00,00),
             "end_time": dt.time(10,00,00),
             "date": (dt.datetime.now() + dt.timedelta(1)).date()
         }
         
-        create_time_slot(self.date, other, t1)
+        create_time_slot(self.date, usr, t1)
 
         n_timeslots = TimeSlot.objects.filter(event=self.date)
-        self.assertEqual(len(n_timeslots),1)
+        self.assertEqual(len(n_timeslots), 1)
 
         self.client.logout()
-        self.client.login(username=self.other['username'], password=self.other['password'])        
+        self.client.login(username=self.userGood['username'], password=self.userGood['password'])        
         
-        # DELETE 'OTHER'
         self.client.post("/mypage/delete_user_account/")
 
         n_timeslots = TimeSlot.objects.filter(event=self.date)
