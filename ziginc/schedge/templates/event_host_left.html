@@ -1,0 +1,54 @@
+<div class="row txt_center invite_box m_top_med">
+    <div class="col-lg-12">
+        <h4 class="white_txt m_btm_small ">Invite someone</h4>
+        <form action="{% url 'event_invite' event_id=event.id%}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <p>
+                <label>Invite:</label>
+                {{inviteform.invitee}}
+            </p>
+            <input type="submit" class="btn btn-light" value="Submit">
+        </form>
+    </div>
+</div>
+
+{%if invites%}
+
+<div class="row txt_center m_top_med">
+    <div class="col-lg-12">
+
+        <h4 class="white_txt">Pending Invitations</h4>
+    </div>
+
+
+</div>
+<div class="row txt_center">
+    <div class="col-lg-12">
+
+
+        <table class="people">
+            {% for invite in invites %}
+            <tr>
+                <td>
+                    {{invite.invitee.first_name}} {{invite.invitee.last_name}}
+                </td>
+                <td>
+                    {% if invite.user == user %}
+                    (you)
+                    {% elif user == event.host %}
+                    <form action="{% url 'invite_delete' invite_id=invite.id %}" method="POST"
+                        enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="submit" value="🗑">
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+
+
+{%endif%}
