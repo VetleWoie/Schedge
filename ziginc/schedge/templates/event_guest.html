@@ -1,0 +1,316 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load nicedelta %}
+{% block title %}Event{% endblock %}
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'css/event_style.css' %}" />
+<!-- <meta http-equiv="refresh" content="5"> -->
+{% endblock %}
+{% block header%}{%endblock%}
+{% block content %}
+
+<div class="container-fluid">
+    <div class="row">
+
+        <div class="col">
+
+            <!-- EVENT INFO SECTION -->
+
+            <div class="row event_info_wrap m_top_small p_btm_med">
+                <div class="col-md-4 event_image txt_right">
+                    {% if event.image.url != "/media/default.jpg" %}
+                    <img class="img_test" src="{{event.image.url}}" />
+                    {% endif %}
+                </div>
+                <div class="col-md-8 displayright event_txt txt_center">
+
+                    <span class="event_tit"> {{event.title}}</span>
+                    <br>
+
+                    <div class="txt_large">
+
+                        {{event.location}}
+
+                    </div>
+
+                    <div class="txt_large">
+                        {%if event.startdate == event.enddate%}
+                        {{event.startdate}}
+                        {%else%}
+                        {{event.startdate}} - {{event.enddate}}
+                        {%endif%}
+                    </div>
+                    <div class="txt_large">
+
+                        {{event.starttime}} - {{event.endtime}}
+
+                    </div>
+                    <div class="txt_large">
+
+                        Duration: {{event.duration}}
+
+                    </div>
+
+
+                    <div class="event_desc txt_left m_top_small p_side_s">
+                        {{event.description}}
+                    </div>
+
+                    <div class="row m_top_med">
+                        <div class="col-md-10">
+
+                        </div>
+                        <div class="col displayright">
+
+
+                            <a href="/event/{{ event.id}}/edit/" class="btn btn-dark txt_large">Edit</a>
+
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+
+
+            <!-- TIMESLOT SECTION -->
+            <div class="row">
+                <!-- BUTTONS -->
+                <div class="col-md-4">
+                    <div class="row justify-content-end">
+                        <button class="btn btn-dark" onclick="tmslotToggle('overlapTS')">OVERLAP *</button>
+                    </div>
+                    <div class="row justify-content-end m_top_small">
+                        <button class="btn btn-dark" onclick="tmslotToggle('ownTS')">MY TS *</button>
+                    </div>
+                </div>
+
+                <!-- TIMESLOTS -->
+                <div class="col displayright">
+                    <div dir="overlapTS">
+
+                        <!-- overlap timeslots -->
+                        <div class="overlapTS_txt">
+                         
+                        
+                            {% for pt in pts %}
+                            
+                            {% if user == event.host%}
+                            <button type="button" data-toggle="modal" data-target="#exampleModalCenter{{pt.id}}">
+                                {% endif%}
+                                <table>
+                                    <tr>
+                                        <td>Time: </td>
+                                        <td>{{pt.start_time|time:"H:i"}} - {{pt.end_time|time:"H:i"}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Date: </td>
+                                        <td>{{pt.date }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>{{pt.n_participants}} / {{event.n_attendees}}</td>
+                                    </tr>
+                                </table>
+                                {% if user == event.host%}
+                            </button>
+
+                            <!-- To get popup -->
+                            <div class="modal fade" id="exampleModalCenter{{pt.id}}" tabindex="-1" role="dialog"
+                                aria-labelledby="exampleModalCenterTitle{{pt.id}}" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="{% url 'timeslot_select' event_id=event.id %}" method="post"
+                                                id="selectform{{pt.id}}">
+                                                {% csrf_token %}
+                                                <ul>
+                                                    {% for starttime, endtime in pt.split %}
+                                                    <li>
+                                                        <input type="radio" class="btn-check" name="options"
+                                                            id="option{{starttime}}" autocomplete="off"
+                                                            value="{{starttime|time:'H:i'}},{{endtime|time:'H:i'}},{{pt.date|date:'Y/m/d'}}">
+                                                        <label class="btn btn-secondary"
+                                                            for="option{{starttime}}">{{starttime|time:"H:i"}} -
+                                                            {{endtime|time:"H:i"}}</label>
+                                                    </li>
+                                                    {% endfor %}
+                                                    <!-- <input type="submit" value="Submit" > -->
+                                                </ul>
+                                            </form>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-primary"
+                                                form="selectform{{pt.id}}">Choose</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif%}
+                            {% endfor %}
+
+
+   
+
+
+
+
+                        </div>
+
+
+
+
+
+
+
+
+
+
+
+                        <!-- own timeslots -->
+                        <div class="ownTS_txt">
+                            own times, to be implemented
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+
+
+
+
+        <div class="col-sm-3 displayright right_section">
+
+
+            <div class="row txt_center invite_box m_top_med">
+                <div class="col-lg-12">
+                    <h2 class="white_txt m_btm_small">Invite someone</h2>
+                    <form action="{% url 'event_invite' event_id=event.id%}" method="post"
+                        enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <p>
+                            <label>Invite:</label>
+                            {{inviteform.invitee}}
+                        </p>
+                        <input type="submit" class="btn btn-light" value="Submit">
+                    </form>
+                </div>
+            </div>
+
+            <div class="row txt_center m_top_med">
+                <div class="col-lg-12">
+
+                    <h2 class="white_txt">Attendees</h2>
+                </div>
+
+
+            </div>
+            <div class="row txt_center">
+                <div class="col-lg-12">
+
+
+                    <table class="people">
+                        {% for participant in participants %}
+                        <tr>
+                            <td>
+                                {{participant.first_name}} {{participant.last_name}}
+                            </td>
+                            <td>
+                                {% if participant == user %}
+                                (you)
+                                {% elif user == event.host %}
+                                <form action="{% url 'participant_delete' event_id=event.id user_id=participant.id %}"
+                                    method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <input type="submit" value="🗑">
+                                </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+
+
+
+
+
+            <div class="row txt_center m_top_med">
+                <div class="col-lg-12">
+
+                    <h2 class="white_txt">Pending Invitations</h2>
+                </div>
+
+
+            </div>
+            <div class="row txt_center">
+                <div class="col-lg-12">
+
+
+                    <table class="people">
+                        {% for invite in invites %}
+                        <tr>
+                            <td>
+                                {{invite.invitee.first_name}} {{invite.invitee.last_name}}
+                            </td>
+                            <td>
+                                {% if invite.user == user %}
+                                (you)
+                                {% elif user == event.host %}
+                                <form action="{% url 'invite_delete' invite_id=invite.id %}" method="POST"
+                                    enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <input type="submit" value="🗑">
+                                </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+
+
+
+
+
+
+            <div class="row txt_center m_top_med">
+                <div class="col-lg-12">
+                    <h2 class="white_txt">Pick a Time</h2>
+                    <form action="{% url 'event' event_id=event.id %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ timeslotform.as_p }}
+                        <input type="submit" class="btn btn-light" value="Submit">
+                    </form>
+                </div>
+            </div>
+
+            <div class="row justify-content-center m_top_med">
+
+                <div class="col txt_center">
+                    <a href="/mypage" class="btn btn-dark">Dashboard</a>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+</div>
+
+<script src="{% static 'js/event.js' %}"></script>
+
+{% endblock %}

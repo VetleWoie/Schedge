@@ -1,8 +1,13 @@
+html, body, main{
+    height: 100%;
+}
+
 
 .nav_bar {
-    height: 100vh;
+    height: 100%;
     background-color: lightgray;
-    overflow: hidden;
+    box-shadow: 2px 0px 1px #8D8D8D;
+    /* overflow: hidden; */
 }
  
 

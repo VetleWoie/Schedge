@@ -1,0 +1,91 @@
+html, body, main{
+    height: 100%;
+}
+
+
+[dir="overlapTS"] > :not(.overlapTS_txt),
+[dir="ownTS"] > :not(.ownTS_txt){
+  display: none;
+
+}
+
+
+img {
+    /* border-radius: 8px; */
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    max-height: 20em;
+    max-width: 100%; 
+    object-fit:contain;
+    margin-top: 2%;
+    /* border: 1px solid transparent; */
+    /* width: 100%; */
+    /* float: right !important; */
+    /* text-align: right; */
+    
+    /* border-radius: 12px; */
+    border: 2.5px solid #8d8d8d;
+}
+
+
+.img_test {
+    float: right;
+}
+
+.event_info_wrap {
+    /* border-bottom: 1px solid black; */
+}
+
+
+
+
+
+.event_tit {
+    font-size: 2em;
+    letter-spacing: 5px;
+    padding-left: 5pxmål;
+    /* color: red; */
+}
+
+.event_txt {
+    padding-right: 40px;
+}
+
+
+.event_inf_text {
+    text-transform: uppercase;
+}
+
+.event_desc {
+    font-size: 1em;
+}
+
+.white_txt {
+    color: black;
+}
+
+.people td{
+    text-align: center;
+}
+
+
+.people tr{
+    text-align: center;
+}
+
+
+.people {
+    width: 100%;
+    text-align: center;
+}
+
+
+
+
+
+.left-section {
+    background-color: lightgray;
+    height: 100%;
+    box-shadow: 2px 0px 1px #A8A8A8;
+}

@@ -30,7 +30,7 @@ class SplitDurationWidget(forms.MultiWidget):
         return '<table id="duration">' + "".join(labeled) + "</table>"
 
     def value_from_datadict(self,data,files,name):
-        duration = dict(data)[name]
+        duration = dict(data).get(name)
         if duration:
             try:
                 d, h, m = [int(s) if s else 0 for s in duration]

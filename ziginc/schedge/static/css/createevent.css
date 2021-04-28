@@ -59,15 +59,15 @@ th {
     padding-bottom: 50px;
 }
 
-.btn {
+/* .btn {
     background-color: white;
     padding: 5px 10px;
     /* margin-left: 25%; */
-    margin-top: 30px;
+    /* margin-top: 30px;
     width: 50%;
     margin: 0 auto;
     
-}
+} */ */
 
 .smallbtn {
     padding: 2px 5px;
@@ -83,13 +83,13 @@ th {
     letter-spacing: 1px;
 }
 
-.btn:hover {
+/* .btn:hover {
     cursor: pointer;
     /* margin-top: 20px; */
     box-shadow: 2.5px 2.5px 0px gray;
-    letter-spacing: 2px;
+    letter-spacing: 2px; */
 
-}
+/* } */
 
 textarea {
     resize: vertical;
@@ -179,3 +179,33 @@ textarea {
     display: block;
     margin: 5px 0;
 } */
+
+
+
+
+
+
+
+
+
+
+
+
+.ce {
+
+    border: 1px solid #343a40  !important;
+    /* width: 50% !important; */
+    margin: auto;
+    margin-top: 50px;
+    border-radius: 20px;
+    padding: 50px;
+    background-color: white;
+
+}
+
+
+.test {
+    width: auto;
+    margin: auto;
+
+}

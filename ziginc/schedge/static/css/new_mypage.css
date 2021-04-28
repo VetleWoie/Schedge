@@ -1,0 +1,148 @@
+body {
+    background: rgb(230, 230, 230);
+    padding: 0;
+}
+
+.sidenav, .displayright {
+    height: 100vh;
+}
+.sidenav {
+    background-color: lightgrey;
+
+}
+
+.displayright {
+    /* height: 100vh; */
+    padding-top: 50px;
+    font-size: 30px;
+    padding-left: 50px;
+}
+
+[dir="home"] > :not(.homeTxt),
+[dir="host"] > :not(.hostTxt),
+[dir="parti"] > :not(.partiTxt) {
+  display: none;
+
+}
+
+.nav_btn {
+    border: none;
+    background: none;
+    /* margin-bottom: 50px; */
+    padding: 25px 0px;
+    font-size: 20px;
+    letter-spacing: 5px;
+    width: 100%;
+}
+
+.nav_btn:focus {
+    outline: none;
+    color: white;
+    background: black;
+    
+}
+
+
+.so {
+    color: black;
+    position: fixed;
+    bottom: 0;
+    padding: 0;
+    padding-bottom: 50px;
+    font-size: 25px;
+    margin-right: 50px;
+
+}
+
+
+
+
+
+
+
+
+
+/* home css */
+
+.welcome_message {
+    text-align: center;
+    letter-spacing: 10px;
+    padding-left: 10px;
+    font-size: 50px;
+    margin-bottom: 40px;
+    text-shadow: 1px 1px 0px white;
+}
+
+
+ /* inbox */
+
+.inbox {
+    /* background: white; */
+    width: 100%;
+    font-size: 25px;
+}
+
+.inbox a:hover {
+    color: black;
+    text-decoration: none;
+}
+
+.inbox_tit {
+    font-weight: bolder;
+    font-size: larger;
+    text-transform: uppercase;
+}
+
+.invite_box {
+/* background-color: red;   */
+    /* border: 1px solid black; */
+    padding: 20px;
+    border-radius: 50px;
+    background-color: white;
+    box-shadow: 2px 2px 2px black;
+}
+
+.sender {
+    text-transform: capitalize;
+    margin-bottom: 30px;
+    font-size: smaller;
+}
+
+.acc_btn, .dec_btn {
+    border: 1px solid black;
+    padding: 5px 15px;
+    border-radius: 50px;
+}
+
+/* .acc_btn{
+    background-color: gray;
+    color: white;
+} */
+
+.inbox.acc_btn:hover, .inbox.dec_btn:hover{
+    color: white;
+    background-color: black;
+    text-decoration: none;
+}
+/* common i guess */
+
+.sub_title {
+    text-transform: uppercase;
+    padding: 10px;
+    letter-spacing: 5px;
+
+    text-shadow: 1px 1px 0px white;
+}
+
+.space {
+    margin-top: 50px;
+}
+
+.center {
+    text-align: center;
+}
+
+
+.right {
+    text-align: right;
+}

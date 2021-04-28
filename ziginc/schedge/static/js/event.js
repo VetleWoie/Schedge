@@ -2,6 +2,7 @@ var x = document.getElementById("id_location");
 var button = document.getElementById("curlocbutton");
 var loc_errmsg = document.getElementById("loc-err-msg")
 var loc_div = document.getElementById("loc-div")
+var tmslot_btn = document.querySelector("[dir]")
 
 function getLocation() {
     if (navigator.geolocation) {
@@ -37,4 +38,15 @@ function errorCallBack(error) {
 
     loc_errmsg.className = "errormsgtext"
     loc_errmsg.innerHTML = "Enable location services to use this feature"
+}
+
+function validateSubmit(message, id) {
+    result = confirm(message);
+    if (result) {
+        $('#' + id).submit();
+    }
+}
+
+function tmslotToggle(val) {
+    tmslot_btn.setAttribute('dir', val);
 }

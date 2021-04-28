@@ -7,33 +7,113 @@ import datetime as dt
 from django.http import JsonResponse
 from unittest import skip
 
+from schedge.forms import TimeSlotForm
+from schedge.utils import create_time_slot
+
 class TimeSlotFunctionalTest(TestCase):
     def setUp(self):
         self.example_event_model = {
             "title": "golfing",
             "location": "golf course",
             "description": ":)",
-            "starttime": dt.time(hour=8, minute=30),
-            "endtime": dt.time(hour=11, minute=45),
+            "starttime": dt.time(00,00,00),
+            "endtime": dt.time(00,00,00),
             "startdate": dt.datetime.now(),
             "enddate": dt.datetime.now() + dt.timedelta(days=7),
-            "duration": dt.timedelta(hours=1),
+            "duration": dt.timedelta(hours=2),
         }
 
-        self.golf = Event.objects.create(**self.example_event_model)
-        password = "Elias123"
-        self.user = User.objects.create_user("tester", "myemail@test.com", password)
+        self.testevent = Event.objects.create(**self.example_event_model)
 
-        self.client.login(username=self.user.username, password=password)
+        user = {
+                "username" : "testUsername",
+                "first_name" : "testFirstName",
+                "last_name" : "testLastName",
+                "email" : "testMail@riise.no",
+                "password" : "testPassword",
+        }
+        self.user = User.objects.create_user(**user)
+
+        self.client.login(username=self.user.username, password=user["password"])
         self.tomorrow = (dt.datetime.now() + dt.timedelta(days=1)).strftime("%Y-%m-%d")
         self.example_timeslot = {
             "date": self.tomorrow,
             "start_time": "09:10",
             "end_time" : "11:10",
         }
+    
+    def test_create_time_slot(self):
+        expected = {
+            "event": self.testevent,
+            "start_time": dt.time(8,00,00),
+            "end_time": dt.time(14,00,00),
+            "date": (dt.datetime.now() + dt.timedelta(1)).date(),
+            "creator": self.user,
+        }
+
+        t1 = {
+            "start_time": dt.time(8,00,00),
+            "end_time": dt.time(10,00,00),
+            "date": (dt.datetime.now() + dt.timedelta(1)).date()
+        }
+        t2 = {
+            "start_time": dt.time(12,00,00),
+            "end_time": dt.time(14,00,00),
+            "date": (dt.datetime.now() + dt.timedelta(1)).date()
+        }
+        t3 = {
+            "start_time": dt.time(10,00,00),
+            "end_time": dt.time(12,00,00),
+            "date": (dt.datetime.now() + dt.timedelta(1)).date()
+        }
+        
+        create_time_slot(self.testevent, self.user, t1)
+        create_time_slot(self.testevent, self.user, t2)
+        create_time_slot(self.testevent, self.user, t3)
+
+        timeslots = TimeSlot.objects.all()
+        self.assertEqual(len(timeslots), 1, msg="Should only be one timeslot, found %s" % len(timeslots))        
+        timeslots = timeslots[0]
+        #Check timeslot values
+        self.assertEqual(timeslots.start_time,expected["start_time"] , msg="Start time should be %s but got %s" % (expected['start_time'], timeslots.start_time))        
+        self.assertEqual(timeslots.end_time,expected["end_time"] , msg="End time should be %s but got %s" % (expected['end_time'], timeslots.end_time))
+        self.assertEqual(timeslots.date,expected["date"] , msg="Date should be %s but got %s" % (expected['date'], timeslots.date))
+        self.assertEqual(timeslots.creator,expected["creator"], msg="Creator should be %s but got %s" % (expected["creator"], timeslots.creator))    
+
+    def test_rollover_time_slot(self):
+        t1 = {
+            "start_time": dt.time(23,00,00),
+            "end_time": dt.time(1,00,00),
+            "date": dt.datetime.now(),
+        }
+        
+        form = TimeSlotForm(duration=self.testevent.duration,data=t1)
+        #Check errors in start time
+        with self.assertRaises(KeyError,msg="Expected no errors but got error(s) in starttime."):
+            print("\nExpected no errors in start time but got %d \n Errors: \n %s" % (len(form.errors["start_time"]),form.errors["start_time"]))
+            
+        #Check errors in end time    
+        with self.assertRaises(KeyError,msg="Expected no errors but got error(s) in end time."):
+            print("\nExpected no errors in end time but got %d \n Errors: \n %s" % (len(form.errors["end_time"]),form.errors["end_time"]))
+    
+    def test_rollover_time_slot_with_invalid_length(self):
+        t1 = {
+            "start_time": dt.time(23,30,00),
+            "end_time": dt.time(00,30,00),
+            "date": dt.datetime.now(),
+        }
+        
+        form = TimeSlotForm(duration=self.testevent.duration,data=t1)
+        try:
+            #Check errors in start time
+            self.assertEqual(len(form.errors["start_time"]), 1, msg="Expected 1 error in start time got %d" % len(form.errors["start_time"]))            
+            #Check errors in end time    
+            self.assertEqual(len(form.errors["end_time"]), 1, msg="Expected 1 error in end_time got %d" % len(form.errors["end_time"]))    
+        except Exception as e:
+            self.fail("Got exeption: %s" % e)
 
     def test_create_timeslot(self):
-        response = self.client.post(f"/event/{self.golf.id}/", self.example_timeslot)
+        response = self.client.post(f"/event/{self.testevent.id}/", self.example_timeslot)
         # there is a timeslot in the context
         self.assertTrue(response.context["timeslots"])
         self.assertEqual(response.status_code, 200)
@@ -45,7 +125,7 @@ class TimeSlotFunctionalTest(TestCase):
             "end_time": "22:00"
             
         }
-        response = self.client.post(f"/event/{self.golf.id}/", timeslot)
+        response = self.client.post(f"/event/{self.testevent.id}/", timeslot)
         # there is a timeslot in the context
         self.assertEqual(response.status_code, 400)
 
@@ -58,7 +138,7 @@ class TimeSlotFunctionalTest(TestCase):
             "start_time": "13:00",
             "end_time": "15:00",
         }
-        response = self.client.post(f"/event/{self.golf.id}/", timeslot)
+        response = self.client.post(f"/event/{self.testevent.id}/", timeslot)
         self.assertEqual(response.status_code, 400)
 
         # enddate is in one week. try posting timeslot in two weeks
@@ -68,5 +148,5 @@ class TimeSlotFunctionalTest(TestCase):
             "start_time": "09:10",
             "end_time": "13:00",
         }
-        response = self.client.post(f"/event/{self.golf.id}/", timeslot)
+        response = self.client.post(f"/event/{self.testevent.id}/", timeslot)
         self.assertEqual(response.status_code, 400)
