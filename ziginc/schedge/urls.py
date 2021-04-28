@@ -35,7 +35,8 @@ urlpatterns = [
     url(
         "^inbox/notifications/", include(notifications.urls, namespace="notifications")
     ),
-    path("signup/termsandservices", views.termsandservices, name="tands")
+    path("signup/termsandservices/", views.termsandservices, name="tands"),
+    path("mypage/delete_user_account/", views.delete_user, name="delete_user_account")
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
