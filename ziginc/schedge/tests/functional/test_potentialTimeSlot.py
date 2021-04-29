@@ -6,7 +6,7 @@ from django.contrib.auth.models import User, UserManager
 import datetime as dt
 from django.http import JsonResponse
 
-from schedge.utils import riise_hofsøy
+from schedge.model_utils import riise_hofsøy
 
 
 class PotentialTimeSlotTest(TestCase):

@@ -21,7 +21,8 @@ from django.contrib.auth.models import User
 from collections import namedtuple
 import re
 
-from .utils import riise_hofsøy, create_time_slot
+from .model_utils import riise_hofsøy, create_time_slot
+from .utils import time_diff
 
 from django.db.models.signals import post_save
 from notifications.signals import notify
@@ -163,17 +164,15 @@ def timeslot_select(request, event_id):
         return dt.datetime.strptime(time, '%H:%M').time()
     def parse_datestring(time):
         """Parse the fuzzy timestamps."""
-        return dt.datetime.strptime(time, '%Y/%m/%d').date()
+        return dt.datetime.strptime(time, '%Y-%m-%d').date()
 
     print(start, end)
     start = parse_timestring(start)
     end = parse_timestring(end)
     date = parse_datestring(date)
 
-    # try:
-    #     p_timeslot = PotentialTimeSlot.objects.get(id=pt_id, event=this_event)
-    # except TimeSlot.DoesNotExist:
-    #     return HttpResponseNotFound("404: not valid timeslot id")
+    if time_diff(start, end) != this_event.duration:
+        return HttpResponseBadRequest("the selected time does not have the same length as the duration of the event")
 
     this_event.status = "C"
     this_event.chosen_time = dt.datetime.combine(date, start)

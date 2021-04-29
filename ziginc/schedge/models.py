@@ -6,6 +6,7 @@ import django
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 
+from .utils import time_add, time_diff
 # Create your models here.
 
 
@@ -122,10 +123,7 @@ class PotentialTimeSlot(models.Model):
         start at either 00, 15, 30 or 45.
         F.ex: pts between 11:50am and 1pm, duration is 30 min
         return [12:00 - 12:30, 12:15 - 12:45, 12:30 - 13:00]"""
-        def time_add(time, delta):
-            """adds a timedelta to a time object"""
-            return (dt.datetime.combine(dt.date.today(), time) + delta).time()
-
+ 
         interval = 15
         startmin = self.start_time.minute
         duration = self.event.duration

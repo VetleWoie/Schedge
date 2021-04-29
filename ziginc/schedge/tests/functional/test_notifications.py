@@ -179,7 +179,7 @@ class NotificationTest(TestCase):
         self.assertEqual(len(notifications), 1)
         self.assertTrue(notifications.exists())
 
-    @skip("TODO: Redo! Uses old functionality which didn't take the duration into consideration")
+    # @skip("TODO: Redo! Uses old functionality which didn't take the duration into consideration")
     def test_gets_notification_on_time_selected(self):
         """ Test notification when the host decides the time for an event"""
 
@@ -200,7 +200,9 @@ class NotificationTest(TestCase):
         event = Event.objects.get(id=self.event_id)
         pts = PotentialTimeSlot.objects.get(event=event)
         # Post a leave request
-        response = self.client.post(f"/event/{self.event_id}/select/{pts.id}/")
+        form = {"options": "10:00,20:00,{}".format(self.tomorrow)}
+
+        response = self.client.post(f"/event/{self.event_id}/select/", form)
        
         # Assert that there is a notification
         notifications = Notification.objects.filter(recipient=self.invitee, verb="time selected")
