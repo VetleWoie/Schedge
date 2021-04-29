@@ -33,6 +33,8 @@ def home(request):
 
     user_count = User.objects.count()
     context = {"user_count": user_count}
+    if request.user.is_authenticated:
+        return redirect(mypage)
 
     return render(request, "home.html", context)
 
@@ -548,6 +550,6 @@ def delete_user(request):
     
     user = request.user
     user.delete()        
-    return redirect(signUpView)
+    return redirect(home)
 
 
