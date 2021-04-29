@@ -15,7 +15,7 @@ from notifications.models import Notification
 PASSWORD = "Elias123"
 
 
-class CreateEventSeleniumTest(StaticLiveServerTestCase):
+class NotificationsSeleniumTest(StaticLiveServerTestCase):
     """Functional test of the create event page using Selenium"""
 
     def setUp(self):
