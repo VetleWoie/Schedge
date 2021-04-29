@@ -17,10 +17,12 @@ urlpatterns = [
         views.timeslot_delete,
         name="timeslot_delete",
     ),
+    path("event/<int:event_id>/select/", views.timeslot_select, name="timeslot_select"),
     path("event/<int:event_id>/edit/", views.eventedit, name="eventedit"),
     path("event/<int:event_id>/edit/delete/", views.event_delete, name="event_delete"),
     path("event/<int:event_id>/invite/", views.event_invite, name="event_invite"),
     path("event/<int:event_id>/participant_delete/<int:user_id>/", views.participant_delete, name="participant_delete"),
+    path("event/<int:event_id>/participant_leave/<int:user_id>/", views.participant_leave, name="participant_leave"),
     path("invite_accept/<int:invite_id>/", views.invite_accept, name="invite_accept"),
     path("invite_reject/<int:invite_id>/", views.invite_reject, name="invite_reject"),
     path("invite_delete/<int:invite_id>/", views.invite_delete, name="invite_delete"),
@@ -35,6 +37,8 @@ urlpatterns = [
     url(
         "^inbox/notifications/", include(notifications.urls, namespace="notifications")
     ),
+    path("signup/termsandservices/", views.termsandservices, name="tands"),
+    path("mypage/delete_user_account/", views.delete_user, name="delete_user_account")
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

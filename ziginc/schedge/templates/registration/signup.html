@@ -11,52 +11,24 @@
 {% block auth %}{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-  <div class="row txt_ls_med m_top_small">
-    <div class="col logo txt_large p_side_m">
-      Schedge
-    </div>
-    <div class="col txt_right txt_large p_side_m au_txt">
-      <a class="simple_link" href="#">about us</a>
-    </div>
-  </div>
-  <div class="signup_box">
+<form action="{% url 'signup' %}" method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
 
-  <div class="row ">
-    <div class="col d-flex justify-content-center signup_title m_top_med m_btm_small">
-      Sign up
-    </div>
-  </div>
-
-  <div class="row ">
-    <div class="col d-flex justify-content-center">
-
-      <form action="{% url 'signup' %}" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <div class="txt_center">
-
-          <button type='submit' class="btn btn-dark txt_large m_top_xsmall p_btn">Sign up</button>
-        </div>
-      </form>
-    </div>
-  </div>
-  <div class="row m_top_med">
-    <div class="col d-flex justify-content-center">
-      <div class="txt_center">
-        <!-- </break> -->
-        <span class="txt_large">
-          Do you have an account?
-        </span> 
-        <form action="{% url 'login' %}">
-          <input type="submit" class="btn btn-dark m_btm_med m_top_small p_side_m" value="Sign in" />
-        </form>
-      </div>
-
-    </div>
-  </div>
-
-  </div>
-
-</div>
+ <!-- Checkbox to opt in to our terms and services to be able ot use our service. -->
+  <input id='check' name='checkbox' type='checkbox' onclick="checkbox_clicked()">
+  <span>
+    By clicking Sign up, you agree to our
+    <a class="terms" href={% url 'tands' %} data-toogle="tooltip" data-placement="top" title="">Terms.</a>
+  </span> 
+  <br>
+  
+  <button type='submit' id='signupbtn' disabled>Sign up</button>
+</form>
+</break>
+Already have an account? 
+<form action="{% url 'login' %}">
+  <input type="submit" value="Sign in" />
+</form>
+<script src='{%static "js/signup.js"%}'></script>
 {% endblock %}

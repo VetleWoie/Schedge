@@ -22,8 +22,8 @@ function parse_invitation_list(data) {
             switch (item.verb) {
                 case "invite":
                     message += item.actor + " has <span style=\"color:green;\">invited</span> you to join an event:</br><i>" + item.data.title + "</i></br>"
-                    message += "<button type=\"button\" onclick=\"invitation_respond('accept', " + item.data.invite_id + ", " + item.id + ")\">✓</button>"
-                    message += "<button type=\"button\" onclick=\"invitation_respond('reject', " + item.data.invite_id + ", " + item.id + ")\">✗</button>"
+                    message += "<button id=\"id_notif_invite_accept\" type=\"button\" onclick=\"invitation_respond('accept', " + item.data.invite_id + ", " + item.id + ")\">✓</button>"
+                    message += "<button id=\"id_notif_invite_reject\" type=\"button\" onclick=\"invitation_respond('reject', " + item.data.invite_id + ", " + item.id + ")\">✗</button>"
 
                     break;
                 case "invite accepted":
@@ -35,6 +35,9 @@ function parse_invitation_list(data) {
                 case "participant deleted":
                     message += item.actor + " has <span style=\"color:red;\">removed</span> you from the event:</br>" + item.data.title
                     break;
+                case "participant left":
+                        message += item.actor + " has <span style=\"color:red;\">left</span> your event:</br>" + item.data.title
+                        break;
                 case "invite deleted":
                     message += item.actor + " has <span style=\"color:red;\">removed</span> you from the event:</br>" + item.data.title
                     break;
@@ -44,6 +47,8 @@ function parse_invitation_list(data) {
                 case "event edited":
                     message += item.actor + " has <span style=\"color:blue;\">edited</span> the event:</br>" + item.data.title
                     break;
+                case "time selected":
+                    message += item.actor + " has <span style=\"color:green;\"> picked a time </span> for the event:</br>" + item.data.title
                 default:
                     break;
             }

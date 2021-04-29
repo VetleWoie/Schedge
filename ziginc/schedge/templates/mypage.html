@@ -10,6 +10,7 @@
 {% block content %}
 
 <div id="box_myevents">
+    <h1 id="welcome_message"></h1>
     <div class="title_main">m&nbsp;y&nbsp;&nbsp;e&nbsp;v&nbsp;e&nbsp;n&nbsp;t&nbsp;s</div>
     {% if host_undecided %}
     {% for event in host_undecided %}
@@ -82,6 +83,12 @@
     {% endif %}
 </div>
 
+{% comment%} Below is how the 'delete user' functionality is used. {% endcomment %}
+<form action="{% url 'delete_user_account'%}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="submit" value="Delete me">
+</form>
+
 
 <div id="box_participant">
 
@@ -139,7 +146,8 @@
     {% else %}
     <div class="nothing">you don't have any event RSVPs</div>
     {% endif %}
-
+    <script src="{% static 'js/mypage.js' %}"></script>
+    <script>put_welcome_message("{{user.first_name}}")</script>
 </div>
 
 

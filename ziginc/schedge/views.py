@@ -19,8 +19,10 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from collections import namedtuple
+import re
 
-from .utils import riise_hofsøy, create_time_slot
+from .model_utils import riise_hofsøy, create_time_slot
+from .utils import time_diff
 
 from django.db.models.signals import post_save
 from notifications.signals import notify
@@ -44,11 +46,18 @@ def mypage(request):
     participant_as_guest = Event.objects.filter(participants=user).exclude(host=user)
 
     invites = Invite.objects.filter(invitee=user)
+
+    # Get events that will happen in between today and within the next seven days
+    today = dt.date.today()
+    in_seven_days = today + dt.timedelta(days=7)
+    this_weeks_events = Event.objects.filter(participants=user, status="C", startdate__gte=today, enddate__lte=in_seven_days)
+
     context = {
         "host_undecided": host_undecided,
         "host_decided": host_decided,
         "participant_as_guest": participant_as_guest,
         "invites": invites,
+        "this_week": this_weeks_events
     }
     return render(request, "mypage.html", context)
 
@@ -139,10 +148,55 @@ def timeslot_delete(request, event_id, timeslot_id):
             return HttpResponseNotFound("404: not valid timeslot id")
 
         timeslot.delete()
-        refactor_potential_time_slots(this_event)
+        riise_hofsøy(this_event)
 
     return redirect(event, event_id)
 
+
+def timeslot_select(request, event_id):
+
+    if request.method != "POST":
+        return HttpResponseBadRequest("Request method not allowed")
+
+    try:
+        this_event = Event.objects.get(id=event_id)
+    except Event.DoesNotExist:
+        raise Http404("Not valid event id")
+
+    print(request.POST)
+    time = request.POST["options"]
+    start, end, date = time.split(",")
+
+    def parse_timestring(time):
+        """Parse the fuzzy timestamps."""
+        return dt.datetime.strptime(time, '%H:%M').time()
+    def parse_datestring(time):
+        """Parse the fuzzy timestamps."""
+        return dt.datetime.strptime(time, '%Y-%m-%d').date()
+
+    print(start, end)
+    start = parse_timestring(start)
+    end = parse_timestring(end)
+    date = parse_datestring(date)
+
+    if time_diff(start, end) != this_event.duration:
+        return HttpResponseBadRequest("the selected time does not have the same length as the duration of the event")
+
+    this_event.status = "C"
+    this_event.chosen_time = dt.datetime.combine(date, start)
+    this_event.save()
+
+    users = this_event.participants.exclude(id=request.user.id)
+    notify.send(
+        request.user,
+        recipient=users,
+        target=this_event,
+        verb="time selected",
+        title=this_event.title,
+        url=f"/event/{this_event.id}/",
+    )
+
+    return redirect(event, event_id)
 
 def notify_if_changed(event, newdata, user):
     """sends notification from user to all participants
@@ -161,6 +215,7 @@ def notify_if_changed(event, newdata, user):
             title=event.title,
             url=f"/event/{event.id}/",
         )
+
 
 
 @login_required(login_url="/login/")
@@ -221,12 +276,12 @@ def event_delete(request, event_id):
     if request.user != event_del.host:
         return HttpResponse("Unauthorized", status=401)
 
-    users = event_del.participants.exclude(id=request.user.id)
-
     timeslots = TimeSlot.objects.filter(id=event_id)
     timeslots.delete()
 
     Notification.objects.filter(target_object_id=event_del.id).delete()
+    
+    users = event_del.participants.exclude(id=request.user.id)
     notify.send(
         request.user,
         recipient=users,
@@ -271,10 +326,20 @@ def event_invite(request, event_id):
         this_event = Event.objects.get(id=event_id)
     except Event.DoesNotExist:
         return HttpResponseNotFound("404: not valid event id")
+    
+    # Only the host can invite people:
+    if request.user != this_event.host:
+        return HttpResponse("Unauthorized", status=401)
+    
     if request.method != "POST":
         return HttpResponseBadRequest(
             "invite view does not support other than post method"
         )
+
+    # only participants are allowed to invite others
+    if not this_event.participants.filter(id=request.user.id).exists():
+        return HttpResponse("Unautherized", status=401)
+
     form = InviteForm(request.POST, user=request.user)
     if form.is_valid():
         data = form.cleaned_data
@@ -317,6 +382,9 @@ def invite_accept(request, invite_id):
     except Invite.DoesNotExist:
         return HttpResponseBadRequest("Unknown invite")
 
+    if invite.invitee != request.user:
+        return HttpResponse("Unautherized", status=401)
+
     try:
         notif = Notification.objects.get(target_object_id=invite.id)
     except Notification.DoesNotExist:
@@ -324,7 +392,6 @@ def invite_accept(request, invite_id):
     else:
         notif.mark_as_read()
 
-    assert invite.invitee == request.user
     invite.event.participants.add(invite.invitee)
 
     notify.send(
@@ -346,6 +413,9 @@ def invite_reject(request, invite_id):
         invite = Invite.objects.get(id=invite_id)
     except Invite.DoesNotExist:
         return HttpResponseBadRequest("Unknown invite")
+
+    if invite.invitee != request.user:
+        return HttpResponse("Unautherized", status=401)
 
     try:
         notif = Notification.objects.get(target_object_id=invite.id)
@@ -380,14 +450,14 @@ def invite_delete(request, invite_id):
     if invite.event.host != request.user:
         return HttpResponse("Unauthorized", status=401)
 
-    # silently remove the notifications
+    #  silently remove the notifications
     try:
         notification = Notification.objects.get(target_object_id=invite.id)
     except Notification.DoesNotExist:
         pass
     else:
         notification.delete()
- 
+
     invite.delete()
     return redirect(event, invite.event.id)
 
@@ -427,6 +497,37 @@ def participant_delete(request, event_id, user_id):
     return redirect(event, this_event.id)
 
 
+def participant_leave(request, event_id, user_id):
+    try:
+        this_event = Event.objects.get(id=event_id)
+    except User.DoesNotExist:
+        return HttpResponseNotFound("Unknown event")
+
+    if request.method != "POST":
+        return HttpResponseBadRequest("Bad request")
+
+    try:
+        user = this_event.participants.get(id=user_id)
+    except User.DoesNotExist:
+        return HttpResponseNotFound("Unknown User")
+
+    # remove the timeslots created by this user
+    TimeSlot.objects.filter(event=this_event, creator=user).delete()
+    # remove user from the event's participants
+    this_event.participants.remove(user)
+
+    # notify host that user left
+    notify.send(
+        user,
+        recipient=this_event.host,
+        target=this_event,
+        verb=f"participant left",
+        title=this_event.title,
+        url=f"/event/{this_event.id}",
+    )
+    return redirect(mypage)
+
+
 def mark_notification_as_read(request, notif_id):
     try:
         notif = Notification.objects.get(id=notif_id)
@@ -434,3 +535,19 @@ def mark_notification_as_read(request, notif_id):
         return HttpResponseNotFound("notification not found", status=404)
     notif.mark_as_read()
     return HttpResponse("ok", status=200)
+
+
+def termsandservices(request):
+    return render(request, "termsandservices.html")
+
+# TODO: Redirect to 'home' instead of 'signUpView'. Needs to be changed when home view is added
+@login_required
+def delete_user(request):
+    if request.method != "POST":
+        return HttpResponseBadRequest("Bad request")
+    
+    user = request.user
+    user.delete()        
+    return redirect(signUpView)
+
+

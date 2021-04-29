@@ -6,10 +6,10 @@ from django.contrib.auth.models import User, UserManager
 import datetime as dt
 from django.http import JsonResponse
 
-from schedge.utils import riise_hofsøy
+from schedge.model_utils import riise_hofsøy
 
 
-class TimeSlotTest(TestCase):
+class PotentialTimeSlotTest(TestCase):
     def setUp(self):
 
         self.users = []
@@ -32,9 +32,9 @@ class TimeSlotTest(TestCase):
             "endtime" : dt.time(00,00,00),
             "duration" : dt.timedelta(hours=2),
         }
-        self.event = Event.objects.create(**e, host=self.users[0])
-        
-    
+        self.event = Event.objects.create(**e, host=self.users[0])        
+
+
     def test_same_time_slot(self):
         expected = {
             "event" : self.event,
