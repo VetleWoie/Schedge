@@ -38,3 +38,10 @@ function errorCallBack(error) {
     loc_errmsg.className = "errormsgtext"
     loc_errmsg.innerHTML = "Enable location services to use this feature"
 }
+
+function validateSubmit(message, id) {
+    result = confirm(message);
+    if (result) {
+        $('#' + id).submit();
+    }
+}
