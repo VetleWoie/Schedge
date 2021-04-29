@@ -6,7 +6,7 @@ from unittest import skip
 import datetime as dt
 from django.utils.timezone import now
 from schedge.models import Event
-from schedge.utils import create_time_slot
+from schedge.model_utils import create_time_slot
 from schedge.models import Event, TimeSlot
 
 class DeleteUserTest(TestCase):
@@ -130,6 +130,7 @@ class DeleteUserTest(TestCase):
             "host": self.host,
         }
         self.date = Event.objects.create(**self.example_model)
+        self.date.participants.add(self.host)
 
         self.date.participants.add(usr)
 
