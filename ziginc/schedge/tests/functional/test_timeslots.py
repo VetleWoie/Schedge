@@ -8,7 +8,7 @@ from django.http import JsonResponse
 from unittest import skip
 
 from schedge.forms import TimeSlotForm
-from schedge.utils import create_time_slot
+from schedge.model_utils import create_time_slot
 
 class TimeSlotFunctionalTest(TestCase):
     def setUp(self):
