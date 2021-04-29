@@ -1,8 +1,13 @@
 <!-- templates/registration/signup.html -->
 {% extends 'base.html' %}
 {% load static %}
-
 {% block title %}Sign Up{% endblock %}
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'css/startpage.css' %}" />
+<link rel="stylesheet" href="{% static 'css/signup.css' %}" />
+{% endblock %}
+
+{% block header%}{%endblock%}
 {% block auth %}{% endblock %}
 
 {% block content %}

@@ -29,6 +29,14 @@ from notifications.signals import notify
 from notifications.models import Notification
 
 
+def home(request):
+
+    user_count = User.objects.count()
+    context = {"user_count": user_count}
+
+    return render(request, "home.html", context)
+
+
 @login_required(login_url="/login/")
 def mypage(request):
     user = request.user
@@ -322,6 +330,7 @@ def event_invite(request, event_id):
     # Only the host can invite people:
     if request.user != this_event.host:
         return HttpResponse("Unauthorized", status=401)
+    
     if request.method != "POST":
         return HttpResponseBadRequest(
             "invite view does not support other than post method"
