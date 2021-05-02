@@ -1,28 +1,95 @@
-{% extends 'base.html' %}
-
+{% extends 'framework.html' %}
+{% load static %}
 {% block title %}Sign in{% endblock %}
-{%block auth%}{%endblock%}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'css/startpage.css' %}" />
+<link rel="stylesheet" href="{% static 'css/reg.css' %}" />
+{% endblock %}
+
 {% block content %}
-<h2>Sign in</h2>
-<form method="post" id="sign-in-form">
-  {% csrf_token %}
-  <!-- <table>
-    <tr>
-        <td>{{ form.username.label_tag }}</td>
-        <td>{{ form.username }}</td>
-    </tr>
-    <tr>
-        <td>{{ form.password.label_tag }}</td>
-        <td>{{ form.password }}</td>
-    </tr>
-    </table> -->
-  {{ form.as_p }}
-  <button type="submit">Sign in</button>
-</form>
-</break>
-Don't have an account yet? 
-<form action="{% url 'signup' %}">
-  <input type="submit" value="Sign up" />
-</form>
-<p><a href="{% url 'password_reset' %}">Reset Password</a></p>
+
+<div class="container-fluid">
+  <div class="row txt_ls_med m_top_small">
+    <div class="col logo txt_large p_side_m">
+      <a href="{% url 'home' %}" class="simple_link">Schedge</a>
+    </div>
+    <div class="col txt_right txt_large p_side_m au_txt">
+      <a class="simple_link" href="#">about us</a>
+    </div>
+  </div>
+
+
+
+  <div class="row">
+
+
+    <div class="col-md-6 signup_box">
+
+      <div class="row ">
+        <div class="col d-flex justify-content-center signup_title m_top_med m_btm_small">
+          Sign in
+        </div>
+      </div>
+
+
+
+      <div class="row ">
+        <div class="col d-flex justify-content-center">
+          <form method="post" id="sign-in-form">
+
+
+            {% csrf_token %}
+            <!-- <table>
+          <tr>
+            <td>{{ form.username.label_tag }}</td>
+            <td>{{ form.username }}</td>
+          </tr>
+          <tr>
+            <td>{{ form.password.label_tag }}</td>
+            <td>{{ form.password }}</td>
+          </tr>
+        </table> -->
+            {{ form.as_p }}
+
+            <div class="txt_center">
+
+              <button type='submit' class="btn btn-dark txt_large m_top_xsmall p_btn">Sign in</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="row m_top_med">
+        <div class="col d-flex justify-content-center">
+          <div class="txt_center">
+            <!-- </break> -->
+            <span class="txt_large">
+              Don't have an account yet?
+            </span>
+            <form action="{% url 'signup' %}">
+              <input type="submit" class="btn btn-dark m_btm_small m_top_small p_side_m" value="Sign up" />
+            </form>
+          </div>
+
+        </div>
+      </div>
+      <div class="row justify-content-center p_btm_med">
+        Did you forget your password?&nbsp;
+        <p><a class="simple_link" href="{% url 'password_reset' %}">Reset Password</a></p>
+      </div>
+
+
+
+    </div>
+
+
+  </div>
+
+</div>
+
+
+
+
+
 {% endblock %}

@@ -1,16 +1,14 @@
-{% extends 'base.html' %}
+{% extends 'framework.html' %}
 {% load static %}
 {% block title %}Schedge{% endblock %}
 {% block stylesheet %}
 <link rel="stylesheet" href="{% static 'css/startpage.css' %}" />
 {% endblock %}
 
-{% block header%}{%endblock%}
-
 {% block content%}
 
-
 <div class="container-fluid">
+
     <div class="row txt_ls_med m_top_small">
         <div class="col logo txt_large p_side_m">
             Schedge
@@ -19,9 +17,13 @@
             <a class="simple_link" href="#">about us</a>
         </div>
     </div>
+
+
     <div class="row">
-        <div class="col txt_center main_tit txt_ls_l m_top_med">Schedge</div>
+        <div class="col txt_center main_title txt_ls_l">Schedge</div>
     </div>
+
+
     <div class="row">
         <div class="col txt_center sub_txt m_top_med txt_ls_small">
             Find the time that works for <span class="txt_large txt_cursive txt_bold">all</span> of you<br>
@@ -35,20 +37,25 @@
 
         </div>
     </div>
-    <div class="row justify-content-center m_top_l">
+
+
+    <div class="row justify-content-center m_top_med">
         <a href="{% url 'login' %}" id="sign-in">
-            <button type="button" class="btn btn-secondary si_btn txt_large">Sign in</button>
+            <button type="button" class="btn btn-light p_side_m txt_large">Sign in</button>
         </a>
     </div>
+
+
     <div class="row">
-        <div class="col txt_center m_top_xsmall txt_bold">OR</div>
+        <div class="col txt_center m_top_xsmall txt_white txt_bold ">OR</div>
     </div>
+
+
     <div class="row justify-content-center m_top_xsmall">
-        <a href="{% url 'signup' %}" class="simple_link txt_large">Create an account</a>
+        <a href="{% url 'signup' %}" class="simple_link txt_white txt_large">Create an account</a>
     </div>
 
 </div>
 
 
 {%endblock%}
-{% block sidebar %} {% endblock %}

@@ -1,18 +1,19 @@
-.main_tit {
+html {
+    height: 100%;
+}
+body {
+    background: rgb(0,153,224);
+    background: linear-gradient(135deg, rgba(0,153,224,1) 0%, rgba(0,166,179,1) 50%, rgba(0,177,129,1) 100%);
+}
+.main_title {
     font-size: 50px;
-    margin-top: 30vh;
-    color: #343a40;
+    margin-top: 10vh;
+    color: white;
 }
 
-
-.si_btn {
-    padding: 10px 40px;
-    font-size: 25px;
-    border-radius: 20px;
-    background-color: #343a40;
-}
 
 .sub_txt {
     font-size: 20px;
+    color: white;
 }
 
