@@ -597,7 +597,7 @@ def friend_request_accept(request, request_id):
         # url=f"/event/{this_event.id}/",
     )
     
-    fr.delete()
+    friend_req.delete()
 
     return HttpResponse('Friend request accepted')
 
