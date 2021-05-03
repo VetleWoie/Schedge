@@ -90,7 +90,7 @@ class InviteTest(TestCase):
     @as_bob
     def test_accept_invitation(self):
         # bob accept invite
-        response = self.client.post(f"/invite_accept/{self.inv.id}/")
+        response = self.client.post(f"/event_invite_accept/{self.inv.id}/")
         # the accepting should redirect
         self.assertEqual(response.status_code, 302)
         # other should be in the event's participants
@@ -99,7 +99,7 @@ class InviteTest(TestCase):
     @as_bob
     def test_accepted_invitation_is_on_mypage(self):
         # bob accept invite
-        self.client.post(f"/invite_accept/{self.inv.id}/")
+        self.client.post(f"/event_invite_accept/{self.inv.id}/")
         # the accepting should redirect
         response = self.client.get("/mypage/")
         self.assertIn(self.hiking, response.context["participant_as_guest"])
@@ -107,7 +107,7 @@ class InviteTest(TestCase):
     @as_bob
     def test_rejected_invitation_is_not_on_mypage(self):
         # bob reject invite
-        self.client.post(f"/invite_reject/{self.inv.id}/")
+        self.client.post(f"/event_invite_reject/{self.inv.id}/")
         # the accepting should redirect
         response = self.client.get("/mypage/")
         self.assertNotIn(self.hiking, response.context["participant_as_guest"])
@@ -116,7 +116,7 @@ class InviteTest(TestCase):
     @as_bob
     def test_reject_invitation(self):
         # bob reject invite
-        response = self.client.post(f"/invite_reject/{self.inv.id}/")
+        response = self.client.post(f"/event_invite_reject/{self.inv.id}/")
         # the accepting should redirect
         self.assertEqual(response.status_code, 302)
 
@@ -133,12 +133,12 @@ class InviteTest(TestCase):
 
     def test_accept_someone_elses_invite(self):
         # me tries to accept other's invite
-        response = self.client.post(f"/invite_accept/{self.inv.id}/")
+        response = self.client.post(f"/event_invite_accept/{self.inv.id}/")
         self.assertEqual(response.status_code, 401)
 
     def test_reject_someone_elses_invite(self):
         # me tries to reject other's invite
-        response = self.client.post(f"/invite_reject/{self.inv.id}/")
+        response = self.client.post(f"/event_invite_reject/{self.inv.id}/")
         self.assertEqual(response.status_code, 401)
 
     @as_bob
