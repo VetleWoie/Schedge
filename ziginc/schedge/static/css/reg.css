@@ -1,0 +1,25 @@
+.signup_title {
+    font-size: 50px;
+    color: #16161d;
+}
+
+.sub_signup_title {
+    font-size: 35px;
+}
+
+
+.signup_box {
+    background-color: white;
+    border: 1px solid white  !important;
+    /* width: 50% !important; */
+    margin: auto;
+    margin-top: 20px;
+    border-radius: 10px;
+    box-shadow: 5px 5px 5px #3d3d41;
+}
+
+.p_btn {
+    padding: 10px 20px !important;
+    font-size: 20px;
+    /* border-radius: 20px; */
+}

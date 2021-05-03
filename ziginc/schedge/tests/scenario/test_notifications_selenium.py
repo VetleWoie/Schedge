@@ -75,22 +75,27 @@ class NotificationsSeleniumTest(StaticLiveServerTestCase):
 
     def test_notif_on_invite(self):
         self.driver.get(self.live_server_url + f"/event/{self.event.id}")
+        sleep(1)
+        
         invite_form = self.driver.find_element_by_id("id_invitee")
         invite_form.send_keys("guest")
         invite_submit = self.driver.find_element_by_id("invite-submit")
         invite_submit.click()
+        sleep(0.5)
 
         self.login(self.guest.username)
-        sleep(1)
+        sleep(0.2)
         self.driver.get(self.live_server_url + f"/mypage/")
+        sleep(1)
 
         self.assertTrue(Notification.objects.filter(recipient=self.guest).exists())
         bell = self.driver.find_element_by_class_name("busybell")
         accept = self.driver.find_element_by_id("id_notif_invite_accept")
         chain = ActionChains(self.driver)
         chain.move_to_element(bell)
-        chain.pause(0.3)
+        chain.pause(0.1)
         chain.move_to_element(accept)
+        
         chain.click()
         chain.perform()
         sleep(1)
