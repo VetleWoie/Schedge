@@ -18,6 +18,7 @@ from django.views import generic
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.models import User
+from django.utils.timezone import get_current_timezone
 from collections import namedtuple
 import re
 
@@ -165,7 +166,6 @@ def timeslot_select(request, event_id):
     except Event.DoesNotExist:
         raise Http404("Not valid event id")
 
-    print(request.POST)
     time = request.POST["options"]
     start, end, date = time.split(",")
 
@@ -176,7 +176,6 @@ def timeslot_select(request, event_id):
         """Parse the fuzzy timestamps."""
         return dt.datetime.strptime(time, '%Y-%m-%d').date()
 
-    print(start, end)
     start = parse_timestring(start)
     end = parse_timestring(end)
     date = parse_datestring(date)
@@ -185,7 +184,8 @@ def timeslot_select(request, event_id):
         return HttpResponseBadRequest("the selected time does not have the same length as the duration of the event")
 
     this_event.status = "C"
-    this_event.chosen_time = dt.datetime.combine(date, start)
+    tz = get_current_timezone()
+    this_event.chosen_time = dt.datetime.combine(date, start, tzinfo=tz)
     this_event.save()
 
     users = this_event.participants.exclude(id=request.user.id)
