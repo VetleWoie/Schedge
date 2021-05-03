@@ -579,16 +579,17 @@ def friend_request_accept(request, request_id):
     if request.method != 'POST':
         return HttpResponseBadRequest('Bad Request')
     if not FriendRequest.objects.filter(id=request_id).exists():
-        return HttpResponseBadRequest('Bad Request')
-    fr = FriendRequest.objects.get(id=request_id)
-    if not fr.to_user == request.user:
+        return HttpResponseNotFound('Bad Request')
+    friend_req = FriendRequest.objects.get(id=request_id)
+    if not friend_req.to_user == request.user:
         return HttpResponseBadRequest('Error')
 
-    fr.to_user.profile.friends.add(fr.from_user)
-    fr.from_user.profile.friends.add(fr.to_user)
+    to_user = User.objects.get(username=friend_req.to_user)
+    from_user = User.objects.get(username=friend_req.from_user)
+    from_user.profile.friends.add(to_user)
+    to_user.profile.friends.add(from_user)
     
-    fr.from_user.save()
-    fr.to_user.save()
+    
     notify.send(
         request.user,
         recipient=fr.from_user,
@@ -597,6 +598,7 @@ def friend_request_accept(request, request_id):
     )
     
     fr.delete()
+
     return HttpResponse('Friend request accepted')
 
 @login_required(login_url='/login/')
@@ -604,7 +606,7 @@ def friend_request_reject(request, request_id):
     if request.method != 'POST':
         return HttpResponseBadRequest('Bad Request')
     if not FriendRequest.objects.filter(id=request_id).exists():
-        return HttpResponseBadRequest('Bad Request')
+        return HttpResponseNotFound('Bad Request')
     
     fr = FriendRequest.objects.get(id=request_id)
     if not fr.to_user == request.user:
