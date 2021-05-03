@@ -3,7 +3,7 @@ from . import views
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic.base import TemplateView
-from .views import signUpView, friend_request_accept, friend_request_reject, friend_request_send
+from .views import signUpView, friend_request_accept, friend_request_reject, friend_request_send, friend_delete, friend_request_delete
 import notifications.urls
 from django.conf.urls import url
 
@@ -41,6 +41,8 @@ urlpatterns = [
     path("friend_invite_accept/<int:request_id>/", friend_request_accept, name='friend_request_accept'),
     path("friend_invite_reject/<int:request_id>/", friend_request_reject, name='friend_request_reject'),
     path("friend_request_send/", friend_request_send, name='friend_request_send'),
+    path("friend_request_delete/", friend_request_delete, name='friend_request_delete'),
+    path("friend_delete/", friend_delete, name='friend_delete'),
 
 ]
 if settings.DEBUG:
