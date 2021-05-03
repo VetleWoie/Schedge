@@ -5,7 +5,7 @@ from django.forms.widgets import TextInput
 from django.utils.dateparse import parse_duration
 from django.core.exceptions import ValidationError
 from django.forms.widgets import MultiWidget
-from .models import Event, TimeSlot
+from .models import Event, TimeSlot, FriendRequest
 from django.contrib.auth.models import User
 from .widgets import SplitDurationWidget, MultiValueDurationField
 
@@ -167,7 +167,7 @@ class InviteForm(forms.Form):
         self.fields["invitee"].choices = [
             (v, u) for v, u in choices if u not in excluded and u != user.username
         ]
-class FriendReqForm(forms.Form):
+class FriendForm(forms.Form):
     to_user = forms.CharField(label='Username')
 
     def clean(self):
