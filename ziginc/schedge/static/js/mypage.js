@@ -1,3 +1,11 @@
+var holder = document.querySelector("[dir]");
+
+function toggle(val) {
+  holder.setAttribute('dir', val);
+}
+
+
+
 welcomeelement = document.getElementById("welcome_message")
 
 
@@ -6,18 +14,19 @@ var adjectives = ["affable", "affectionate", "agreeable", "ambitious", "amiable"
 function put_welcome_message(first_name) {
     var now = new Date();
     var hour = now.getHours();
+    console.log(hour)
     var i = Math.floor(Math.random() * adjectives.length);
     var adjective = adjectives[i];
     text = ""
     if (hour >= 5 && hour <= 11) {
-        text += "good morning";
+        text += "Good morning";
     } else if (hour >= 12 && hour <= 17) {
-        text += "good afternoon"
-    } else if (hour >= 18 && hour <= 4) {
-        text += "good evening"
+        text += "Good afternoon"
+    } else if (hour >= 18 || hour <= 4) {
+        text += "Good evening"
     } else {
         // something went horribly wrong. go with the safe choice.
-        text += "hello"
+        text += "Hello"
     }
     welcomeelement.innerHTML = text + " " + adjective + " " + first_name;
 }
