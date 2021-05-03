@@ -579,12 +579,12 @@ def friend_request_accept(request, request_id):
     
     notify.send(
         request.user,
-        recipient=fr.from_user,
+        recipient=friend_req.from_user,
         verb="friend request accept",
         # url=f"/event/{this_event.id}/",
     )
     
-    fr.delete()
+    friend_req.delete()
 
     return HttpResponse('Friend request accepted')
 
