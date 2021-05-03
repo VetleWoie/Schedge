@@ -167,3 +167,11 @@ class InviteForm(forms.Form):
         self.fields["invitee"].choices = [
             (v, u) for v, u in choices if u not in excluded and u != user.username
         ]
+class FriendReqForm(forms.Form):
+    to_user = forms.CharField(label='Username')
+
+    def clean(self):
+        user = self.cleaned_data['to_user']
+        if not User.objects.filter(username=user).exists():
+            raise forms.ValidationError('Username does not exist')
+        return self.cleaned_data
