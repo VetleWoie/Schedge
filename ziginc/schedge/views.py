@@ -546,20 +546,20 @@ def friend_request_send(request):
     form = FriendReqForm(request.POST)
     if form.is_valid():
         from_user = request.user
-        to_user = User.objects.get(user=request.POST['to_user'])
+        to_user = User.objects.get(username=request.POST['to_user'])
         friend_req, created = FriendRequest.objects.get_or_create(from_user=from_user, to_user=to_user)
         if created:
             notify.send(
                 request.user,
                 recipient=to_user,
                 verb="friend request",
-                url=f"/event/{this_event.id}/",
+                # url=f"/event/{this_event.id}/",
             )
             return HttpResponse('Friend request sent')
         else:
             return HttpResponse('Friend request was already sent')
     else:
-        return Http404('user not found')
+        return HttpResponseNotFound('user not found')
 
 @login_required(login_url='/login/')
 def friend_request_accept(request, request_id):
@@ -576,7 +576,13 @@ def friend_request_accept(request, request_id):
     
     fr.from_user.save()
     fr.to_user.save()
-
+    notify.send(
+        request.user,
+        recipient=fr.from_user,
+        verb="friend request accept",
+        # url=f"/event/{this_event.id}/",
+    )
+    
     fr.delete()
     return HttpResponse('Friend request accepted')
 
