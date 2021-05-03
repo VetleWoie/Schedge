@@ -110,4 +110,3 @@ class FriendFunctionalTest(TestCase):
         friends = self.users[0].profile.friends.all()
         self.assertEqual(len(friends), 0)
     
-    # def test_delete_existing_friend_request
