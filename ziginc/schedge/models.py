@@ -13,7 +13,7 @@ from .utils import time_add, time_diff
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    friends = models.ManyToManyField('self', blank=True)
+    friends = models.ManyToManyField(User, blank=True)
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
