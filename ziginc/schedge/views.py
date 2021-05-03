@@ -559,7 +559,7 @@ def friend_request_send(request):
     form = FriendReqForm(request.POST)
     if form.is_valid():
         from_user = request.user
-        to_user = User.objects.get(request.POST['to_user'])
+        to_user = User.objects.get(user=request.POST['to_user'])
         friend_req, created = FriendRequest.objects.get_or_create(from_user=from_user, to_user=to_user)
         if created:
             notify.send(
