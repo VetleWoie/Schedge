@@ -55,29 +55,23 @@ class FriendFunctionalTest(TestCase):
         self.client.login(username=self.users[1].username, password=self.password)
 
         response = self.client.post(f'/friend_invite_accept/{friend_requests[0].id}/')
-        print('Got here')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(friend_requests), 1)
         friends = self.users[0].profile.friends.all()
         self.assertEqual(len(friends), 1)
         self.assertEqual(friends[0], self.users[1])
 
-    @skip
     def test_reject_existing_friend_request(self):
         friend_requests = FriendRequest.objects.all()
         self.client.logout()
         self.client.login(username=self.users[1].username, password=self.password)
-        print(friend_requests[0].from_user, friend_requests[0].to_user)
-        print("friend request id: ", friend_requests[0].id)
         response = self.client.post(f'/friend_invite_reject/{friend_requests[0].id}/')
-        print(response)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(friend_requests), 1)
 
         friends = self.users[0].profile.friends.all()
         self.assertEqual(len(friends), 0)
 
-    @skip
     def test_accept_non_existing_friend_request(self):
         #Respond to friend request
         friend_requests = FriendRequest.objects.all()
@@ -86,7 +80,6 @@ class FriendFunctionalTest(TestCase):
         response = self.client.post(f'/friend_invite_accept/2000/')
         self.assertEqual(response.status_code, 404)
 
-    @skip
     def test_reject_non_existing_friend_request(self):
         #Respond to friend request
         friend_requests = FriendRequest.objects.all()
@@ -95,7 +88,6 @@ class FriendFunctionalTest(TestCase):
         response = self.client.post(f'/friend_invite_reject/2000/')
         self.assertEqual(response.status_code, 404)
 
-    @skip
     def test_accept_others_friend_request(self):
         #Respond to friend request
         friend_requests = FriendRequest.objects.all()
@@ -103,11 +95,19 @@ class FriendFunctionalTest(TestCase):
 
         response = self.client.post(f'/friend_invite_accept/{friend_requests[1].id}/')
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(len(friend_requests), 1)
+        self.assertEqual(len(friend_requests), 2)
         friends = self.users[0].profile.friends.all()
-        self.assertEqual(len(friends), 1)
-        self.assertEqual(friends[0], self.users[1])
+        self.assertEqual(len(friends), 0)
 
-    @skip
     def test_reject_others_friend_request(self):
-        pass
+        #Respond to friend request
+        friend_requests = FriendRequest.objects.all()
+        self.client.login(username=self.users[0].username, password=self.password)
+
+        response = self.client.post(f'/friend_invite_reject/{friend_requests[1].id}/')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(len(friend_requests), 2)
+        friends = self.users[0].profile.friends.all()
+        self.assertEqual(len(friends), 0)
+    
+    # def test_delete_existing_friend_request
