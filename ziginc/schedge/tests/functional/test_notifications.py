@@ -59,7 +59,7 @@ class NotificationTest(TestCase):
         self.client.logout()
         self.client.login(username=self.invitee.username, password=PASSWORD)
 
-        response = self.client.post(f"/invite_accept/{invite.id}/")
+        response = self.client.post(f"/event_invite_accept/{invite.id}/")
         # assert invitee has an invitation
         notifications = Notification.objects.filter(recipient=self.inviter)
         # invitee should have 1 notification
@@ -80,7 +80,7 @@ class NotificationTest(TestCase):
         self.client.logout()
         self.client.login(username=self.invitee.username, password=PASSWORD)
 
-        response = self.client.post(f"/invite_reject/{invite.id}/")
+        response = self.client.post(f"/event_invite_reject/{invite.id}/")
         notifications = Notification.objects.filter(recipient=self.inviter)
         # invitee should have 1 notification
         self.assertEqual(1, len(notifications))
@@ -96,7 +96,7 @@ class NotificationTest(TestCase):
         """ Test for marking the notification as read for accept notifications"""
         invite = Invite.objects.get(inviter=self.inviter)
         self.client.login(username=self.invitee.username, password=PASSWORD)
-        response = self.client.post(f"/invite_accept/{invite.id}/")
+        response = self.client.post(f"/event_invite_accept/{invite.id}/")
         self.assertFalse(
             Notification.objects.filter(recipient=self.invitee).unread().exists()
         )
@@ -108,7 +108,7 @@ class NotificationTest(TestCase):
         """ Test for marking the notification as read for reject notifications"""
         invite = Invite.objects.get(inviter=self.inviter)
         self.client.login(username=self.invitee.username, password=PASSWORD)
-        response = self.client.post(f"/invite_reject/{invite.id}/")
+        response = self.client.post(f"/event_invite_reject/{invite.id}/")
         self.assertFalse(
             Notification.objects.filter(recipient=self.invitee).unread().exists()
         )
