@@ -14,6 +14,14 @@ background: linear-gradient(135deg, rgba(91,91,91,1) 0%, rgba(224,224,224,1) 100
     text-shadow: 2px 2px 0px white;
 }
 
+.under_title {
+    font-size: 35px;
+    margin-top: 40px;
+    /* color: white; */
+    font-weight: 900;
+    text-shadow: 2px 2px 0px white;
+}
+
 
 .sub_txt {
     font-size: 20px;
