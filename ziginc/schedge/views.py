@@ -578,7 +578,7 @@ def friend_request_send(request):
 def friend_request_accept(request, request_id):
     if request.method != 'POST':
         return HttpResponseBadRequest('Bad Request')
-    if FriendRequest.objects.filter(id=request_id).exists():
+    if not FriendRequest.objects.filter(id=request_id).exists():
         return HttpResponseBadRequest('Bad Request')
     fr = FriendRequest.objects.get(id=request_id)
     if not fr.to_user == request.user:
@@ -603,7 +603,7 @@ def friend_request_accept(request, request_id):
 def friend_request_reject(request, request_id):
     if request.method != 'POST':
         return HttpResponseBadRequest('Bad Request')
-    if FriendRequest.objects.filter(id=request_id).exists():
+    if not FriendRequest.objects.filter(id=request_id).exists():
         return HttpResponseBadRequest('Bad Request')
     
     fr = FriendRequest.objects.get(id=request_id)
