@@ -7,11 +7,11 @@ from django.http import (
 )
 import datetime as dt
 from .forms import EventForm, TimeSlotForm, InviteForm
-from .models import Event, TimeSlot, Invite, PotentialTimeSlot
+from .models import Event, TimeSlot, Invite, PotentialTimeSlot, FriendRequest
 from django.shortcuts import render
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
-from .forms import NameForm
+from .forms import NameForm, FriendReqForm
 from django.template import loader
 from django.urls import reverse_lazy, reverse
 from django.views import generic
@@ -541,4 +541,25 @@ def delete_user(request):
     user.delete()        
     return redirect(signUpView)
 
+@login_required(login_url="/login/")
+def friend_request_send(request):
+    if request.method != 'POST':
+        return HttpResponseBadRequest('Bad Request')
+    form = FriendReqForm(request.POST)
+    if form.is_valid():
+        from_user = request.user
+        to_user = User.objects.get(request.POST['to_user'])
+        friend_req, created = FriendRequest.objects.get_or_create(from_user=from_user, to_user=to_user)
+        if created:
+            return HttpResponse('Friend request sent')
+        else:
+            return HttpResponse('Friend request was already sent')
 
+@login_required(login_url='/login/')
+def friend_request_answer(request, request_id):
+    if request.method != 'POST':
+        return HttpResponseBadRequest('Bad Request')
+    if FriendRequest.objects.filter(id=request_id).exists():
+        return HttpResponseBadRequest('Bad Request')
+    fr = FriendRequest.objects.get(id=request_id)
+    
