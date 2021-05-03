@@ -155,7 +155,6 @@ def timeslot_select(request, event_id):
     except Event.DoesNotExist:
         raise Http404("Not valid event id")
 
-    print(request.POST)
     time = request.POST["options"]
     start, end, date = time.split(",")
 
@@ -166,7 +165,6 @@ def timeslot_select(request, event_id):
         """Parse the fuzzy timestamps."""
         return dt.datetime.strptime(time, '%Y-%m-%d').date()
 
-    print(start, end)
     start = parse_timestring(start)
     end = parse_timestring(end)
     date = parse_datestring(date)
@@ -551,15 +549,46 @@ def friend_request_send(request):
         to_user = User.objects.get(request.POST['to_user'])
         friend_req, created = FriendRequest.objects.get_or_create(from_user=from_user, to_user=to_user)
         if created:
+            notify.send(
+                request.user,
+                recipient=to_user,
+                verb="friend request",
+                url=f"/event/{this_event.id}/",
+            )
             return HttpResponse('Friend request sent')
         else:
             return HttpResponse('Friend request was already sent')
+    else:
+        return Http404('user not found')
 
 @login_required(login_url='/login/')
-def friend_request_answer(request, request_id):
+def friend_request_accept(request, request_id):
     if request.method != 'POST':
         return HttpResponseBadRequest('Bad Request')
     if FriendRequest.objects.filter(id=request_id).exists():
         return HttpResponseBadRequest('Bad Request')
     fr = FriendRequest.objects.get(id=request_id)
+    if not fr.to_user == request.user:
+        return HttpResponseBadRequest('Error')
+
+    fr.to_user.profile.friends.add(fr.from_user)
+    fr.from_user.profile.friends.add(fr.to_user)
     
+    fr.from_user.save()
+    fr.to_user.save()
+
+    fr.delete()
+    return HttpResponse('Friend request accepted')
+
+@login_required(login_url='/login/')
+def friend_request_reject(request, request_id):
+    if request.method != 'POST':
+        return HttpResponseBadRequest('Bad Request')
+    if FriendRequest.objects.filter(id=request_id).exists():
+        return HttpResponseBadRequest('Bad Request')
+    
+    fr = FriendRequest.objects.get(id=request_id)
+    if not fr.to_user == request.user:
+        return HttpResponseBadRequest('Error')
+    fr.delete()
+    return HttpResponse('Friend request rejected')

@@ -20,15 +20,15 @@ function parse_invitation_list(data) {
         var messages = data.unread_list.map(function (item) {
             message = ""
             switch (item.verb) {
-                case "invite":
+                case "event invite":
                     message += item.actor + " has <span style=\"color:green;\">invited</span> you to join an event:</br><i>" + item.data.title + "</i></br>"
                     message += "<button id=\"id_notif_invite_accept\" type=\"button\" onclick=\"invitation_respond('event', 'accept', " + item.data.invite_id + ", " + item.id + ")\">✓</button>"
                     message += "<button id=\"id_notif_invite_reject\" type=\"button\" onclick=\"invitation_respond('event', 'reject', " + item.data.invite_id + ", " + item.id + ")\">✗</button>"
                     break;
-                case "invite accepted":
+                case "event invite accepted":
                     message += item.actor + " has <span style=\"color:green;\">accepted</span> your invite for the event:</br>" + item.data.title
                     break;
-                case "invite rejected":
+                case "event invite rejected":
                     message += item.actor + " has <span style=\"color:red;\">declined</span> your invite for the event:</br>" + item.data.title
                     break;
                 case "participant deleted":
@@ -50,9 +50,9 @@ function parse_invitation_list(data) {
                     message += item.actor + " has <span style=\"color:green;\"> picked a time </span> for the event:</br>" + item.data.title
 
                 case "friend request":
-                    message += item.actor + " has <span style=\"color:green;\">sent</span> you a friend request</br><i>" + item.data.title + "</i></br>"
-                    message += "<button id=\"id_notif_invite_accept\" type=\"button\" onclick=\"invitation_respond('friend_request', 'accept', " + item.data.invite_id + ", " + item.id + ")\">✓</button>"
-                    message += "<button id=\"id_notif_invite_reject\" type=\"button\" onclick=\"invitation_respond('friend_request', 'reject', " + item.data.invite_id + ", " + item.id + ")\">✗</button>"
+                    message += item.actor + " has <span style=\"color:green;\">sent</span> you a friend request</br></br>"
+                    message += "<button id=\"id_notif_invite_accept\" type=\"button\" onclick=\"invitation_respond('friend', 'accept', " + item.data.invite_id + ", " + item.id + ")\">✓</button>"
+                    message += "<button id=\"id_notif_invite_reject\" type=\"button\" onclick=\"invitation_respond('friend', 'reject', " + item.data.invite_id + ", " + item.id + ")\">✗</button>"
                     break;
                 case "friend request accepted":
                     message += item.actor + " has <span style=\"color:green;\">accepted</span> your friend request</br>"
@@ -106,7 +106,7 @@ function mark_notification(notif_id) {
     });
 }
 
-function invitation_respond(answer, type, invite_id, notif_id) {
+function invitation_respond(type, answer, invite_id, notif_id) {
     invite_req = () => $.ajax({
         url: "/" + type + "_invite_" + answer + "/" + invite_id + "/",
         type: "POST",
