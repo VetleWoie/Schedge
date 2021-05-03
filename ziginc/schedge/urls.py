@@ -38,8 +38,8 @@ urlpatterns = [
     path("signup/termsandservices/", views.termsandservices, name="tands"),
     path("mypage/delete_user_account/", views.delete_user, name="delete_user_account"),
 
-    path("friend_invite_accept/<int:invite_id>/", friend_request_accept, name='friend_request_accept'),
-    path("friend_invite_reject/<int:invite_id>/", friend_request_reject, name='friend_request_reject'),
+    path("friend_invite_accept/<int:request_id>/", friend_request_accept, name='friend_request_accept'),
+    path("friend_invite_reject/<int:request_id>/", friend_request_reject, name='friend_request_reject'),
     path("friend_request_send/", friend_request_send, name='friend_request_send'),
 
 ]
