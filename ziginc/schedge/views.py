@@ -577,9 +577,9 @@ def friend_request_send(request):
 
 @login_required(login_url='/login/')
 def friend_request_delete(request):
-    if request.method != 'DELETE':
+    if request.method != 'POST':
         return HttpResponseBadRequest('Bad request')    
-    form = FriendForm(request.DELETE)
+    form = FriendForm(request.POST)
     if form.is_valid() and FriendRequest.objects.filter(from_user=request.user, to_user=form.cleaned_data['to_user']).exists():
         friend_req = FriendRequest.objects.get(from_user=request.user, to_user=form.cleaned_data['to_user'])
         friend_req.delete()
@@ -628,9 +628,9 @@ def friend_request_reject(request, request_id):
 
 @login_required(login_url='/login/')
 def friend_delete(request):
-    if request.method != 'DELETE':
+    if request.method != 'POST':
         return HttpResponseBadRequest('Bad request')
-    form = FriendForm(request.DELETE)
+    form = FriendForm(request.POST)
     if form.is_valid() and request.user.profile.friends.filter(username=form.cleaned_data['to_user']).exists():
         f = request.user.profile.friends.get(username=form.cleaned_data['to_user'])
         request.user.profile.friends.remove(f)
