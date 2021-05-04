@@ -110,3 +110,52 @@ class FriendFunctionalTest(TestCase):
         friends = self.users[0].profile.friends.all()
         self.assertEqual(len(friends), 0)
     
+    def test_delete_existing_friend_request(self):
+        pass
+    def test_delete_non_existing_friend_request(self):
+        #Respond to friend request
+        friend_requests = FriendRequest.objects.all()
+        self.client.logout()
+        self.client.login(username=self.users[1].username, password=self.password)
+        response = self.client.delete(f'/friend_invite_delete/2000/')
+        self.assertEqual(response.status_code, 404)
+
+    def test_delete_others_friend_request(self):
+        #Respond to friend request
+        friend_requests = FriendRequest.objects.all()
+        self.client.login(username=self.users[0].username, password=self.password)
+
+        response = self.client.post(f'/friend_invite_delete/{friend_requests[1].id}/')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(len(friend_requests), 2)
+        friends = self.users[0].profile.friends.all()
+        self.assertEqual(len(friends), 0)
+
+    def test_add_self_friend(self):
+        form = {'to_user': self.users[0].username}
+        self.client.login(username=self.users[0].username, password=self.password)
+        response = self.client.post(f'/friend_request_send/', form)
+        self.assertEqual(response.status_code, 400, msg = "Expected status code 400 got %d"%response.status_code)
+        friend_requests = FriendRequest.objects.all()
+        self.assertEqual(len(friend_requests),2)
+    
+    def test_delete_user_with_pending_outgoing_friend_request(self):
+        self.users[0].delete()
+        friend_requests = FriendRequest.objects.all()
+        self.assertEqual(len(friend_requests), 1)
+    
+    def test_delete_user_with_pending_incoming_friend_request(self):
+        self.users[1].delete()
+        friend_requests = FriendRequest.objects.all()
+        self.assertEqual(len(friend_requests), 1)
+
+    def test_delete_user_with_friend(self):
+        #Respond to friend request
+        friend_requests = FriendRequest.objects.all()
+        self.client.login(username=self.users[1].username, password=self.password)
+
+        response = self.client.post(f'/friend_invite_accept/{friend_requests[0].id}/')
+        self.client.logout()
+        self.users[1].delete()
+        friends = self.users[0].profile.friends.all()
+        self.assertEqual(len(friends),0)
