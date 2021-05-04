@@ -634,6 +634,7 @@ def friend_delete(request):
     if form.is_valid() and request.user.profile.friends.filter(username=form.cleaned_data['to_user']).exists():
         f = request.user.profile.friends.get(username=form.cleaned_data['to_user'])
         request.user.profile.friends.remove(f)
+        f.profile.friends.remove(request.user)
         return HttpResponse('friend removed')
         
     return HttpResponseNotFound('Bad request')
