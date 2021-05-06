@@ -93,7 +93,7 @@ th {
 
 textarea {
     resize: vertical;
-    max-height:500px;
+    max-height:200px;
     min-height: 2em;
 }
 

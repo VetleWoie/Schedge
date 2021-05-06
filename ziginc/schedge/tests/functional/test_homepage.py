@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from random import randrange
 
 
-class HomepageTest(TestCase):
+class HomePageTest(TestCase):
     def test_0_users(self):
         response = self.client.get("/")
         self.assertEqual(response.context["user_count"], 0) 

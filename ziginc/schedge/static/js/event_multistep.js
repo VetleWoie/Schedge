@@ -62,10 +62,12 @@ $(document).ready(function () {
 		$(this).addClass('selected');
 	});
 
-	// $(".submit").click(function(){
-	// 	console.log("her!!");
-	// 	$("msform").submit()
-	// // return false;
-	// })
-
+	$('#msform').on('keyup keypress', function(e) {
+		var keyCode = e.keyCode || e.which;
+		if (keyCode === 13 && !$(document.activeElement).is('textarea')) { 
+		  e.preventDefault();
+		  return false;
+		}
+		return true;
+	  });
 });
