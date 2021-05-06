@@ -1,7 +1,12 @@
 var holder = document.querySelector("[dir]");
-
-function toggle(val) {
-  holder.setAttribute('dir', val);
+var prev_section = "home";
+function toggle(new_section) {
+    if(document.getElementById(prev_section).classList.contains('nav_btn_selected')){
+        document.getElementById(prev_section).classList.remove('nav_btn_selected');
+    }
+    holder.setAttribute('dir', new_section);
+    document.getElementById(new_section).classList.add('nav_btn_selected');
+    prev_section = new_section;
 }
 
 
@@ -28,6 +33,6 @@ function put_welcome_message(first_name) {
         // something went horribly wrong. go with the safe choice.
         text += "Hello"
     }
-    welcomeelement.innerHTML = text + " " + adjective + " " + first_name;
+    welcomeelement.innerHTML = text + " "  + first_name;
 }
 

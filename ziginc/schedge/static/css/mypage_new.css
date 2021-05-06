@@ -6,7 +6,7 @@ html, body, main{
 .nav_bar {
  
     background-color: lightgray;
-    box-shadow: 2px 0px 1px #8D8D8D;
+    /* box-shadow: 2px 0px 1px #8D8D8D; */
     /* overflow: hidden; */
 }
  
@@ -25,14 +25,25 @@ html, body, main{
     padding: 15px 0px;
     font-size: 20px;
     letter-spacing: 5px;
+    color: #505050;
     width: 100%;
 }
 
-.nav_btn:focus {
+.nav_btn_selected {
+    /* background: #343a40; */
+    color: black;
+    font-weight: bolder;
+    /* outline: none; */
+}
+
+.nav_btn_selected:focus{
     outline: none;
-    background: #343a40;
-    color: white;
-    
+    border: none;
+}
+
+.nav_btn:active {
+    outline: none;
+    border: none;
 }
 
 
@@ -50,11 +61,11 @@ html, body, main{
 }
 
 .ce_btn {
-    border-radius: 50px !important;
+    /* border-radius: 10px !important; */
     text-transform: capitalize;
-    padding-left: 14.5px;
-    letter-spacing: 2.5px;
-    font-weight: bold;
+    /* padding-left: 2.5px; */
+    /* letter-spacing: 2.5px; */
+    /* font-weight: bold; */
 }
 
 .plus {
@@ -68,6 +79,8 @@ html, body, main{
   display: none;
 
 }
+
+
 
 .welcome_message {
     text-align: center;
@@ -93,7 +106,12 @@ html, body, main{
 .inbox_box {
     width: 60%;
     margin: auto;
-    border: 1px solid #6c757d;
+    border: 1px solid #d6d6d6;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    box-shadow: 2px 2px #cfcfcf;
 }
 
 .card {
@@ -115,15 +133,15 @@ html, body, main{
 /* NOTIFICATION BELL */
 
 .bell_dropdown {
-    position: relative;
-    margin-right: 40px;
-    float: left;
+    /* position: relative; */
+    /* margin-right: 40px; */
+    /* float: left; */
     padding-top: 5px;
   }
 
 .notifimg {
-    width: 35px;
-    position: absolute;
+    /* width: 35px; */
+    /* position: absolute; */
 
 }
 .live_notify_list {
@@ -135,7 +153,7 @@ html, body, main{
     border-radius: 10px;
     padding: 15px 15px 0px 30px;
     top: 60%;
-    width: 150px;
+    width: 250px;
 }
 
 .live_notify_list li {
@@ -156,7 +174,7 @@ html, body, main{
     border-radius: 50%;
     display: inline-block;
     position: absolute;
-    margin-left: 50%;
+    margin-left: 25%;
     z-index: 1;
     text-align: center;
     color:white;
@@ -172,7 +190,7 @@ html, body, main{
 }
 
 .busybell {
-    width: 35px;
+    /* width: 35px; */
     height: 35px;
 }
 
