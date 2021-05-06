@@ -1,7 +1,7 @@
 from django import forms
 from itertools import product
 import datetime as dt
-from django.forms.widgets import TextInput
+from django.forms.widgets import TextInput, Textarea
 from django.utils.dateparse import parse_duration
 from django.core.exceptions import ValidationError
 from django.forms.widgets import MultiWidget
@@ -60,6 +60,11 @@ class EventForm(forms.ModelForm):
         today = dt.datetime.today().strftime("%Y-%m-%d")
 
         widgets = {
+            "title": TextInput(attrs={"placeholder": "Event Title"}),
+            "description": Textarea(attrs={"placeholder": "Event Description"}),
+
+            "location": TextInput(attrs={"placeholder": "Event Location"}),
+
             "startdate": DateInput(attrs={"min": today, "max": max_date()}),
             "enddate": DateInput(attrs={"min": today, "max": max_date()}),
             "starttime": TimeInput(format=("HH:mm")),
