@@ -24,16 +24,7 @@
             </div> -->
             <div class="row">
                 <div class="col-10 txt_left sub_title txt_large">Schedge</div>
-                <div class="col-2">
-                    <div class="bell_dropdown">
-                        <div class="busybell">
-                            {%live_notify_badge%}
-                            <img src="{% static 'icons/bell.svg' %}" class="notifimg" width="35px">
-                        </div>
-                        {% live_notify_list %}
 
-                    </div>
-                </div>
             </div>
             <div class="row">
                 <button class="nav_btn nav_btn_selected m_top_small" id="home" onclick="toggle('home')">Home</button>
@@ -46,7 +37,7 @@
                 <button class="nav_btn" id="parti" onclick="toggle('parti')">Participant</button>
             </div>
             <br>
-            <a href="/createevent" class="m_top_small btn btn-dark btn-lg ce_btn">create event</a>
+            <a href="{% url 'createevent' %}" class="m_top_small btn btn-dark btn-lg ce_btn">create event</a>
             <div class="so m_top_l txt_ls_small">
                 <a class="simple_link" href="{% url 'logout' %}">Sign out</a>
             </div>
