@@ -565,13 +565,13 @@ def friend_request_send(request):
 @login_required(login_url='/login/')
 def friend_request_delete(request):
     if request.method != 'POST':
-        return HttpResponseBadRequest('Bad request')    
+        return HttpResponseBadRequest('Bad request') 
     form = FriendForm(request.POST)
     if form.is_valid() and FriendRequest.objects.filter(from_user=request.user, to_user=form.cleaned_data['to_user']).exists():
         friend_req = FriendRequest.objects.get(from_user=request.user, to_user=form.cleaned_data['to_user'])
         friend_req.delete()
     else:
-        return HttpResponseBadRequest('Not found')
+        return HttpResponseNotFound('Not found')
 
 @login_required(login_url='/login/')
 def friend_request_accept(request, request_id):
