@@ -17,6 +17,7 @@ from django.views import generic
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.models import User
+from django.utils.timezone import get_current_timezone
 from collections import namedtuple
 import re
 
@@ -26,6 +27,16 @@ from .utils import time_diff
 from django.db.models.signals import post_save
 from notifications.signals import notify
 from notifications.models import Notification
+
+
+def home(request):
+
+    user_count = User.objects.count()
+    context = {"user_count": user_count}
+    if request.user.is_authenticated:
+        return redirect(mypage)
+
+    return render(request, "home.html", context)
 
 
 @login_required(login_url="/login/")
@@ -172,7 +183,8 @@ def timeslot_select(request, event_id):
         return HttpResponseBadRequest("the selected time does not have the same length as the duration of the event")
 
     this_event.status = "C"
-    this_event.chosen_time = dt.datetime.combine(date, start)
+    tz = get_current_timezone()
+    this_event.chosen_time = dt.datetime.combine(date, start, tzinfo=tz)
     this_event.save()
 
     users = this_event.participants.exclude(id=request.user.id)
@@ -319,6 +331,7 @@ def event_invite(request, event_id):
     # Only the host can invite people:
     if request.user != this_event.host:
         return HttpResponse("Unauthorized", status=401)
+    
     if request.method != "POST":
         return HttpResponseBadRequest(
             "invite view does not support other than post method"
@@ -536,7 +549,7 @@ def delete_user(request):
     
     user = request.user
     user.delete()        
-    return redirect(signUpView)
+    return redirect(home)
 
 @login_required(login_url="/login/")
 def friend_request_send(request):

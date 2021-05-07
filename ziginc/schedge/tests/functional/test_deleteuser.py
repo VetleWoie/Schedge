@@ -50,7 +50,7 @@ class DeleteUserTest(TestCase):
         usr_exists = User.objects.filter(username=self.userGood["username"]).exists()
         self.assertEqual(usr_exists, False)
 
-    @skip("Need the home view which is not present in this version of master, but which is implemented in another branch.")
+    # @skip("Need the home view which is not present in this version of master, but which is implemented in another branch.")
     def test_delete_user_redirect(self):
         """
         1. Create a user
@@ -64,7 +64,7 @@ class DeleteUserTest(TestCase):
         self.client.login(username=self.userGood["username"], password=self.userGood["password"])
 
         response2 = self.client.post("/mypage/delete_user_account/")
-        self.assertEqual(response2.url, "/home/")
+        self.assertEqual(response2.url, "/")
 
     def test_delete_event_host(self):
         """
