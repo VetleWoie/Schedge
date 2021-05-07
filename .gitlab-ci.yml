@@ -9,14 +9,14 @@ functional:
   stage: test
 
   script:
-    - python3 manage.py test schedge/tests/functional
-  only:
     - apt-get update
     - python3 -m pip install Pillow
     - python3 -m pip install django-notifications-hq
     - cd ziginc
     - python3 manage.py makemigrations
     - python3 manage.py migrate
+    - python3 manage.py test schedge/tests/functional
+  only:
     - merge_requests
     - master
 #Run scenario tests.
