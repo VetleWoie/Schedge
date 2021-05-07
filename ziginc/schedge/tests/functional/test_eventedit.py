@@ -77,3 +77,17 @@ class EventEditTest(TestCase):
 
         response = self.client.post(f"/event/{self.event_id}/edit/", edited_event_form)
         self.assertEqual(response.status_code, 401)
+
+    def test_invalid_form(self):
+
+        self.invalid_form = {
+            "location": "Ocean",
+            "starttime": "05:00",
+            "endtime": "23:00",
+            "startdate": self.tomorrow,
+            "enddate": self.next_week,
+            "duration": ["0", "5", "0"],
+        }
+
+        response = self.client.post(f"/event/{self.event_id}/edit/", self.invalid_form)
+        self.assertEqual(response.content, b'Invalid Form!')
