@@ -44,7 +44,7 @@ class NotificationTest(TestCase):
 
         notification = notifications[0]
         self.assertEqual(notification.actor, self.inviter)
-        self.assertEqual(notification.verb, "invite")
+        self.assertEqual(notification.verb, "event invite")
         self.assertEqual(notification.data["title"], "hiking")
         self.assertEqual(notification.data["url"], f"/event/{self.event_id}/")
         self.assertEqual(

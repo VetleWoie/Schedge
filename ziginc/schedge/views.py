@@ -366,7 +366,7 @@ def event_invite(request, event_id):
                 inviter,
                 recipient=invitee,
                 target=invite,
-                verb="invite",
+                verb="event invite",
                 title=this_event.title,
                 url=f"/event/{invite.event.id}/",
                 invite_id=invite.id,
