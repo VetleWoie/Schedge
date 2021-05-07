@@ -49,8 +49,23 @@ class DeleteUserTest(TestCase):
 
         usr_exists = User.objects.filter(username=self.userGood["username"]).exists()
         self.assertEqual(usr_exists, False)
+    
+    def test_delete_user_wrong_request_type(self):
+        """
+        1. Create a user
+        2. Login user
+        3. Delete user using GET instead of POST
+        4. Assert that the request didn't get through but return 'bad request'.
+        """
+        response = self.client.post("/signup/", self.userGood)
+        self.assertEqual(response.status_code, 302)
 
-    # @skip("Need the home view which is not present in this version of master, but which is implemented in another branch.")
+        self.client.login(username=self.userGood["username"], password=self.userGood["password"])
+
+        response = self.client.get("/mypage/delete_user_account/")
+
+        self.assertEqual(response.content, b"Bad request")
+
     def test_delete_user_redirect(self):
         """
         1. Create a user
