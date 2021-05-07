@@ -129,7 +129,7 @@ class TimeSlotFunctionalTest(TestCase):
         # there is a timeslot in the context
         self.assertEqual(response.status_code, 400)
 
-    # @skip("need better form validation on the timeslots")
+    @skip("need better form validation on the timeslots")
     def test_create_timeslot_outside_range(self):
         # even't time interval is 8:30 am to 11:45 am
         # posting timeslot at 13:00 should fail
