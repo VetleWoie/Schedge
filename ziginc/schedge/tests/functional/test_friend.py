@@ -25,13 +25,13 @@ class FriendFunctionalTest(TestCase):
         #Create friend request between user 0 and 1 
         form = {'to_user': self.users[1].username}
         self.client.login(username=self.users[0].username, password=self.password)
-        response = self.client.post(f'/friend_request_send/', form)
+        response = self.client.post(f'/friend_invite_send/', form)
         self.assertEqual(response.status_code, 200, msg = "Expected status code 200 got %d"%response.status_code)
         self.client.logout()
         #Create friend request between user 0 and 1 
         form = {'to_user': self.users[2].username}
         self.client.login(username=self.users[1].username, password=self.password)
-        response = self.client.post(f'/friend_request_send/', form)
+        response = self.client.post(f'/friend_invite_send/', form)
         self.assertEqual(response.status_code, 200, msg = "Expected status code 200 got %d"%response.status_code)
         
     def test_send_friend_request_to_valid_user(self):
@@ -43,7 +43,7 @@ class FriendFunctionalTest(TestCase):
     def test_send_friend_request_to_non_existing_user(self):
         form = {'to_user': "Gibberish"}
         self.client.login(username=self.users[0].username, password=self.password)
-        response = self.client.post(f'/friend_request_send/', form)
+        response = self.client.post(f'/friend_invite_send/', form)
         self.assertEqual(response.status_code, 404, msg = "Expected status code 404 got %d"%response.status_code)
         friend_requests = FriendRequest.objects.all()
         self.assertEqual(len(friend_requests),2)
@@ -111,30 +111,41 @@ class FriendFunctionalTest(TestCase):
         self.assertEqual(len(friends), 0)
     
     def test_delete_existing_friend_request(self):
-        pass
-    def test_delete_non_existing_friend_request(self):
-        #Respond to friend request
-        friend_requests = FriendRequest.objects.all()
-        self.client.logout()
-        self.client.login(username=self.users[1].username, password=self.password)
-        response = self.client.delete(f'/friend_invite_delete/2000/')
-        self.assertEqual(response.status_code, 404)
-
-    def test_delete_others_friend_request(self):
-        #Respond to friend request
-        friend_requests = FriendRequest.objects.all()
+        form = {'to_user': self.users[1].username}
         self.client.login(username=self.users[0].username, password=self.password)
+        response = self.client.post(f'/friend_invite_delete/', form)
+        self.assertEqual(response.status_code, 200)
 
-        response = self.client.post(f'/friend_invite_delete/{friend_requests[1].id}/')
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(len(friend_requests), 2)
+        friend_requests = FriendRequest.objects.all()
+        self.assertEqual(len(friend_requests), 1)
+
         friends = self.users[0].profile.friends.all()
         self.assertEqual(len(friends), 0)
+
+    def test_delete_non_existing_friend_request(self):
+        #Respond to friend request
+        form = {'to_user': 'Gibberish'}
+        self.client.login(username=self.users[1].username, password=self.password)
+        response = self.client.post(f'/friend_invite_delete/', form)
+        self.assertEqual(response.status_code, 404)
+        friend_requests = FriendRequest.objects.all()
+        self.assertEqual(len(friend_requests), 2)
+
+    def test_delete_others_friend_request(self):
+        form = {'to_user': self.users[2].username}
+        #Respond to friend request
+        login = self.client.login(username=self.users[0].username, password=self.password)
+        self.assertTrue(login)
+
+        response = self.client.post(f'/friend_invite_delete/', form)
+        self.assertEqual(response.status_code, 400)
+        friend_requests = FriendRequest.objects.all()
+        self.assertEqual(len(friend_requests), 2)
 
     def test_add_self_friend(self):
         form = {'to_user': self.users[0].username}
         self.client.login(username=self.users[0].username, password=self.password)
-        response = self.client.post(f'/friend_request_send/', form)
+        response = self.client.post(f'/friend_invite_send/', form)
         self.assertEqual(response.status_code, 400, msg = "Expected status code 400 got %d"%response.status_code)
         friend_requests = FriendRequest.objects.all()
         self.assertEqual(len(friend_requests),2)
@@ -147,7 +158,7 @@ class FriendFunctionalTest(TestCase):
     def test_delete_user_with_pending_incoming_friend_request(self):
         self.users[1].delete()
         friend_requests = FriendRequest.objects.all()
-        self.assertEqual(len(friend_requests), 1)
+        self.assertEqual(len(friend_requests), 0)
 
     def test_delete_user_with_friend(self):
         #Respond to friend request
