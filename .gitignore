@@ -5,3 +5,4 @@ media/images/*
 *.pyc
 *.log
 htmlcov
+*.coverage
