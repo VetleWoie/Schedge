@@ -26,6 +26,7 @@ class InviteTest(TestCase):
     def setUp(self):
         self.alice = User.objects.create_user("Alice", "alice@test.com", PASSWORD)
         self.bob = User.objects.create_user("Bob", "bob@test.com", PASSWORD)
+        self.other = User.objects.create_user('Other', 'other@test.com', PASSWORD)
 
         self.client.login(username=self.alice.username, password=PASSWORD)
 
@@ -177,5 +178,10 @@ class InviteTest(TestCase):
         # Check that an attendee is not able to see pending invites.
         response = self.client.get(f"/event/{self.hiking.id}/")
         self.assertNotContains(response, "id='pending_invites'")
-    
+
+    def test_invite_invalid_event(self):
+        form = {"invitee": self.bob.id}
+        invalid_event_id = 9999999
+        response = self.client.post(f"/event/{invalid_event_id}/invite/", form)
+        self.assertEqual(response.content, b"404: not valid event id")
 
