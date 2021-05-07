@@ -7,7 +7,7 @@ class SplitDurationWidget(forms.MultiWidget):
     A Widget that splits duration input into four number input boxes.
     """
 
-    def __init__(self, attrs={"min": 0}):
+    def __init__(self, attrs={"min": 0, "class": "duration-form"}):
         widgets = (
             forms.NumberInput(attrs=attrs),
             forms.NumberInput(attrs=attrs),

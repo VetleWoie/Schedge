@@ -127,6 +127,10 @@ html, body, main{
     margin-top: -10px;
 }
 
-
+.form-card textarea {
+    max-height: 300px;
+    min-height: 2em;
+    height: 100px;
+}
 
 

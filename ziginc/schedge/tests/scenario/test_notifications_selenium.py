@@ -89,16 +89,13 @@ class NotificationsSeleniumTest(StaticLiveServerTestCase):
         sleep(1)
 
         self.assertTrue(Notification.objects.filter(recipient=self.guest).exists())
-        bell = self.driver.find_element_by_class_name("busybell")
-        accept = self.driver.find_element_by_id("id_notif_invite_accept")
-        chain = ActionChains(self.driver)
-        chain.move_to_element(bell)
-        chain.pause(0.1)
-        chain.move_to_element(accept)
-        
-        chain.click()
-        chain.perform()
-        sleep(1)
+
+        invite_accept_btn = self.driver.find_element_by_id("id_notif_invite_accept")
+
+        # press accept button. we must do it this way as the button is hidden
+        self.driver.execute_script("$(arguments[0]).click();", invite_accept_btn)
+
+        sleep(0.2)
         guestparticipant = self.event.participants.get(id=self.guest.id)
         self.assertTrue(guestparticipant)
         notifs = Notification.objects.filter(recipient=self.host)

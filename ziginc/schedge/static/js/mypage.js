@@ -1,7 +1,7 @@
 var holder = document.querySelector("[dir]");
 var prev_section = "home";
 function toggle(new_section) {
-    if(document.getElementById(prev_section).classList.contains('nav_btn_selected')){
+    if (document.getElementById(prev_section).classList.contains('nav_btn_selected')) {
         document.getElementById(prev_section).classList.remove('nav_btn_selected');
     }
     holder.setAttribute('dir', new_section);
@@ -14,7 +14,7 @@ function toggle(new_section) {
 welcomeelement = document.getElementById("welcome_message")
 
 
-var adjectives = ["affable", "affectionate", "agreeable", "ambitious", "amiable", "amicable", "amusing", "brave", "bright", "broad-minded", "calm", "careful", "charming", "communicative", "compassionate", "conscientious", "considerate", "convivial", "courageous", "courteous", "creative", "decisive", "determined", "diligent", "diplomatic", "discreet", "dynamic", "easygoing", "emotional", "energetic", "enthusiastic", "exuberant", "fair-minded", "faithful", "fearless", "forceful", "frank", "friendly", "funny", "generous", "gentle", "good", "gregarious", "hard-working", "helpful", "honest", "humorous", "imaginative", "impartial", "independent", "intellectual", "intelligent", "intuitive", "inventive", "kind", "loving", "loyal", "modest", "neat", "nice", "optimistic", "passionate", "patient", "persistent", "pioneering", "philosophical", "placid", "plucky", "polite", "powerful", "practical", "pro-active", "quick-witted", "quiet", "rational", "reliable", "reserved", "resourceful", "romantic", "self-confident", "self-disciplined", "sensible", "sensitive", "sincere", "sociable", "straightforward", "sympathetic", "thoughtful", "tidy", "tough", "unassuming", "understanding", "versatile", "warmhearted", "willing", "witty"]
+var adjectives = ["affable", "agreeable", "ambitious", "amiable", "amicable", "amusing", "brave", "bright", "broad-minded", "calm", "careful", "charming", "conscientious", "considerate", "courageous", "courteous", "creative", "decisive", "determined", "diligent", "diplomatic", "dynamic", "easygoing", "energetic", "enthusiastic", "exuberant", "fair-minded", "fearless", "friendly", "funny", "generous", "gentle", "good", "hard-working", "helpful", "honest", "humorous", "imaginative", "intellectual", "intelligent", "kind", "loving", "neat", "nice", "optimistic", "persistent", "practical", "quick-witted", "rational", "reliable", "sensible", "sincere", "sociable", "thoughtful", "tough", "warmhearted", "witty"]
 
 function put_welcome_message(first_name) {
     var now = new Date();
@@ -33,6 +33,6 @@ function put_welcome_message(first_name) {
         // something went horribly wrong. go with the safe choice.
         text += "Hello"
     }
-    welcomeelement.innerHTML = text + " "  + first_name;
+    welcomeelement.innerHTML = `${text} ${adjective} ${first_name}`;
 }
 
