@@ -4,3 +4,4 @@ media/images/*
 *.sqlite3
 *.pyc
 *.log
+htmlcov
