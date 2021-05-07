@@ -91,3 +91,23 @@ class EventEditTest(TestCase):
 
         response = self.client.post(f"/event/{self.event_id}/edit/", self.invalid_form)
         self.assertEqual(response.content, b'Invalid Form!')
+    
+    def test_delete_invalid_event(self):
+        invalid_event_id = 9999999999999999
+        response = self.client.post(f"/event/{invalid_event_id}/edit/delete/")
+        self.assertEqual(response.content, b"Event not found")
+
+
+    def test_delete_event_wrong_method(self):
+        edited_event_form = self.example_form.copy()
+        edited_event_form["title"] = "climbing"
+
+        response = self.client.get(f"/event/{self.event_id}/edit/delete/", edited_event_form)
+        self.assertEqual(response.content, b"Bad request")
+
+    def test_delete_event_not_as_host(self):
+        self.client.logout()
+        self.client.login(username=self.other.username, password=PASSWORD)
+
+        response = self.client.post(f"/event/{self.event_id}/edit/delete/")
+        self.assertEqual(response.status_code, 401)
