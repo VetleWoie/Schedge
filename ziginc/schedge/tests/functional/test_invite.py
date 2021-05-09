@@ -201,3 +201,12 @@ class InviteTest(TestCase):
         response = self.client.post(f"/invite_reject/{non_existing_invite_id}/")
         # the reject should yield a unknown invite response.
         self.assertEqual(response.content, b"Unknown invite")
+
+    
+    @as_bob
+    def test_delete_non_existing_invitation(self):
+        # bob try to accept invite to unknown invite id.
+        non_existing_invite_id = 999999999
+        response = self.client.post(f"/invite_delete/{non_existing_invite_id}/")
+        # the reject should yield a unknown invite response.
+        self.assertEqual(response.content, b"Unknown invite")
