@@ -103,6 +103,7 @@ class NotificationTest(TestCase):
         self.assertTrue(
             Notification.objects.filter(recipient=self.invitee).read().exists()
         )
+    
 
     def test_reject_marks_notification_as_read(self):
         """ Test for marking the notification as read for reject notifications"""
