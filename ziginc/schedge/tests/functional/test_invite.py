@@ -185,3 +185,12 @@ class InviteTest(TestCase):
         response = self.client.post(f"/event/{invalid_event_id}/invite/", form)
         self.assertEqual(response.content, b"404: not valid event id")
 
+    
+
+    @as_bob
+    def test_accept_unknown_invitation(self):
+        # bob try to accept invite to unknown invite id.
+        unknown_invite_id = 999999999
+        response = self.client.post(f"/invite_accept/{unknown_invite_id}/")
+        # the accept should yield a unknown invite response.
+        self.assertEqual(response.content, b"Unknown invite")
