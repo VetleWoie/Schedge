@@ -15,6 +15,9 @@ class Profile(models.Model):
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
     friends = models.ManyToManyField(get_user_model(), related_name='friend', blank=True)
 
+    def __str__(self):
+        return f"{self.user}"
+
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
