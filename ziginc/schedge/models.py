@@ -32,8 +32,7 @@ class FriendRequest(models.Model):
 
     
 class Event(models.Model):
-    """The event model
-    TODO: Add more stuff"""
+    """The event model"""
 
     STATUS_OPTIONS = (("C", "Chosen"), ("U", "Unresolved"), ("F", "Finished"))
     title = models.CharField(max_length=100)

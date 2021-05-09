@@ -10,12 +10,11 @@ html, body, main{
     /* overflow: hidden; */
 }
  
-
 [dir="home"] > :not(.homeTxt),
 [dir="host"] > :not(.hostTxt),
-[dir="parti"] > :not(.partiTxt) {
+[dir="parti"] > :not(.partiTxt),
+[dir="friends"] > :not(.friendsTxt) {
   display: none;
-
 }
 
 .nav_btn {
@@ -133,4 +132,12 @@ html, body, main{
     height: 100px;
 }
 
+.form-control-borderless {
+    border: none;
+}
 
+.form-control-borderless:hover, .form-control-borderless:active, .form-control-borderless:focus {
+    border: none;
+    outline: none;
+    box-shadow: none;
+}

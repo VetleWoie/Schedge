@@ -35,6 +35,9 @@
             <div class="row">
                 <button class="nav_btn" id="parti" onclick="toggle('parti')">Participant</button>
             </div>
+            <div class="row">
+                <button class="nav_btn" id="friends" onclick="toggle('friends')">Friends</button>
+            </div>
             <br>
             <a href="{% url 'createevent' %}" class="m_top_small btn btn-dark btn-lg ce_btn">create event</a>
             <div class="so m_top_l txt_ls_small">
@@ -50,7 +53,7 @@
 
 
         <div class="col displayright">
-            
+
             <div dir="home">
                 <div class="homeTxt">
                     <!-- SECTION 1: WELCOME MESSAGE -->
@@ -250,6 +253,55 @@
                     </div>
                     {% else %}
                     <div class="row justify-content-center nothing">you do not participate in any upcoming events
+                    </div>
+                    {% endif %}
+                </div>
+                <!-- FRIENDS -->
+                <div class="friendsTxt">
+                    <div class="row justify-content-center ">
+                        <div class="col-12 col-md-10 col-lg-8 m_top_med">
+                            <form class="card card-sm" action="{% url 'friend_request_send' %}" method="POST">
+                                {% csrf_token %}
+                                <div class="card-body row no-gutters align-items-center">
+                                    <div class="col-auto">
+                                        <i class="fas fa-search h4 text-body"></i>
+                                    </div>
+                                    <!--end of col-->
+                                    <div class="col">
+                                        <input class="form-control form-control-lg form-control-borderless" name="to_user" type="search" placeholder="Add a friend">
+                                    </div>
+                                    <!--end of col-->
+                                    <div class="col-auto">
+                                        <button class="btn btn-lg btn-dark" type="submit">Add</button>
+                                    </div>
+                                    <!--end of col-->
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col sub_title m_top_med m_btm_small m_left_small txt_large"> My friends
+                        </div>
+                    </div>
+
+                    {%if friends%}
+                    <div class="row">
+                        {% for friend in friends %}
+                        <!-- for loop -->
+                        <div class="col-sm-4">
+
+                            <div class="card">
+                                <!-- <img class="card-img-top" src="img_avatar1.png" alt="Card image" style="width:100%"> -->
+                                <div class="card-body">
+                                    <h4 class="card-title">{{friend.username}}</h4>
+                                </div>
+                            </div>
+
+                        </div>
+                        {%endfor%}
+                    </div>
+                    {% else %}
+                    <div class="row justify-content-center nothing">haha you don't have any friends
                     </div>
                     {% endif %}
                 </div>

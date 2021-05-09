@@ -9,6 +9,55 @@ function toggle(new_section) {
     prev_section = new_section;
 }
 
+const searchFocus = document.getElementById('search-focus');
+const keys = [
+    { keyCode: 'AltLeft', isTriggered: false },
+    { keyCode: 'ControlLeft', isTriggered: false },
+];
+
+window.addEventListener('keydown', (e) => {
+    keys.forEach((obj) => {
+        if (obj.keyCode === e.code) {
+            obj.isTriggered = true;
+        }
+    });
+
+    const shortcutTriggered = keys.filter((obj) => obj.isTriggered).length === keys.length;
+
+    if (shortcutTriggered) {
+        searchFocus.focus();
+    }
+});
+
+window.addEventListener('keyup', (e) => {
+
+    keys.forEach((obj) => {
+        if (obj.keyCode === e.code) {
+            obj.isTriggered = false;
+        }
+    });
+});
+
+document.addEventListener("submit", (e) => {
+    // Store reference to form to make later code easier to read
+    const form = e.target;
+  
+    // Post data using the Fetch API
+    fetch(form.action, {
+      method: form.method,
+      body: new FormData(form),
+    }).then((response => {
+        if (response.status === 200) {
+            alert("Friend request sent")
+        } else {
+            alert("Could not send friend request")
+        }
+    }));
+
+
+    // Prevent the default form submit
+    e.preventDefault();
+  });
 
 
 welcomeelement = document.getElementById("welcome_message")

@@ -19,6 +19,7 @@ function parse_invitation_list(data) {
     if (menus) {
         var messages = data.unread_list.map(function (item) {
             message = ""
+            console.log(item.verb)
             switch (item.verb) {
                 case "event invite":
                     message += item.actor + " has <span style=\"color:green;\">invited</span> you to join an event:</br><i>" + item.data.title + "</i></br>"
@@ -51,8 +52,8 @@ function parse_invitation_list(data) {
 
                 case "friend request":
                     message += item.actor + " has <span style=\"color:green;\">sent</span> you a friend request</br></br>"
-                    message += "<button id=\"id_notif_invite_accept\" type=\"button\" onclick=\"invitation_respond('friend', 'accept', " + item.data.invite_id + ", " + item.id + ")\">✓</button>"
-                    message += "<button id=\"id_notif_invite_reject\" type=\"button\" onclick=\"invitation_respond('friend', 'reject', " + item.data.invite_id + ", " + item.id + ")\">✗</button>"
+                    message += "<button id=\"id_notif_invite_accept\" type=\"button\" onclick=\"invitation_respond('friend', 'accept', " + item.data.request_id + ", " + item.id + ")\">✓</button>"
+                    message += "<button id=\"id_notif_invite_reject\" type=\"button\" onclick=\"invitation_respond('friend', 'reject', " + item.data.request_id + ", " + item.id + ")\">✗</button>"
                     break;
                 case "friend request accepted":
                     message += item.actor + " has <span style=\"color:green;\">accepted</span> your friend request</br>"

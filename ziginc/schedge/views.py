@@ -123,6 +123,8 @@ def event(request, event_id):
 
     inviteform = InviteForm(invites=invites, accepted=participants, user=request.user)
 
+    friends = request.user.friends
+
     context = {
         "event": this_event,
         "timeslotform": timeslotform,
@@ -131,6 +133,7 @@ def event(request, event_id):
         "participants": participants,
         "invites": invites,
         "pts": potentialtimeslots,
+        "friends": friends,
     }
     return render(request, "event.html", context)
 
@@ -558,6 +561,7 @@ def friend_request_send(request):
     form = FriendForm(request.POST)
     if form.is_valid():
         from_user = request.user
+        print(request.POST)
         to_user = User.objects.get(username=request.POST['to_user'])
         if to_user == from_user:
             return HttpResponseBadRequest('Cannot add self as friend')
@@ -567,6 +571,7 @@ def friend_request_send(request):
                 request.user,
                 recipient=to_user,
                 verb="friend request",
+                request_id=friend_req.id
                 # url=f"/event/{this_event.id}/",
             )
             return HttpResponse('Friend request sent')
@@ -588,20 +593,27 @@ def friend_request_delete(request):
 
 @login_required(login_url='/login/')
 def friend_request_accept(request, request_id):
+    print("\n\nher\n\n")
     if request.method != 'POST':
         return HttpResponseBadRequest('Bad Request')
     if not FriendRequest.objects.filter(id=request_id).exists():
         return HttpResponseNotFound('Not found')
+
     friend_req = FriendRequest.objects.get(id=request_id)
     if not friend_req.to_user == request.user:
         return HttpResponseBadRequest('Error')
 
+    print(1)
     to_user = User.objects.get(username=friend_req.to_user)
+    print(2)
     from_user = User.objects.get(username=friend_req.from_user)
+    print(3)
     from_user.profile.friends.add(to_user)
+    print(4)
     to_user.profile.friends.add(from_user)
     
-    
+    print("men enn her da??\n\n")
+
     notify.send(
         request.user,
         recipient=friend_req.from_user,
@@ -611,6 +623,7 @@ def friend_request_accept(request, request_id):
     
     friend_req.delete()
 
+    print("enn her??\n\n")
     return HttpResponse('Friend request accepted')
 
 @login_required(login_url='/login/')
