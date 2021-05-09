@@ -114,3 +114,28 @@ class ParticipantTest(TestCase):
         self.client.post(f"/event/{self.date.id}/participant_leave/{self.guest.id}/")
         response = self.client.get(f"/event/{self.date.id}/")
         self.assertNotIn(self.guest, response.context["participants"])
+
+    def test_delete_participant_from_non_existing_event(self):
+        """ Test for host deleting guest. """
+        non_existing_event = 99999
+        response = self.client.post(
+            f"/event/{non_existing_event}/participant_delete/{self.guest.id}/"
+        )
+        self.assertEqual(response.content, b"Unknown event")
+
+        
+    def test_delete_guest_participant_wrong_method(self):
+        """ Test for deleting guest using wrong method. """
+
+        response = self.client.get(
+            f"/event/{self.date.id}/participant_delete/{self.guest.id}/"
+        )
+        self.assertEqual(response.content, b"Bad request")
+
+    def test_delete_guest_that_is_not_participant(self):
+        """ Test for deleting guest that is not a participant. """
+        non_participating_guest_id = 9999999
+        response = self.client.post(
+            f"/event/{self.date.id}/participant_delete/{non_participating_guest_id}/"
+        )
+        self.assertEqual(response.content, b"Unknown User")
