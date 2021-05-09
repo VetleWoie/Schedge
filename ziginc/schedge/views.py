@@ -467,7 +467,7 @@ def invite_delete(request, invite_id):
 def participant_delete(request, event_id, user_id):
     try:
         this_event = Event.objects.get(id=event_id)
-    except User.DoesNotExist:
+    except Event.DoesNotExist:
         return HttpResponseNotFound("Unknown event")
 
     if request.method != "POST":
