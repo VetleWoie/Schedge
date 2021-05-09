@@ -2,6 +2,7 @@ image: ato058/schedge:latest
 stages:
   #Jobs in the same stage run in parallel so we only need one stage but several jobs.
   - test
+    
 
 #Run functional tests.
 functional:
@@ -12,6 +13,8 @@ functional:
     - python3 -m pip install Pillow
     - python3 -m pip install django-notifications-hq
     - cd ziginc
+    - python3 manage.py makemigrations
+    - python3 manage.py migrate
     - python3 manage.py test schedge/tests/functional
   only:
     - merge_requests
@@ -23,8 +26,10 @@ scenario:
     - apt-get update
     - python3 -m pip install Pillow
     - python3 -m pip install django-notifications-hq
-    - python3 -m pip install selenium
     - cd ziginc
+    - python3 manage.py makemigrations
+    - python3 manage.py migrate
+    - python3 -m pip install selenium
     - python3 manage.py test schedge/tests/scenario
   only:
     - merge_requests

@@ -369,7 +369,7 @@ def event_invite(request, event_id):
                 inviter,
                 recipient=invitee,
                 target=invite,
-                verb="invite",
+                verb="event invite",
                 title=this_event.title,
                 url=f"/event/{invite.event.id}/",
                 invite_id=invite.id,
@@ -583,13 +583,14 @@ def friend_request_send(request):
 @login_required(login_url='/login/')
 def friend_request_delete(request):
     if request.method != 'POST':
-        return HttpResponseBadRequest('Bad request')    
+        return HttpResponseBadRequest('Bad request') 
     form = FriendForm(request.POST)
-    if form.is_valid() and FriendRequest.objects.filter(from_user=request.user, to_user=form.cleaned_data['to_user']).exists():
-        friend_req = FriendRequest.objects.get(from_user=request.user, to_user=form.cleaned_data['to_user'])
+    if form.is_valid() and FriendRequest.objects.filter(from_user=request.user, to_user=User.objects.get(username=form.cleaned_data['to_user'])).exists():
+        friend_req = FriendRequest.objects.get(from_user=request.user, to_user=User.objects.get(username=form.cleaned_data['to_user']))
         friend_req.delete()
+        return HttpResponse('Request deleted')
     else:
-        return HttpResponseBadRequest('Not found')
+        return HttpResponseNotFound('Not found')
 
 @login_required(login_url='/login/')
 def friend_request_accept(request, request_id):
@@ -618,7 +619,7 @@ def friend_request_accept(request, request_id):
         request.user,
         recipient=friend_req.from_user,
         verb="friend request accept",
-        # url=f"/event/{this_event.id}/",
+        # url=f"/event/{this_event.id}/", #TODO fix url?
     )
     
     friend_req.delete()
@@ -645,9 +646,9 @@ def friend_delete(request):
         return HttpResponseBadRequest('Bad request')
     form = FriendForm(request.POST)
     if form.is_valid() and request.user.profile.friends.filter(username=form.cleaned_data['to_user']).exists():
-        f = request.user.profile.friends.get(username=form.cleaned_data['to_user'])
-        request.user.profile.friends.remove(f)
-        f.profile.friends.remove(request.user)
+        friend = request.user.profile.friends.get(username=form.cleaned_data['to_user'])
+        request.user.profile.friends.remove(friend)
+        friend.profile.friends.remove(request.user)
         return HttpResponse('friend removed')
         
     return HttpResponseNotFound('Bad request')
