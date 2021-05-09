@@ -210,3 +210,13 @@ class InviteTest(TestCase):
         response = self.client.post(f"/invite_delete/{non_existing_invite_id}/")
         # the reject should yield a unknown invite response.
         self.assertEqual(response.content, b"Unknown invite")
+
+    def test_delete_invitation_wrong_method(self):
+        response = self.client.get(f"/invite_delete/{self.inv.id}/")
+        self.assertEqual(response.content, b"Bad request")
+
+    def test_delete_invitation_as_unauthorized_user(self):
+        self.client.logout()
+        self.client.login(username=self.other.username, password=PASSWORD)
+        response = self.client.post(f"/invite_delete/{self.inv.id}/")
+        self.assertEqual(response.status_code, 401)
