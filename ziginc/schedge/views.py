@@ -613,7 +613,7 @@ def friend_request_accept(request, request_id):
     notify.send(
         request.user,
         recipient=friend_req.from_user,
-        verb="friend request accept",
+        verb="friend request accepted",
         url=f"", #TODO fix url?
     )
     
