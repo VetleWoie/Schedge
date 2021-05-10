@@ -547,7 +547,6 @@ def mark_notification_as_read(request, notif_id):
 def termsandservices(request):
     return render(request, "termsandservices.html")
 
-# TODO: Redirect to 'home' instead of 'signUpView'. Needs to be changed when home view is added
 @login_required
 def delete_user(request):
     if request.method != "POST":
@@ -561,12 +560,16 @@ def delete_user(request):
 def friend_request_send(request):
     if request.method != 'POST':
         return HttpResponseBadRequest('Bad Request')
+    if not request.POST.get("", False): 
+        return HttpResponseBadRequest("The form is empty")
     form = FriendForm(request.POST)
     if form.is_valid():
         from_user = request.user
         to_user = User.objects.get(username=request.POST['to_user'])
         if to_user == from_user:
-            return HttpResponseBadRequest('Cannot add self as friend')
+            return HttpResponseBadRequest('You cannot add yourself as a friend')
+        if from_user.profile.friends.filter(id=to_user.id).exists():
+            return HttpResponseBadRequest("You are already friends with this user")
         friend_req, created = FriendRequest.objects.get_or_create(from_user=from_user, to_user=to_user)
         if created:
             notify.send(
@@ -576,7 +579,7 @@ def friend_request_send(request):
                 request_id=friend_req.id,
                 url=f"",
             )
-            return HttpResponse('Friend request sent')
+            return HttpResponse('Friend request sent successfully')
         else:
             return HttpResponse('Friend request was already sent')
     else:

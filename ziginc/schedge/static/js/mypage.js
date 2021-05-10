@@ -47,11 +47,8 @@ document.addEventListener("submit", (e) => {
       method: form.method,
       body: new FormData(form),
     }).then((response => {
-        if (response.status === 200) {
-            alert("Friend request sent")
-        } else {
-            alert("Could not send friend request")
-        }
+        response.text().then(txt => {alert(txt)});
+        form.reset();
     }));
 
 

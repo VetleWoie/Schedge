@@ -1,3 +1,5 @@
+{% load static %}
+
 <!-- MultiStep Form -->
 
         <div class="col-11 col-sm-9 col-md-7 col-lg-6 text-center p-0 mt-3 mb-2">
@@ -31,8 +33,15 @@
                                     <h2 class="fs-title">Place of the event</h2>
                                     <div class="explanation">Where will the event take place?</div><br>
                                     {{ form.location }}
-                                    <td id="loc-td"><button onclick="getLocation()" type="button" id="curlocbutton">Current Location</button>
-                                        <span class="invis" id="loc-err-msg"></span>
+                                    <td id="loc-td">
+                                        
+                                        <div class="row justify-content-center" id="loc-div">
+
+                                            <button onclick="getLocation()" type="button" id="curlocbutton" class="btn-info p_side_s">Use Your Current Location</button>
+                                            <span class="invis" id="loc-err-msg"></span>
+                                            
+                                        </div>
+                                    
                                     </td>
                                 </div> <input type="button" name="previous" class="previous action-button-previous" value="Previous" /> <input type="button" name="next" class="next action-button" value="Next Step" id="next2"/>
                             </fieldset>
@@ -77,7 +86,7 @@
                                 <div class="form-card">
                                     <h2 class="fs-title text-center">Success!</h2> <br><br>
                                     <div class="row justify-content-center">
-                                        <div class="col-3"> <img src="https://img.icons8.com/color/96/000000/ok--v2.png" class="fit-image"> </div>
+                                        <div class="col-3"> <img src="{% static 'icons/tick.svg' %}" class="fit-image"> </div>
                                     </div> <br><br>
                                     <div class="row justify-content-center">
                                         <div class="col-7 text-center">

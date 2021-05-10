@@ -4,7 +4,9 @@
 {% notifications_unread as unread_count %}
 {% block stylesheet %}
 <link rel="stylesheet" href="{% static 'css/mypage_new.css' %}">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+    crossorigin="anonymous" />
 {% endblock %}
 
 {% block title%}My Page{%endblock%}
@@ -269,11 +271,13 @@
                                     </div>
                                     <!--end of col-->
                                     <div class="col">
-                                        <input class="form-control form-control-lg form-control-borderless" name="to_user" type="search" placeholder="Add a friend">
+                                        <input class="form-control form-control-lg form-control-borderless"
+                                            name="to_user" type="search" placeholder="Add a friend">
                                     </div>
                                     <!--end of col-->
                                     <div class="col-auto">
-                                        <button class="btn btn-lg btn-dark" type="submit"><i class="fas fa-user-plus" aria-hidden="true"></i>
+                                        <button class="btn btn-lg btn-dark" type="submit"><i class="fas fa-user-plus"
+                                                aria-hidden="true"></i>
 
                                         </button>
                                     </div>
@@ -290,9 +294,14 @@
                     {%if friends%}
                     <div class="row">
                         {% for friend in friends %}
-                        <!-- for loop -->
-                        <div class="col-sm-4">
-                            <h4>{{friend.username}}</h4>
+                        <div class="align-items-stretch m_left_small m_right_small">
+                            <!-- for loop -->
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="card-title">{{friend.first_name}} {{friend.last_name}}</div>
+                                    <div class="card-text">{{friend.username}}</div>
+                                </div>
+                            </div>
                         </div>
                         {%endfor%}
                     </div>

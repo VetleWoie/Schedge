@@ -6,7 +6,10 @@
 
 <link rel="stylesheet" href="{% static 'css/mypage_new.css' %}">
 <link rel="stylesheet" href="{% static 'css/event_multistep.css' %}">
-<link rel="stylesheet" href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.css'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+    crossorigin="anonymous" />
+
 {%endblock%}
 
 {%block title%}Create Event{%endblock%}
@@ -19,17 +22,6 @@
 
 <div class="container-fluid h-100">
     <div class="row h-100">
-        {%comment%}
-        <div class="col-sm-3 nav_bar txt_center">
-
-            <!-- <div class="m_left_small m_right_small m_btm_small row m_top_med dash justify-content-center">
-
-                <span class="txt_ls_med">Dashboard</span>
-            </div> -->
-            
-            
-        </div>
-        {%endcomment%}
         <!-- MultiStep Form -->
         <div class="col displayright" id="grad1">
         <div class="row m_left_small m_top_small">
@@ -41,86 +33,6 @@
 
                 {% include "event_form.html" %}
 
-
-                {%comment%}
-                <div class="col-md-6">
-                    <form action="/createevent/" method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <h1 class="txt_center sub_title">CREATE AN EVENT</h1>
-                        <table class="createevent blob">
-                            {% for field in form %}
-                            <tr>
-                                <td>{{field.label}}</td>
-                                <div class="field">
-                                    <td>
-                                        {% if field.errors %}
-                                        <div class="errormsg invalid">{{ field }}
-                                            <span class="errormsgtext">{{field.errors}}</span>
-                                        </div>
-                                        {%else%}
-                                        {{ field }}
-                                        {% endif %}
-                                        {% if field.label == "Location" %}
-                                        <div id="loc-div"><button onclick="getLocation()" type="button"
-                                                id="curlocbutton" class="smallbtn">Current
-                                                Location</button>
-                                            <span class="invis" id="loc-err-msg"></span>
-                                        </div>
-                                        {% endif %}
-                                    </td>
-                                </div>
-                            </tr>
-                            {% endfor %}
-                            <!-- <tr>
-                                <td>Title</td>
-                                <td>{{ form.title }}</td>
-                            </tr>
-                            <tr>
-                                <td>Location</td>
-                                <td>{{ form.location }}</td>
-                                <td id="loc-td"><button onclick="getLocation()" type="button" id="curlocbutton">Current Location</button>
-                                    <span class="invis" id="loc-err-msg"></span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Start Time</td>
-                                <td>{{ form.starttime }}</td>
-                                <td>End Time</td>
-                                <td>{{ form.endtime }}</td>
-                            </tr>
-                            <tr>
-                                <td>Start Date</td>
-                                {% if form.startdate.errors %}
-                                <td class="errormsg"><p class="invalid">{{ form.startdate }}</p>
-                                    <span class="errormsgtext">{{form.startdate.errors}}</span>
-                                </td>
-                                {%else%}
-                                <td>{{ form.startdate }}</td>
-                                {% endif %}
-                                <td>End Date</td>
-                                <td>{{ form.enddate }}</td>
-                            </tr>
-                            <tr>
-                                <td>Duration</td>
-                                <td>{{ form.duration}}</td>
-                            </tr>
-                            <tr>
-                                <td>Description</td>
-                                <td>{{ form.description }}</td>
-                            </tr>
-                            <tr>
-                                <td>Image</td>
-                                <td>{{ form.image }}</td>
-                            </tr> -->
-
-                        </table>
-                        <div class="txt_center">
-                            <input type="submit" value="Submit" class="btn btn-dark" id="id_submit_btn">
-
-                        </div>
-                    </form>
-                </div>
-                {%endcomment%}
             </div>
 
         </div>
@@ -135,84 +47,6 @@
 
 
 
-
-{%comment%}
-<div class="wrap">
-    <form action="/createevent/" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <h1>CREATE AN EVENT</h1>
-        <table class="createevent blob">
-            {% for field in form %}
-            <tr>
-                <td>{{field.label}}</td>
-                <div class="field">
-                    <td>
-                        {% if field.errors %}
-                        <div class="errormsg invalid">{{ field }}
-                            <span class="errormsgtext">{{field.errors}}</span>
-                        </div>
-                        {%else%}
-                        {{ field }}
-                        {% endif %}
-                        {% if field.label == "Location" %}
-                        <div id="loc-div"><button onclick="getLocation()" type="button" id="curlocbutton"
-                                class="smallbtn">Current
-                                Location</button>
-                            <span class="invis" id="loc-err-msg"></span>
-                        </div>
-                        {% endif %}
-                    </td>
-                </div>
-            </tr>
-            {% endfor %}
-            <!-- <tr>
-                <td>Title</td>
-                <td>{{ form.title }}</td>
-            </tr>
-            <tr>
-                <td>Location</td>
-                <td>{{ form.location }}</td>
-                <td id="loc-td"><button onclick="getLocation()" type="button" id="curlocbutton">Current Location</button>
-                    <span class="invis" id="loc-err-msg"></span>
-                </td>
-            </tr>
-            <tr>
-                <td>Start Time</td>
-                <td>{{ form.starttime }}</td>
-                <td>End Time</td>
-                <td>{{ form.endtime }}</td>
-            </tr>
-            <tr>
-                <td>Start Date</td>
-                {% if form.startdate.errors %}
-                <td class="errormsg"><p class="invalid">{{ form.startdate }}</p>
-                    <span class="errormsgtext">{{form.startdate.errors}}</span>
-                </td>
-                {%else%}
-                <td>{{ form.startdate }}</td>
-                {% endif %}
-                <td>End Date</td>
-                <td>{{ form.enddate }}</td>
-            </tr>
-            <tr>
-                <td>Duration</td>
-                <td>{{ form.duration}}</td>
-            </tr>
-            <tr>
-                <td>Description</td>
-                <td>{{ form.description }}</td>
-            </tr>
-            <tr>
-                <td>Image</td>
-                <td>{{ form.image }}</td>
-            </tr> -->
-
-        </table>
-        <input type="submit" value="Submit" class="btn wrap" id="id_submit_btn">
-    </form>
-</div>
-
-{%endcomment%}
 <script src="{% static 'js/event.js' %}"></script>
 <script src="{% static 'js/event_multistep.js' %}"></script>
 
