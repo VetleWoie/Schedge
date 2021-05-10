@@ -2,6 +2,7 @@ from .scenario.test_notifications_selenium import *
 from .scenario.test_createevent_selenium import *
 
 from .functional.test_potentialTimeSlot import *
+from .functional.test_select_timeslot import *
 from .functional.test_notifications import * 
 from .functional.test_participant import *
 from .functional.test_createevent import *
