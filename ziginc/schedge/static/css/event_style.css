@@ -89,3 +89,25 @@ img {
     /* height: 100%; */
     box-shadow: 2px 0px 1px #A8A8A8;
 }
+
+
+.folder_row {
+    border-bottom: 1px solid black;
+}
+
+.folder_active {
+    border: 1px solid black;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom: 1px solid transparent !important;
+    /* border-left: none; */
+    border-right: none;
+    padding-top: 2px;
+}
+
+.folder_unactive {
+    border: 1px solid black;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    background-color: lightgrey;
+}
