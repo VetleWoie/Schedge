@@ -6,6 +6,7 @@ html, body, main{
 .nav_bar {
  
     background-color: lightgray;
+    background-image: linear-gradient(120deg, rgba(88, 225, 224, 0.75), rgba(255, 135, 74, 0.75));
     /* box-shadow: 2px 0px 1px #8D8D8D; */
     /* overflow: hidden; */
 }
@@ -80,6 +81,10 @@ html, body, main{
 
 }
 
+
+.displayright {
+    /* background-image: linear-gradient(120deg, #58E1E0, #FF874A); */
+}
 
 
 .welcome_message {
