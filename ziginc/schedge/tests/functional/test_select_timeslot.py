@@ -79,7 +79,7 @@ class SelectTimeslotTest(TestCase):
     
         form = {"options": "10:00,20:00,{}".format(self.tomorrow)}
         response = self.client.get(f"/event/{self.date.id}/select/", form)
-        self.assertEqual(response.content, b"Request method not allowed")
+        self.assertEqual(response.status_code, 400)
 
 
     def test_selected_timeslot_unequal_to_duration(self):
@@ -99,7 +99,7 @@ class SelectTimeslotTest(TestCase):
         form = {"options": "10:00,11:00,{}".format(self.tomorrow)}
         response = self.client.post(f"/event/{self.date.id}/select/", form)
 
-        self.assertEqual(response.content, b"the selected time does not have the same length as the duration of the event")
+        self.assertEqual(response.status_code, 400)
         # self.assertNotIn(response.context, "pts")
     
     def test_time_selected_event_not_legal_event(self):
