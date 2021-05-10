@@ -119,17 +119,17 @@ class ParticipantTest(TestCase):
     def test_participant_leave_non_existent_event(self):
         non_existing_event = 99999
         response = self.client.post(f"/event/{non_existing_event}/participant_leave/{self.guest.id}/")
-        self.assertEqual(response.content, b"Unknown event")
+        self.assertEqual(response.status_code, 404)
 
     @as_guest
     def test_participant_leave_wrong_method(self):
         response = self.client.get(f"/event/{self.date.id}/participant_leave/{self.guest.id}/")
-        self.assertEqual(response.content, b"Bad request")
+        self.assertEqual(response.status_code, 400)
 
     def test_participant_leave_non_existing_user(self):
         non_existing_user_id = 9999999
         response = self.client.post(f"/event/{self.date.id}/participant_leave/{non_existing_user_id}/")
-        self.assertEqual(response.content, b"Unknown User")
+        self.assertEqual(response.status_code, 404)
     
 
     def test_delete_participant_from_non_existing_event(self):
@@ -138,7 +138,7 @@ class ParticipantTest(TestCase):
         response = self.client.post(
             f"/event/{non_existing_event}/participant_delete/{self.guest.id}/"
         )
-        self.assertEqual(response.content, b"Unknown event")
+        self.assertEqual(response.status_code, 404)
 
         
     def test_delete_guest_participant_wrong_method(self):
@@ -147,7 +147,7 @@ class ParticipantTest(TestCase):
         response = self.client.get(
             f"/event/{self.date.id}/participant_delete/{self.guest.id}/"
         )
-        self.assertEqual(response.content, b"Bad request")
+        self.assertEqual(response.status_code, 400)
 
     def test_delete_guest_that_is_not_participant(self):
         """ Test for deleting guest that is not a participant. """
@@ -155,4 +155,4 @@ class ParticipantTest(TestCase):
         response = self.client.post(
             f"/event/{self.date.id}/participant_delete/{non_participating_guest_id}/"
         )
-        self.assertEqual(response.content, b"Unknown User")
+        self.assertEqual(response.status_code, 404)
