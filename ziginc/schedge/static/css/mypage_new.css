@@ -1,0 +1,148 @@
+html, body, main{
+    height: 100%;
+}
+
+
+.nav_bar {
+ 
+    background-color: lightgray;
+    background-image: linear-gradient(120deg, rgba(88, 225, 224, 0.75), rgba(255, 135, 74, 0.75));
+    /* box-shadow: 2px 0px 1px #8D8D8D; */
+    /* overflow: hidden; */
+}
+ 
+[dir="home"] > :not(.homeTxt),
+[dir="host"] > :not(.hostTxt),
+[dir="parti"] > :not(.partiTxt),
+[dir="friends"] > :not(.friendsTxt) {
+  display: none;
+}
+
+.nav_btn {
+    border: none;
+    background: none;
+    /* margin-bottom: 50px; */
+    padding: 15px 0px;
+    font-size: 20px;
+    letter-spacing: 5px;
+    color: #505050;
+    width: 100%;
+}
+
+.nav_btn_selected {
+    /* background: #343a40; */
+    color: black;
+    font-weight: bolder;
+    /* outline: none; */
+}
+
+.nav_btn_selected:focus{
+    outline: none;
+    border: none;
+}
+
+.nav_btn:active {
+    outline: none;
+    border: none;
+}
+
+
+.so {
+    color: black;
+    padding-bottom: 50px;
+    font-size: 20px;
+    text-align: center;
+}
+
+.dash {
+ font-size: 25px;
+ text-transform: capitalize;
+ border-bottom: 1px solid black;
+}
+
+.ce_btn {
+    /* border-radius: 10px !important; */
+    text-transform: capitalize;
+    /* padding-left: 2.5px; */
+    /* letter-spacing: 2.5px; */
+    /* font-weight: bold; */
+}
+
+.plus {
+    font-weight: bolder;
+}
+
+
+[dir="home"] > :not(.homeTxt),
+[dir="host"] > :not(.hostTxt),
+[dir="parti"] > :not(.partiTxt) {
+  display: none;
+
+}
+
+
+.displayright {
+    /* background-image: linear-gradient(120deg, #58E1E0, #FF874A); */
+}
+
+
+.welcome_message {
+    text-align: center;
+    letter-spacing: 5px;
+    padding-left: 5px;
+    font-size: 50px;
+    margin-bottom: 40px;
+    text-shadow: 1px 1px 0px white;
+    color: #343a40;
+}
+
+.sub_title {
+    text-transform: uppercase;
+    padding: 10px;
+    padding-left: 15px;
+    letter-spacing: 5px;
+    text-shadow: 1px 1px 0px white;
+}
+
+
+
+/* INBOX / INVITES */
+.inbox_box {
+    width: 60%;
+    margin: auto;
+    border: 1px solid #d6d6d6;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    box-shadow: 2px 2px #cfcfcf;
+}
+
+.card {
+    margin-bottom: 20px;
+}
+
+.nothing {
+    text-align: center;
+    color: 848484;
+    font-style: italic;
+    font-size: 15px;
+    margin-bottom: 40px;
+    margin-top: -10px;
+}
+
+.form-card textarea {
+    max-height: 300px;
+    min-height: 2em;
+    height: 100px;
+}
+
+.form-control-borderless {
+    border: none;
+}
+
+.form-control-borderless:hover, .form-control-borderless:active, .form-control-borderless:focus {
+    border: none;
+    outline: none;
+    box-shadow: none;
+}

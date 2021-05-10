@@ -75,30 +75,27 @@ class NotificationsSeleniumTest(StaticLiveServerTestCase):
 
     def test_notif_on_invite(self):
         self.driver.get(self.live_server_url + f"/event/{self.event.id}")
-        sleep(1)
+        sleep(1.5)
         
         invite_form = self.driver.find_element_by_id("id_invitee")
         invite_form.send_keys("guest")
         invite_submit = self.driver.find_element_by_id("invite-submit")
         invite_submit.click()
-        sleep(0.5)
+        sleep(0.8)
 
         self.login(self.guest.username)
-        sleep(0.2)
+        # sleep(0.4)
         self.driver.get(self.live_server_url + f"/mypage/")
-        sleep(1)
+        sleep(1.5)
 
         self.assertTrue(Notification.objects.filter(recipient=self.guest).exists())
-        bell = self.driver.find_element_by_class_name("busybell")
-        accept = self.driver.find_element_by_id("id_notif_invite_accept")
-        chain = ActionChains(self.driver)
-        chain.move_to_element(bell)
-        chain.pause(0.1)
-        chain.move_to_element(accept)
-        
-        chain.click()
-        chain.perform()
-        sleep(1)
+
+        invite_accept_btn = self.driver.find_element_by_id("id_notif_invite_accept")
+
+        # press accept button. we must do it this way as the button is hidden
+        self.driver.execute_script("$(arguments[0]).click();", invite_accept_btn)
+
+        sleep(0.8)
         guestparticipant = self.event.participants.get(id=self.guest.id)
         self.assertTrue(guestparticipant)
         notifs = Notification.objects.filter(recipient=self.host)

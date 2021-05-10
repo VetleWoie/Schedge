@@ -1,0 +1,108 @@
+{% load static %}
+
+<!-- MultiStep Form -->
+
+        <div class="col-11 col-sm-9 col-md-7 col-lg-6 text-center p-0 mt-3 mb-2">
+            <h2><strong>Create a New Event</strong></h2>
+            <div class="card px-0 pt-4 pb-0 mt-3 mb-3">
+               
+                <div class="row">
+                    <div class="col-md-12 mx-0">
+                        <form  method="post" id="msform" action="{% url 'createevent' %}"  enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <!-- progressbar -->
+                            <ul id="progressbar">
+                                <li class="active" id="event_det"><strong>Details</strong></li>
+                                <li id="location"><strong>Location</strong></li>
+                                <li id="calender"><strong>Dates</strong></li>
+                                <li id="durtimer"><strong>Duration</strong></li>
+                                <li id="clock"><strong>Time</strong></li>
+                            </ul> <!-- fieldsets -->
+                            <fieldset>
+                                <div class="form-card">
+                                    <h2 class="fs-title">Event Details</h2> 
+                                    <div class="explanation">Give your event a title and a fitting description.</div><br>
+                                    {{ form.title }} 
+                                    {{ form.description }}
+                                    {{ form.image }}
+                                </div> <input type="button" name="next" class="next action-button" value="Next Step" id="next1"/>
+                            </fieldset>
+                            
+                            <fieldset>
+                                <div class="form-card">
+                                    <h2 class="fs-title">Place of the event</h2>
+                                    <div class="explanation">Where will the event take place?</div><br>
+                                    {{ form.location }}
+                                    <td id="loc-td">
+                                        
+                                        <div class="row justify-content-center" id="loc-div">
+
+                                            <button onclick="getLocation()" type="button" id="curlocbutton" class="btn-info p_side_s">Use Your Current Location</button>
+                                            <span class="invis" id="loc-err-msg"></span>
+                                            
+                                        </div>
+                                    
+                                    </td>
+                                </div> <input type="button" name="previous" class="previous action-button-previous" value="Previous" /> <input type="button" name="next" class="next action-button" value="Next Step" id="next2"/>
+                            </fieldset>
+                            
+                            <fieldset>
+                                <div class="form-card">
+                                    <h2 class="fs-title">Possible Dates *</h2> 
+                                    <div class="explanation">Between which two dates will the event take place? (Including those dates)</div><br>
+                                    <div>Start date:</div>
+                                    {% if form.startdate.errors %}
+                                    <td class="errormsg"><p class="invalid">{{ form.startdate }}</p>
+                                        <span class="errormsgtext">{{form.startdate.errors}}</span>
+                                    </td>
+                                    {%else%}
+                                    <td>{{ form.startdate }}</td>
+                                    {% endif %}
+                                    <div class="">End date:</div>
+                                    {{ form.enddate }}
+                                </div> <input type="button" name="previous" class="previous action-button-previous" value="Previous" /> <input type="button" name="next" class="next action-button" value="Next Step" id="next3"/>
+                            </fieldset>
+                            
+                            <fieldset>
+                                <div class="form-card">
+                                    <h2 class="fs-title">Duration</h2> 
+                                    <div class="explanation">How long does this event last?</div><br>
+                                    {{ form.duration }}
+                                </div> <input type="button" name="previous" class="previous action-button-previous" value="Previous" /> <input type="button" name="next" class="next action-button" value="Next Step" id="next4"/>
+                            </fieldset>
+                            
+                            <fieldset>
+                                <div class="form-card">
+                                    <h2 class="fs-title">Time of Day</h2>
+                                    <div class="explanation">Between what times can the event take place?</div><br> 
+                                    <div>Start time:</div>
+                                    {{ form.starttime }}
+                                    <div>End time:</div>
+                                    {{ form.endtime }} 
+                                </div> <input type="button" name="previous" class="previous action-button-previous" value="Previous" /> <input type="button" name="make_payment" class="next action-button" value="Confirm" id="next5"/>
+                            </fieldset>
+                     
+                            <fieldset>
+                                <div class="form-card">
+                                    <h2 class="fs-title text-center">Success!</h2> <br><br>
+                                    <div class="row justify-content-center">
+                                        <div class="col-3"> <img src="{% static 'icons/tick.svg' %}" class="fit-image"> </div>
+                                    </div> <br><br>
+                                    <div class="row justify-content-center">
+                                        <div class="col-7 text-center">
+                                            <h5>You Have Successfully Created an Event</h5>
+                                        </div>
+                                    </div>
+                                    <div class="row justify-content-center">
+                                        <div class="col-7 text-center">
+                                            <input type="submit" name="submitform" class="submit action-button" value="Go to the event" id="confirmbtn"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>

@@ -175,3 +175,13 @@ body {
 .txt_white {
     color: white;
 }
+
+.box {
+    background-color: white;
+    border: 1px solid black  !important;
+    /* width: 50% !important; */
+    margin: auto;
+    margin-top: 20px;
+    border-radius: 10px;
+    box-shadow: 2px 2px 2px #3d3d41;
+}
