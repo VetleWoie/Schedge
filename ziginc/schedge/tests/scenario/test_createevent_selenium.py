@@ -50,10 +50,9 @@ class CreateEventSeleniumTest(StaticLiveServerTestCase):
         timefield = self.driver.find_element_by_id(id_)
         chain = ActionChains(self.driver)
         # move and click
-        chain.move_to_element(timefield).click()
-        # press shift+tab to move back to hour position
-        # a click moves cursor to minute position
-        chain.key_down(Keys.SHIFT).send_keys(Keys.TAB).key_up(Keys.SHIFT)
+        chain.move_to_element(timefield)
+        chain.click()
+
         # send time input
         chain.send_keys(time)
         chain.perform()
@@ -67,17 +66,40 @@ class CreateEventSeleniumTest(StaticLiveServerTestCase):
         title_field = self.driver.find_element_by_id("id_title")
         title_field.send_keys("Test Event")
 
+        nextbtn = self.driver.find_element_by_id("next1")
+        nextbtn.click()
+
         location_field = self.driver.find_element_by_id("id_location")
         location_field.send_keys("Test Location")
 
-        self.input_time("id_starttime", "0800AM")
-        self.input_time("id_endtime", "0430PM")
+        # sleep(2)
 
-        self.input_date("id_startdate", "01012022")
-        self.input_date("id_enddate", "01012023")
+        nextbtn = self.driver.find_element_by_id("next2")
+        nextbtn.click()
+
+        self.input_date("id_startdate", "01-01-2022")
+        self.input_date("id_enddate", "01-01-2023")
+
+        nextbtn = self.driver.find_element_by_id("next3")
+        nextbtn.click()
+
+        # find all three duration forms
+        duration_inputs = self.driver.find_elements_by_class_name("duration-form")
+        for field, num in zip(duration_inputs, [0, 1, 0]):
+            field.send_keys(str(num))
+        # location_field.send_keys("Test Location")
+
+        nextbtn = self.driver.find_element_by_id("next4")
+        nextbtn.click()
+
+        self.input_time("id_starttime", "0800PM")
+        self.input_time("id_endtime", "1630AM")
+        
+        nextbtn = self.driver.find_element_by_id("next5")
+        nextbtn.click()
 
         # submit form
-        submit_btn = self.driver.find_element_by_id("id_submit_btn")
+        submit_btn = self.driver.find_element_by_id("confirmbtn")
         submit_btn.click()
 
         # wait for new site to load

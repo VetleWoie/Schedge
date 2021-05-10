@@ -4,12 +4,14 @@
 {% notifications_unread as unread_count %}
 {% block stylesheet %}
 <link rel="stylesheet" href="{% static 'css/mypage_new.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+    crossorigin="anonymous" />
 {% endblock %}
 
 {% block title%}My Page{%endblock%}
 
 {% block content %}
-
 
 
 
@@ -24,16 +26,7 @@
             </div> -->
             <div class="row">
                 <div class="col-10 txt_left sub_title txt_large">Schedge</div>
-                <div class="col-2">
-                    <div class="bell_dropdown">
-                        <div class="busybell">
-                            {%live_notify_badge%}
-                            <img src="{% static 'icons/bell.svg' %}" class="notifimg" width="35px">
-                        </div>
-                        {% live_notify_list %}
 
-                    </div>
-                </div>
             </div>
             <div class="row">
                 <button class="nav_btn nav_btn_selected m_top_small" id="home" onclick="toggle('home')">Home</button>
@@ -45,8 +38,11 @@
             <div class="row">
                 <button class="nav_btn" id="parti" onclick="toggle('parti')">Participant</button>
             </div>
+            <div class="row">
+                <button class="nav_btn" id="friends" onclick="toggle('friends')">Friends</button>
+            </div>
             <br>
-            <a href="/createevent" class="m_top_small btn btn-light btn-lg ce_btn">create event</a>
+            <a href="{% url 'createevent' %}" class="m_top_small btn btn-dark btn-lg ce_btn">create event</a>
             <div class="so m_top_l txt_ls_small">
                 <a class="simple_link" href="{% url 'logout' %}">Sign out</a>
             </div>
@@ -60,7 +56,7 @@
 
 
         <div class="col displayright">
-            
+
             <div dir="home">
                 <div class="homeTxt">
                     <!-- SECTION 1: WELCOME MESSAGE -->
@@ -260,6 +256,57 @@
                     </div>
                     {% else %}
                     <div class="row justify-content-center nothing">you do not participate in any upcoming events
+                    </div>
+                    {% endif %}
+                </div>
+                <!-- FRIENDS -->
+                <div class="friendsTxt">
+                    <div class="row justify-content-center ">
+                        <div class="col-12 col-md-10 col-lg-8 m_top_med">
+                            <form class="card card-sm" action="{% url 'friend_request_send' %}" method="POST">
+                                {% csrf_token %}
+                                <div class="card-body row no-gutters align-items-center">
+                                    <div class="col-auto">
+                                        <i class="fas fa-search h4 text-body"></i>
+                                    </div>
+                                    <!--end of col-->
+                                    <div class="col">
+                                        <input class="form-control form-control-lg form-control-borderless"
+                                            name="to_user" type="search" placeholder="Add a friend">
+                                    </div>
+                                    <!--end of col-->
+                                    <div class="col-auto">
+                                        <button class="btn btn-lg btn-dark" type="submit"><i class="fas fa-user-plus"
+                                                aria-hidden="true"></i>
+
+                                        </button>
+                                    </div>
+                                    <!--end of col-->
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col sub_title m_top_med m_btm_small m_left_small txt_large"> My friends
+                        </div>
+                    </div>
+
+                    {%if friends%}
+                    <div class="row">
+                        {% for friend in friends %}
+                        <div class="align-items-stretch m_left_small m_right_small">
+                            <!-- for loop -->
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="card-title">{{friend.first_name}} {{friend.last_name}}</div>
+                                    <div class="card-text">{{friend.username}}</div>
+                                </div>
+                            </div>
+                        </div>
+                        {%endfor%}
+                    </div>
+                    {% else %}
+                    <div class="row justify-content-center nothing">haha you don't have any friends
                     </div>
                     {% endif %}
                 </div>

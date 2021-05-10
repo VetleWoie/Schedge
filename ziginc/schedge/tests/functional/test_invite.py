@@ -13,6 +13,7 @@ PASSWORD = "Elias123"
 def as_bob(func):
     """Log into bob before the method and login back to alice after.
     In case the test is from Bob's perspective"""
+
     def wrapper(*args, **kwargs):
         self = args[0]
         self.client.login(username=self.bob.username, password=PASSWORD)
@@ -26,6 +27,7 @@ class InviteTest(TestCase):
     def setUp(self):
         self.alice = User.objects.create_user("Alice", "alice@test.com", PASSWORD)
         self.bob = User.objects.create_user("Bob", "bob@test.com", PASSWORD)
+        self.other = User.objects.create_user('Other', 'other@test.com', PASSWORD)
 
         self.client.login(username=self.alice.username, password=PASSWORD)
 
@@ -60,11 +62,15 @@ class InviteTest(TestCase):
         response = self.client.post(f"/event/{self.climbing.id}/invite/", form)
 
         self.assertEqual(response.status_code, 302)
-        invite = Invite.objects.get(event=self.climbing, inviter=self.alice, invitee=self.bob)
+        invite = Invite.objects.get(
+            event=self.climbing, inviter=self.alice, invitee=self.bob
+        )
         self.assertTrue(invite)
         # timestamp should be within last 2 seconds
         # usually something like 0.03 s difference
-        self.assertAlmostEqual(invite.senttime.timestamp(), now().timestamp(), delta=2.0)
+        self.assertAlmostEqual(
+            invite.senttime.timestamp(), now().timestamp(), delta=2.0
+        )
 
     def test_invite_same_person_twice(self):
         form = {"invitee": self.bob.id}
@@ -90,7 +96,7 @@ class InviteTest(TestCase):
     @as_bob
     def test_accept_invitation(self):
         # bob accept invite
-        response = self.client.post(f"/invite_accept/{self.inv.id}/")
+        response = self.client.post(f"/event_invite_accept/{self.inv.id}/")
         # the accepting should redirect
         self.assertEqual(response.status_code, 302)
         # other should be in the event's participants
@@ -99,7 +105,7 @@ class InviteTest(TestCase):
     @as_bob
     def test_accepted_invitation_is_on_mypage(self):
         # bob accept invite
-        self.client.post(f"/invite_accept/{self.inv.id}/")
+        self.client.post(f"/event_invite_accept/{self.inv.id}/")
         # the accepting should redirect
         response = self.client.get("/mypage/")
         self.assertIn(self.hiking, response.context["participant_as_guest"])
@@ -107,16 +113,15 @@ class InviteTest(TestCase):
     @as_bob
     def test_rejected_invitation_is_not_on_mypage(self):
         # bob reject invite
-        self.client.post(f"/invite_reject/{self.inv.id}/")
+        self.client.post(f"/event_invite_reject/{self.inv.id}/")
         # the accepting should redirect
         response = self.client.get("/mypage/")
         self.assertNotIn(self.hiking, response.context["participant_as_guest"])
- 
 
     @as_bob
     def test_reject_invitation(self):
         # bob reject invite
-        response = self.client.post(f"/invite_reject/{self.inv.id}/")
+        response = self.client.post(f"/event_invite_reject/{self.inv.id}/")
         # the accepting should redirect
         self.assertEqual(response.status_code, 302)
 
@@ -133,12 +138,12 @@ class InviteTest(TestCase):
 
     def test_accept_someone_elses_invite(self):
         # me tries to accept other's invite
-        response = self.client.post(f"/invite_accept/{self.inv.id}/")
+        response = self.client.post(f"/event_invite_accept/{self.inv.id}/")
         self.assertEqual(response.status_code, 401)
 
     def test_reject_someone_elses_invite(self):
         # me tries to reject other's invite
-        response = self.client.post(f"/invite_reject/{self.inv.id}/")
+        response = self.client.post(f"/event_invite_reject/{self.inv.id}/")
         self.assertEqual(response.status_code, 401)
 
     @as_bob
@@ -156,26 +161,74 @@ class InviteTest(TestCase):
         form = {"invitee": self.bob.id}
         response = self.client.get(f"/event/{self.climbing.id}/invite/", form)
         self.assertEqual(response.status_code, 400)
+
     def test_invite_only_as_host(self):
         response = self.client.get(f"/event/{self.hiking.id}/")
         self.assertContains(response, 'id="Invite_box"')
-    
+
     @as_bob
     def test_try_invite_as_invitee(self):
         # Logout as host user and log in as another invitee.
         # Make sure the invited person does not have access to invite others.
         response = self.client.get(f"/event/{self.hiking.id}/")
         self.assertNotContains(response, 'id="Invite_box')
-    
+
     def test_pending_invites_as_host(self):
         # Check that the host is able to see pending invites
         response = self.client.get(f"/event/{self.hiking.id}/")
-        self.assertContains(response, "id='pending_invites'")
+        self.assertContains(response, 'id="pending_invites"')
     
+    def test_no_pending_invites_as_host_if_no_invites(self):
+        # Check that the host isnt able to see pending invites if there are none
+        self.inv.delete()
+        response = self.client.get(f"/event/{self.hiking.id}/")
+        self.assertNotContains(response, 'id="pending_invites"')
+
     @as_bob
     def test_invisible_pending_invites_as_guest(self):
         # Check that an attendee is not able to see pending invites.
         response = self.client.get(f"/event/{self.hiking.id}/")
         self.assertNotContains(response, "id='pending_invites'")
-    
 
+    def test_invite_invalid_event(self):
+        form = {"invitee": self.bob.id}
+        invalid_event_id = 9999999
+        response = self.client.post(f"/event/{invalid_event_id}/invite/", form)
+        # TODO: Redirect to 'home' instead of 'signUpView'. Needs to be changed when home view is added
+        self.assertEqual(response.status_code, 404)
+
+    @as_bob
+    def test_accept_non_existing_invitation(self):
+        # bob try to accept invite to unknown invite id.
+        non_existing_invite_id = 999999999
+        response = self.client.post(f"/invite_accept/{non_existing_invite_id}/")
+        # the accept should yield a unknown invite response.
+        self.assertEqual(response.status_code, 404)
+
+    
+    @as_bob
+    def test_reject_non_existing_invitation(self):
+        # bob try to accept invite to unknown invite id.
+        non_existing_invite_id = 999999999
+        response = self.client.post(f"/invite_reject/{non_existing_invite_id}/")
+        # the reject should yield a unknown invite response.
+        self.assertEqual(response.status_code, 404)
+
+    
+    @as_bob
+    def test_delete_non_existing_invitation(self):
+        # bob try to accept invite to unknown invite id.
+        non_existing_invite_id = 999999999
+        response = self.client.post(f"/invite_delete/{non_existing_invite_id}/")
+        # the reject should yield a unknown invite response.
+        self.assertEqual(response.status_code, 400)
+
+    def test_delete_invitation_wrong_method(self):
+        response = self.client.get(f"/invite_delete/{self.inv.id}/")
+        self.assertEqual(response.status_code, 400)
+
+    def test_delete_invitation_as_unauthorized_user(self):
+        self.client.logout()
+        self.client.login(username=self.other.username, password=PASSWORD)
+        response = self.client.post(f"/invite_delete/{self.inv.id}/")
+        self.assertEqual(response.status_code, 401)

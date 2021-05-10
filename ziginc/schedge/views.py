@@ -6,12 +6,11 @@ from django.http import (
     HttpResponseBadRequest,
 )
 import datetime as dt
-from .forms import EventForm, TimeSlotForm, InviteForm
-from .models import Event, TimeSlot, Invite, PotentialTimeSlot
+from .forms import EventForm, TimeSlotForm, InviteForm, FriendForm, NameForm
+from .models import Event, TimeSlot, Invite, PotentialTimeSlot, FriendRequest
 from django.shortcuts import render
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
-from .forms import NameForm
 from django.template import loader
 from django.urls import reverse_lazy, reverse
 from django.views import generic
@@ -50,6 +49,8 @@ def mypage(request):
 
     invites = Invite.objects.filter(invitee=user)
 
+    friends = request.user.profile.friends.all()
+
     # Get events that will happen in between today and within the next seven days
     today = dt.date.today()
     in_seven_days = today + dt.timedelta(days=7)
@@ -60,7 +61,8 @@ def mypage(request):
         "host_decided": host_decided,
         "participant_as_guest": participant_as_guest,
         "invites": invites,
-        "this_week": this_weeks_events
+        "this_week": this_weeks_events,
+        "friends": friends
     }
     return render(request, "mypage.html", context)
 
@@ -123,6 +125,8 @@ def event(request, event_id):
     invites = Invite.objects.filter(event=this_event)
 
     inviteform = InviteForm(invites=invites, accepted=participants, user=request.user)
+    
+    friends = request.user.profile.friends
 
     context = {
         "event": this_event,
@@ -132,6 +136,7 @@ def event(request, event_id):
         "participants": participants,
         "invites": invites,
         "pts": potentialtimeslots,
+        "friends": friends,
     }
     return render(request, "event.html", context)
 
@@ -367,7 +372,7 @@ def event_invite(request, event_id):
                 inviter,
                 recipient=invitee,
                 target=invite,
-                verb="invite",
+                verb="event invite",
                 title=this_event.title,
                 url=f"/event/{invite.event.id}/",
                 invite_id=invite.id,
@@ -467,7 +472,7 @@ def invite_delete(request, invite_id):
 def participant_delete(request, event_id, user_id):
     try:
         this_event = Event.objects.get(id=event_id)
-    except User.DoesNotExist:
+    except Event.DoesNotExist:
         return HttpResponseNotFound("Unknown event")
 
     if request.method != "POST":
@@ -502,7 +507,7 @@ def participant_delete(request, event_id, user_id):
 def participant_leave(request, event_id, user_id):
     try:
         this_event = Event.objects.get(id=event_id)
-    except User.DoesNotExist:
+    except Event.DoesNotExist:
         return HttpResponseNotFound("Unknown event")
 
     if request.method != "POST":
@@ -542,7 +547,6 @@ def mark_notification_as_read(request, notif_id):
 def termsandservices(request):
     return render(request, "termsandservices.html")
 
-# TODO: Redirect to 'home' instead of 'signUpView'. Needs to be changed when home view is added
 @login_required
 def delete_user(request):
     if request.method != "POST":
@@ -552,4 +556,96 @@ def delete_user(request):
     user.delete()        
     return redirect(home)
 
+@login_required(login_url="/login/")
+def friend_request_send(request):
+    if request.method != 'POST':
+        return HttpResponseBadRequest('Bad Request')
+    if not request.POST.get("to_user", False): 
+        return HttpResponseBadRequest("The form is empty")
+    form = FriendForm(request.POST)
+    if form.is_valid():
+        from_user = request.user
+        to_user = User.objects.get(username=request.POST['to_user'])
+        if to_user == from_user:
+            return HttpResponseBadRequest('You cannot add yourself as a friend')
+        if from_user.profile.friends.filter(id=to_user.id).exists():
+            return HttpResponseBadRequest("You are already friends with this user")
+        friend_req, created = FriendRequest.objects.get_or_create(from_user=from_user, to_user=to_user)
+        if created:
+            notify.send(
+                request.user,
+                recipient=to_user,
+                verb="friend request",
+                request_id=friend_req.id,
+                url=f"",
+            )
+            return HttpResponse('Friend request sent successfully')
+        else:
+            return HttpResponse('Friend request was already sent')
+    else:
+        return HttpResponseNotFound('user not found')
 
+@login_required(login_url='/login/')
+def friend_request_delete(request):
+    if request.method != 'POST':
+        return HttpResponseBadRequest('Bad request') 
+    form = FriendForm(request.POST)
+    if form.is_valid() and FriendRequest.objects.filter(from_user=request.user, to_user=User.objects.get(username=form.cleaned_data['to_user'])).exists():
+        friend_req = FriendRequest.objects.get(from_user=request.user, to_user=User.objects.get(username=form.cleaned_data['to_user']))
+        friend_req.delete()
+        return HttpResponse('Request deleted')
+    else:
+        return HttpResponseNotFound('Not found')
+
+@login_required(login_url='/login/')
+def friend_request_accept(request, request_id):
+    if request.method != 'POST':
+        return HttpResponseBadRequest('Bad Request')
+    if not FriendRequest.objects.filter(id=request_id).exists():
+        return HttpResponseNotFound('Not found')
+
+    friend_req = FriendRequest.objects.get(id=request_id)
+    if not friend_req.to_user == request.user:
+        return HttpResponseBadRequest('Error')
+
+    to_user = User.objects.get(username=friend_req.to_user)
+    from_user = User.objects.get(username=friend_req.from_user)
+    from_user.profile.friends.add(to_user)
+    to_user.profile.friends.add(from_user)
+    
+    notify.send(
+        request.user,
+        recipient=friend_req.from_user,
+        verb="friend request accepted",
+        url=f"", #TODO fix url?
+    )
+    
+    friend_req.delete()
+
+    return HttpResponse('Friend request accepted')
+
+@login_required(login_url='/login/')
+def friend_request_reject(request, request_id):
+    if request.method != 'POST':
+        return HttpResponseBadRequest('Bad Request')
+    if not FriendRequest.objects.filter(id=request_id).exists():
+        return HttpResponseNotFound('Bad Request')
+    
+    friend_request = FriendRequest.objects.get(id=request_id)
+    if not friend_request.to_user == request.user:
+        return HttpResponseBadRequest('Error')
+    friend_request.delete()
+    return HttpResponse('Friend request rejected')
+
+@login_required(login_url='/login/')
+def friend_delete(request):
+    if request.method != 'POST':
+        return HttpResponseBadRequest('Bad request')
+    form = FriendForm(request.POST)
+    if form.is_valid() and request.user.profile.friends.filter(username=form.cleaned_data['to_user']).exists():
+        friend = request.user.profile.friends.get(username=form.cleaned_data['to_user'])
+        request.user.profile.friends.remove(friend)
+        friend.profile.friends.remove(request.user)
+        return HttpResponse('friend removed')
+        
+    return HttpResponseNotFound('Bad request')

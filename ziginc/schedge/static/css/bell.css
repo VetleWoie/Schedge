@@ -1,0 +1,72 @@
+/* NOTIFICATION BELL */
+
+.bell_dropdown {
+    /* position: relative; */
+    /* margin-right: 40px; */
+    /* float: left; */
+    padding-top: 5px;
+    position: absolute;
+    top:20px;
+    right:50px;
+    z-index: 1000;
+  }
+
+.notifimg {
+    /* width: 35px; */
+    /* position: absolute; */
+
+}
+.live_notify_list {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 10px;
+    padding: 15px 15px 0px 30px;
+    top: 100%;
+    left: -800%;
+    width: 333px;
+}
+
+.live_notify_list li {
+    color:black;
+    margin:0 20px 20px 0;
+    vertical-align:middle;
+    list-style-type: square;
+
+}
+
+.bell_dropdown:hover .live_notify_list {display: block;}
+
+
+.dot {
+    height: 20px;
+    width: 20px;
+    background-color: red;
+    border-radius: 50%;
+    display: inline-block;
+    position: absolute;
+    margin-left: 50%;
+    z-index: 1;
+    text-align: center;
+    color:white;
+    font-size: 13px;
+  }
+
+.dot p {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.busybell {
+    /* width: 35px; */
+    height: 35px;
+}
+
+.invislist {
+    display: none !important;
+}

@@ -19,17 +19,17 @@ function parse_invitation_list(data) {
     if (menus) {
         var messages = data.unread_list.map(function (item) {
             message = ""
+            console.log(item.verb)
             switch (item.verb) {
-                case "invite":
+                case "event invite":
                     message += item.actor + " has <span style=\"color:green;\">invited</span> you to join an event:</br><i>" + item.data.title + "</i></br>"
-                    message += "<button id=\"id_notif_invite_accept\" type=\"button\" onclick=\"invitation_respond('accept', " + item.data.invite_id + ", " + item.id + ")\">✓</button>"
-                    message += "<button id=\"id_notif_invite_reject\" type=\"button\" onclick=\"invitation_respond('reject', " + item.data.invite_id + ", " + item.id + ")\">✗</button>"
-
+                    message += "<button id=\"id_notif_invite_accept\" type=\"button\" onclick=\"invitation_respond('event', 'accept', " + item.data.invite_id + ", " + item.id + ")\">✓</button>"
+                    message += "<button id=\"id_notif_invite_reject\" type=\"button\" onclick=\"invitation_respond('event', 'reject', " + item.data.invite_id + ", " + item.id + ")\">✗</button>"
                     break;
-                case "invite accepted":
+                case "event invite accepted":
                     message += item.actor + " has <span style=\"color:green;\">accepted</span> your invite for the event:</br>" + item.data.title
                     break;
-                case "invite rejected":
+                case "event invite rejected":
                     message += item.actor + " has <span style=\"color:red;\">declined</span> your invite for the event:</br>" + item.data.title
                     break;
                 case "participant deleted":
@@ -49,6 +49,19 @@ function parse_invitation_list(data) {
                     break;
                 case "time selected":
                     message += item.actor + " has <span style=\"color:green;\"> picked a time </span> for the event:</br>" + item.data.title
+
+                case "friend request":
+                    message += item.actor + " has <span style=\"color:green;\">sent</span> you a friend request</br></br>"
+                    message += "<button id=\"id_notif_invite_accept\" type=\"button\" onclick=\"invitation_respond('friend', 'accept', " + item.data.request_id + ", " + item.id + ")\">✓</button>"
+                    message += "<button id=\"id_notif_invite_reject\" type=\"button\" onclick=\"invitation_respond('friend', 'reject', " + item.data.request_id + ", " + item.id + ")\">✗</button>"
+                    break;
+                case "friend request accepted":
+                    message += item.actor + " has <span style=\"color:green;\">accepted</span> your friend request</br>"
+                    break;
+                case "friend request rejected":
+                    message += item.actor + " has <span style=\"color:green;\">declined</span> your friend request</br>"
+                    break;
+
                 default:
                     break;
             }
@@ -69,7 +82,7 @@ function parse_invitation_list(data) {
     }
 }
 
-function update_notificaions() {
+function update_notifications() {
     $.ajax({
         url: "/inbox/notifications/api/unread_list/?max=5",
         type: "GET",
@@ -90,13 +103,13 @@ function mark_notification(notif_id) {
         },
         async: true
     }).done(() => {
-        update_notificaions();
+        update_notifications();
     });
 }
 
-function invitation_respond(type, invite_id, notif_id) {
+function invitation_respond(type, answer, invite_id, notif_id) {
     invite_req = () => $.ajax({
-        url: "/invite_" + type + "/" + invite_id + "/",
+        url: "/" + type + "_invite_" + answer + "/" + invite_id + "/",
         type: "POST",
         headers: {
             "X-CSRFToken": csrftoken
@@ -105,7 +118,7 @@ function invitation_respond(type, invite_id, notif_id) {
     });
 
     $.when(mark_notification(notif_id), invite_req()).done(() => {
-        update_notificaions();
+        update_notifications();
         if (window.location.href.endsWith("/mypage/")) {
             window.location.reload();
         }
@@ -113,4 +126,4 @@ function invitation_respond(type, invite_id, notif_id) {
 }
 
 // we update the notifications on reload
-update_notificaions();
+update_notifications();

@@ -1,11 +1,11 @@
 from django import forms
 from itertools import product
 import datetime as dt
-from django.forms.widgets import TextInput
+from django.forms.widgets import TextInput, Textarea
 from django.utils.dateparse import parse_duration
 from django.core.exceptions import ValidationError
 from django.forms.widgets import MultiWidget
-from .models import Event, TimeSlot
+from .models import Event, TimeSlot, FriendRequest
 from django.contrib.auth.models import User
 from .widgets import SplitDurationWidget, MultiValueDurationField
 
@@ -60,6 +60,11 @@ class EventForm(forms.ModelForm):
         today = dt.datetime.today().strftime("%Y-%m-%d")
 
         widgets = {
+            "title": TextInput(attrs={"placeholder": "Event Title"}),
+            "description": Textarea(attrs={"placeholder": "Event Description"}),
+
+            "location": TextInput(attrs={"placeholder": "Event Location"}),
+
             "startdate": DateInput(attrs={"min": today, "max": max_date()}),
             "enddate": DateInput(attrs={"min": today, "max": max_date()}),
             "starttime": TimeInput(format=("HH:mm")),
@@ -167,3 +172,11 @@ class InviteForm(forms.Form):
         self.fields["invitee"].choices = [
             (v, u) for v, u in choices if u not in excluded and u != user.username
         ]
+class FriendForm(forms.Form):
+    to_user = forms.CharField(label='Username')
+
+    def clean(self):
+        user = self.cleaned_data['to_user']
+        if not User.objects.filter(username=user).exists():
+            raise forms.ValidationError('Username does not exist')
+        return self.cleaned_data

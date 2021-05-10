@@ -1,3 +1,5 @@
+{% load static %}
+
 <!-- MultiStep Form -->
 
         <div class="col-11 col-sm-9 col-md-7 col-lg-6 text-center p-0 mt-3 mb-2">
@@ -6,7 +8,8 @@
                
                 <div class="row">
                     <div class="col-md-12 mx-0">
-                        <form id="msform">
+                        <form  method="post" id="msform" action="{% url 'createevent' %}"  enctype="multipart/form-data">
+                            {% csrf_token %}
                             <!-- progressbar -->
                             <ul id="progressbar">
                                 <li class="active" id="event_det"><strong>Details</strong></li>
@@ -19,17 +22,28 @@
                                 <div class="form-card">
                                     <h2 class="fs-title">Event Details</h2> 
                                     <div class="explanation">Give your event a title and a fitting description.</div><br>
-                                    <input type="text" name="event_title" placeholder="Event title" /> 
-                                    <input type="text" name="desc" placeholder="Description" />
-                                </div> <input type="button" name="next" class="next action-button" value="Next Step" />
+                                    {{ form.title }} 
+                                    {{ form.description }}
+                                    {{ form.image }}
+                                </div> <input type="button" name="next" class="next action-button" value="Next Step" id="next1"/>
                             </fieldset>
                             
                             <fieldset>
                                 <div class="form-card">
                                     <h2 class="fs-title">Place of the event</h2>
                                     <div class="explanation">Where will the event take place?</div><br>
-                                    <input type="text" name="loc" placeholder="Location" /> 
-                                </div> <input type="button" name="previous" class="previous action-button-previous" value="Previous" /> <input type="button" name="next" class="next action-button" value="Next Step" />
+                                    {{ form.location }}
+                                    <td id="loc-td">
+                                        
+                                        <div class="row justify-content-center" id="loc-div">
+
+                                            <button onclick="getLocation()" type="button" id="curlocbutton" class="btn-info p_side_s">Use Your Current Location</button>
+                                            <span class="invis" id="loc-err-msg"></span>
+                                            
+                                        </div>
+                                    
+                                    </td>
+                                </div> <input type="button" name="previous" class="previous action-button-previous" value="Previous" /> <input type="button" name="next" class="next action-button" value="Next Step" id="next2"/>
                             </fieldset>
                             
                             <fieldset>
@@ -37,18 +51,24 @@
                                     <h2 class="fs-title">Possible Dates *</h2> 
                                     <div class="explanation">Between which two dates will the event take place? (Including those dates)</div><br>
                                     <div>Start date:</div>
-                                    <input type="date" name="startdate"/>
+                                    {% if form.startdate.errors %}
+                                    <td class="errormsg"><p class="invalid">{{ form.startdate }}</p>
+                                        <span class="errormsgtext">{{form.startdate.errors}}</span>
+                                    </td>
+                                    {%else%}
+                                    <td>{{ form.startdate }}</td>
+                                    {% endif %}
                                     <div class="">End date:</div>
-                                    <input type="date" name="enddate"/> 
-                                </div> <input type="button" name="previous" class="previous action-button-previous" value="Previous" /> <input type="button" name="next" class="next action-button" value="Next Step" />
+                                    {{ form.enddate }}
+                                </div> <input type="button" name="previous" class="previous action-button-previous" value="Previous" /> <input type="button" name="next" class="next action-button" value="Next Step" id="next3"/>
                             </fieldset>
                             
                             <fieldset>
                                 <div class="form-card">
                                     <h2 class="fs-title">Duration</h2> 
                                     <div class="explanation">How long does this event last?</div><br>
-                                    <input type="time" name="duration"/>
-                                </div> <input type="button" name="previous" class="previous action-button-previous" value="Previous" /> <input type="button" name="next" class="next action-button" value="Next Step" />
+                                    {{ form.duration }}
+                                </div> <input type="button" name="previous" class="previous action-button-previous" value="Previous" /> <input type="button" name="next" class="next action-button" value="Next Step" id="next4"/>
                             </fieldset>
                             
                             <fieldset>
@@ -56,21 +76,26 @@
                                     <h2 class="fs-title">Time of Day</h2>
                                     <div class="explanation">Between what times can the event take place?</div><br> 
                                     <div>Start time:</div>
-                                    <input type="time" name="startdate"/> 
+                                    {{ form.starttime }}
                                     <div>End time:</div>
-                                    <input type="time" name="enddate"/> 
-                                </div> <input type="button" name="previous" class="previous action-button-previous" value="Previous" /> <input type="button" name="make_payment" class="next action-button" value="Confirm" />
+                                    {{ form.endtime }} 
+                                </div> <input type="button" name="previous" class="previous action-button-previous" value="Previous" /> <input type="button" name="make_payment" class="next action-button" value="Confirm" id="next5"/>
                             </fieldset>
                      
                             <fieldset>
                                 <div class="form-card">
                                     <h2 class="fs-title text-center">Success!</h2> <br><br>
                                     <div class="row justify-content-center">
-                                        <div class="col-3"> <img src="https://img.icons8.com/color/96/000000/ok--v2.png" class="fit-image"> </div>
+                                        <div class="col-3"> <img src="{% static 'icons/tick.svg' %}" class="fit-image"> </div>
                                     </div> <br><br>
                                     <div class="row justify-content-center">
                                         <div class="col-7 text-center">
                                             <h5>You Have Successfully Created an Event</h5>
+                                        </div>
+                                    </div>
+                                    <div class="row justify-content-center">
+                                        <div class="col-7 text-center">
+                                            <input type="submit" name="submitform" class="submit action-button" value="Go to the event" id="confirmbtn"/>
                                         </div>
                                     </div>
                                 </div>

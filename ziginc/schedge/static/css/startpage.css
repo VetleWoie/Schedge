@@ -15,6 +15,14 @@ body {
     text-shadow: 2px 2px 0px white;
 }
 
+.under_title {
+    font-size: 35px;
+    margin-top: 40px;
+    /* color: white; */
+    font-weight: 900;
+    text-shadow: 2px 2px 0px white;
+}
+
 
 .sub_txt {
     font-size: 20px;
