@@ -20,7 +20,7 @@ class NotificationsSeleniumTest(StaticLiveServerTestCase):
 
     def setUp(self):
         options = webdriver.FirefoxOptions()
-        # options.add_argument("--headless")
+        options.add_argument("--headless")
 
         self.driver = webdriver.Firefox(firefox_options=options)
         # create user and login
