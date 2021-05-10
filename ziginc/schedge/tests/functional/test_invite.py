@@ -183,7 +183,8 @@ class InviteTest(TestCase):
         form = {"invitee": self.bob.id}
         invalid_event_id = 9999999
         response = self.client.post(f"/event/{invalid_event_id}/invite/", form)
-        self.assertEqual(response.content, b"404: not valid event id")
+# TODO: Redirect to 'home' instead of 'signUpView'. Needs to be changed when home view is added
+        self.assertEqual(response.status_code, 404)
 
     @as_bob
     def test_accept_non_existing_invitation(self):
@@ -191,7 +192,7 @@ class InviteTest(TestCase):
         non_existing_invite_id = 999999999
         response = self.client.post(f"/invite_accept/{non_existing_invite_id}/")
         # the accept should yield a unknown invite response.
-        self.assertEqual(response.content, b"Unknown invite")
+        self.assertEqual(response.status_code, 400)
 
     
     @as_bob
@@ -200,7 +201,7 @@ class InviteTest(TestCase):
         non_existing_invite_id = 999999999
         response = self.client.post(f"/invite_reject/{non_existing_invite_id}/")
         # the reject should yield a unknown invite response.
-        self.assertEqual(response.content, b"Unknown invite")
+        self.assertEqual(response.status_code, 400)
 
     
     @as_bob
@@ -209,11 +210,11 @@ class InviteTest(TestCase):
         non_existing_invite_id = 999999999
         response = self.client.post(f"/invite_delete/{non_existing_invite_id}/")
         # the reject should yield a unknown invite response.
-        self.assertEqual(response.content, b"Unknown invite")
+        self.assertEqual(response.status_code, 400)
 
     def test_delete_invitation_wrong_method(self):
         response = self.client.get(f"/invite_delete/{self.inv.id}/")
-        self.assertEqual(response.content, b"Bad request")
+        self.assertEqual(response.status_code, 400)
 
     def test_delete_invitation_as_unauthorized_user(self):
         self.client.logout()
