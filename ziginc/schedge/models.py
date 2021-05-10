@@ -4,12 +4,33 @@ import datetime as dt
 import django
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
+from django.dispatch import receiver
 from django.core.exceptions import ValidationError
-
+from django.db.models.signals import post_save
 from .utils import time_add, time_diff
 # Create your models here.
 
+class Profile(models.Model):
+    user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
+    friends = models.ManyToManyField(get_user_model(), related_name='friend', blank=True)
 
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()
+    
+class FriendRequest(models.Model):
+    from_user = models.ForeignKey(
+        User, related_name='from_user', on_delete=models.CASCADE)
+    to_user = models.ForeignKey(
+        User, related_name='to_user', on_delete=models.CASCADE)
+
+    
 class Event(models.Model):
     """The event model
     TODO: Add more stuff"""

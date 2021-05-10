@@ -3,7 +3,7 @@ from . import views
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic.base import TemplateView
-from .views import signUpView
+from .views import signUpView, friend_request_accept, friend_request_reject, friend_request_send, friend_delete, friend_request_delete
 import notifications.urls
 from django.conf.urls import url
 
@@ -23,8 +23,8 @@ urlpatterns = [
     path("event/<int:event_id>/invite/", views.event_invite, name="event_invite"),
     path("event/<int:event_id>/participant_delete/<int:user_id>/", views.participant_delete, name="participant_delete"),
     path("event/<int:event_id>/participant_leave/<int:user_id>/", views.participant_leave, name="participant_leave"),
-    path("invite_accept/<int:invite_id>/", views.invite_accept, name="invite_accept"),
-    path("invite_reject/<int:invite_id>/", views.invite_reject, name="invite_reject"),
+    path("event_invite_accept/<int:invite_id>/", views.invite_accept, name="invite_accept"),
+    path("event_invite_reject/<int:invite_id>/", views.invite_reject, name="invite_reject"),
     path("invite_delete/<int:invite_id>/", views.invite_delete, name="invite_delete"),
     path("signup/", signUpView, name="signup"),
     path("", views.home, name="home"),
@@ -34,11 +34,16 @@ urlpatterns = [
         views.mark_notification_as_read,
         name="mark_notif_as_read",
     ),
-    url(
-        "^inbox/notifications/", include(notifications.urls, namespace="notifications")
-    ),
+    url("^inbox/notifications/", include(notifications.urls, namespace="notifications")),
     path("signup/termsandservices/", views.termsandservices, name="tands"),
-    path("mypage/delete_user_account/", views.delete_user, name="delete_user_account")
+    path("mypage/delete_user_account/", views.delete_user, name="delete_user_account"),
+
+    path("friend_invite_accept/<int:request_id>/", friend_request_accept, name='friend_request_accept'),
+    path("friend_invite_reject/<int:request_id>/", friend_request_reject, name='friend_request_reject'),
+    path("friend_invite_send/", friend_request_send, name='friend_request_send'),
+    path("friend_invite_delete/", friend_request_delete, name='friend_request_delete'),
+    path("friend_delete/", friend_delete, name='friend_delete'),
+
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
