@@ -27,6 +27,7 @@ class InviteTest(TestCase):
     def setUp(self):
         self.alice = User.objects.create_user("Alice", "alice@test.com", PASSWORD)
         self.bob = User.objects.create_user("Bob", "bob@test.com", PASSWORD)
+        self.other = User.objects.create_user('Other', 'other@test.com', PASSWORD)
 
         self.client.login(username=self.alice.username, password=PASSWORD)
 
@@ -188,3 +189,46 @@ class InviteTest(TestCase):
         # Check that an attendee is not able to see pending invites.
         response = self.client.get(f"/event/{self.hiking.id}/")
         self.assertNotContains(response, "id='pending_invites'")
+
+    def test_invite_invalid_event(self):
+        form = {"invitee": self.bob.id}
+        invalid_event_id = 9999999
+        response = self.client.post(f"/event/{invalid_event_id}/invite/", form)
+        # TODO: Redirect to 'home' instead of 'signUpView'. Needs to be changed when home view is added
+        self.assertEqual(response.status_code, 404)
+
+    @as_bob
+    def test_accept_non_existing_invitation(self):
+        # bob try to accept invite to unknown invite id.
+        non_existing_invite_id = 999999999
+        response = self.client.post(f"/invite_accept/{non_existing_invite_id}/")
+        # the accept should yield a unknown invite response.
+        self.assertEqual(response.status_code, 404)
+
+    
+    @as_bob
+    def test_reject_non_existing_invitation(self):
+        # bob try to accept invite to unknown invite id.
+        non_existing_invite_id = 999999999
+        response = self.client.post(f"/invite_reject/{non_existing_invite_id}/")
+        # the reject should yield a unknown invite response.
+        self.assertEqual(response.status_code, 404)
+
+    
+    @as_bob
+    def test_delete_non_existing_invitation(self):
+        # bob try to accept invite to unknown invite id.
+        non_existing_invite_id = 999999999
+        response = self.client.post(f"/invite_delete/{non_existing_invite_id}/")
+        # the reject should yield a unknown invite response.
+        self.assertEqual(response.status_code, 400)
+
+    def test_delete_invitation_wrong_method(self):
+        response = self.client.get(f"/invite_delete/{self.inv.id}/")
+        self.assertEqual(response.status_code, 400)
+
+    def test_delete_invitation_as_unauthorized_user(self):
+        self.client.logout()
+        self.client.login(username=self.other.username, password=PASSWORD)
+        response = self.client.post(f"/invite_delete/{self.inv.id}/")
+        self.assertEqual(response.status_code, 401)

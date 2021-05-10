@@ -41,3 +41,8 @@ class EventTest(TestCase):
         # test if self.golf is part of the context
         response = self.client.get(f"/event/{self.golf.id}/")
         self.assertEqual(response.context["event"], self.golf)
+    
+    def test_invalid_id(self):
+        # test if self.golf is part of the context
+        response = self.client.get(f"/event/99999/")
+        self.assertEqual(response.status_code, 404)

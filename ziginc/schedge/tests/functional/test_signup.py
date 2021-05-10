@@ -93,4 +93,8 @@ class SignUpModelTest(TestCase):
 
         response = self.client.post("/signup/", self.userOldBoth)
         self.assertEqual(response.status_code, 200)
+    
+    def test_user_creation_wrong_method(self):
+        response = self.client.get("/signup/", self.userGood)
+        self.assertEqual(response.status_code, 200)
         

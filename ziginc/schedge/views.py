@@ -472,7 +472,7 @@ def invite_delete(request, invite_id):
 def participant_delete(request, event_id, user_id):
     try:
         this_event = Event.objects.get(id=event_id)
-    except User.DoesNotExist:
+    except Event.DoesNotExist:
         return HttpResponseNotFound("Unknown event")
 
     if request.method != "POST":
@@ -507,7 +507,7 @@ def participant_delete(request, event_id, user_id):
 def participant_leave(request, event_id, user_id):
     try:
         this_event = Event.objects.get(id=event_id)
-    except User.DoesNotExist:
+    except Event.DoesNotExist:
         return HttpResponseNotFound("Unknown event")
 
     if request.method != "POST":
@@ -560,7 +560,7 @@ def delete_user(request):
 def friend_request_send(request):
     if request.method != 'POST':
         return HttpResponseBadRequest('Bad Request')
-    if not request.POST.get("", False): 
+    if not request.POST.get("to_user", False): 
         return HttpResponseBadRequest("The form is empty")
     form = FriendForm(request.POST)
     if form.is_valid():
