@@ -194,7 +194,7 @@ class InviteTest(TestCase):
 
     def test_invite_invalid_event(self):
         invalid_event_id = 9999999
-        response = self.client.post(f"/event/{invalid_event_id}/invite/", form)
+        response = self.client.post(f"/event/{invalid_event_id}/invite/")
         self.assertEqual(response.status_code, 404)
     
     def test_invite_as_invalid_user(self):
