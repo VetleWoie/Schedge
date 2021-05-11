@@ -74,20 +74,17 @@ def create_event(request):
     if request.method == "POST":
         # pressed submit
         host = request.user
-        if host.is_authenticated:
-            # get info in the form
-            form = EventForm(request.POST, request.FILES)
-            if form.is_valid():
-                data = form.cleaned_data
-                # create new event with stuff in form
-                # because EventForm is model of Event, we can safely use kwarg
-                newevent = Event.objects.create(**data, host=host)
-                newevent.participants.add(host)
-                return redirect(event, newevent.id)
-            else:
-                return render(request, "createevent.html", {"form": form}, status=400)
+        # get info in the form
+        form = EventForm(request.POST, request.FILES)
+        if form.is_valid():
+            data = form.cleaned_data
+            # create new event with stuff in form
+            # because EventForm is model of Event, we can safely use kwarg
+            newevent = Event.objects.create(**data, host=host)
+            newevent.participants.add(host)
+            return redirect(event, newevent.id)
         else:
-            return HttpResponseBadRequest("Sign in to create an event!")
+            return render(request, "createevent.html", {"form": form}, status=400)
 
     # GET
     form = EventForm()  # empty form
