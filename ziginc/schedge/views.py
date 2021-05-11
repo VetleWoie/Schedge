@@ -115,6 +115,10 @@ def event(request, event_id):
             # shouldn't be possible through the website though. only through manual post
             return HttpResponseBadRequest("Invalid Form!")
 
+    participating = this_event.participants.filter(id=request.user.id).exists()
+    if not participating:
+        return HttpResponse('Unauthorized', status=401)
+
     potentialtimeslots = PotentialTimeSlot.objects.filter(event=this_event)
     timeslots = TimeSlot.objects.filter(event=this_event)
     # new time slot form with this event's start date and end date
@@ -343,9 +347,6 @@ def event_invite(request, event_id):
             "invite view does not support other than post method"
         )
 
-    # only participants are allowed to invite others
-    if not this_event.participants.filter(id=request.user.id).exists():
-        return HttpResponse("Unautherized", status=401)
 
     form = InviteForm(request.POST, user=request.user)
     if form.is_valid():
