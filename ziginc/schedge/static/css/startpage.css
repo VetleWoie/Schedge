@@ -3,7 +3,7 @@ html {
 }
 body {
     background:rgb(139, 139, 139);
-    background-image: linear-gradient(120deg, #FF6F91, #FFC75F);
+    background-image: linear-gradient(120deg, rgba(88, 225, 224, 0.75), rgba(255, 135, 74, 0.75));  
     
     color: #16161d;
 }
