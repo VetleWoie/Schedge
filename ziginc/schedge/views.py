@@ -528,6 +528,9 @@ def participant_leave(request, event_id, user_id):
     except User.DoesNotExist:
         return HttpResponseNotFound("Unknown User")
 
+    if user == this_event.host:
+        return HttpResponseBadRequest("You cannot leave an event for which you  are ")
+
     # remove the timeslots created by this user
     TimeSlot.objects.filter(event=this_event, creator=user).delete()
     # remove user from the event's participants
