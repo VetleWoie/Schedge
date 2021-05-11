@@ -385,7 +385,7 @@ def invite_accept(request, invite_id):
     try:
         invite = Invite.objects.get(id=invite_id)
     except Invite.DoesNotExist:
-        return HttpResponseBadRequest("Unknown invite")
+        return HttpResponseNotFound("Unknown invite")
 
     if invite.invitee != request.user:
         return HttpResponse("Unautherized", status=401)
@@ -417,7 +417,7 @@ def invite_reject(request, invite_id):
     try:
         invite = Invite.objects.get(id=invite_id)
     except Invite.DoesNotExist:
-        return HttpResponseBadRequest("Unknown invite")
+        return HttpResponseNotFound("Unknown invite")
 
     if invite.invitee != request.user:
         return HttpResponse("Unautherized", status=401)
@@ -447,7 +447,7 @@ def invite_delete(request, invite_id):
         invite = Invite.objects.get(id=invite_id)
 
     except Invite.DoesNotExist:
-        return HttpResponseBadRequest("Unknown invite")
+        return HttpResponseNotFound("Unknown invite")
 
     if request.method != "POST":
         return HttpResponseBadRequest("Bad request")
