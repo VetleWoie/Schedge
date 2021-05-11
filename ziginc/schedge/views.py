@@ -391,6 +391,7 @@ def event_invite(request, event_id):
 
 
 def invite_accept(request, invite_id):
+
     try:
         invite = Invite.objects.get(id=invite_id)
     except Invite.DoesNotExist:
@@ -407,6 +408,7 @@ def invite_accept(request, invite_id):
         notif.mark_as_read()
 
     invite.event.participants.add(invite.invitee)
+    invite.event.save()
 
     notify.send(
         invite.invitee,
@@ -544,7 +546,7 @@ def participant_leave(request, event_id, user_id):
         action_object=this_event,
         verb=f"participant left",
         title=this_event.title,
-        url=f"/event/{this_event.id}",
+        url=f"/event/{this_event.id}/",
     )
     return redirect(mypage)
 
@@ -705,6 +707,7 @@ def friend_delete(request, user_id):
     deleted_friend.profile.friends.remove(request.user)
     # im not friends with them
     request.user.profile.friends.remove(deleted_friend)
+    print("\n\nher\n\n")
 
     return HttpResponse("friend removed")
 

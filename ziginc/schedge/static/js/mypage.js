@@ -47,25 +47,28 @@ friend_req_del_btns = document.getElementsByClassName("friend-req-del-btn")
 submit_btns = [...friend_del_btns, ...friend_req_del_btns]
 
 for (var i = 0; i < submit_btns.length; i++) {
-    // console.log("added event listener")
+    console.log("added event listener")
     submit_btns[i].addEventListener("submit", silent_submit, false);
 }
 
 
-function silent_submit(e, type, id) {
+function silent_submit(e) {
     // Store reference to form to make later code easier to read
     const form = e.target;
-
     // Post data using the Fetch API
     fetch(form.action, {
         method: form.method,
         body: new FormData(form),
     }).then((response => {
-    }));
+        window.location.reload()
+
+    })).catch(()=>{
+        alert("Could not delete friend");
+    });
 
     // Prevent the default form submit
     e.preventDefault()
-    window.location.reload()
+    // window.location.reload()
 }
 
 
@@ -108,7 +111,6 @@ var adjectives = ["affable", "agreeable", "ambitious", "amiable", "amicable", "a
 function put_welcome_message(first_name) {
     var now = new Date();
     var hour = now.getHours();
-    console.log(hour)
     var i = Math.floor(Math.random() * adjectives.length);
     var adjective = adjectives[i];
     text = ""
