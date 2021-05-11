@@ -33,6 +33,7 @@ class TimeSlotFunctionalTest(TestCase):
                 "password" : "testPassword",
         }
         self.user = User.objects.create_user(**user)
+        self.testevent.participants.add(self.user)
 
         self.client.login(username=self.user.username, password=user["password"])
         self.tomorrow = (dt.datetime.now() + dt.timedelta(days=1)).strftime("%Y-%m-%d")
@@ -128,6 +129,36 @@ class TimeSlotFunctionalTest(TestCase):
         response = self.client.post(f"/event/{self.testevent.id}/", timeslot)
         # there is a timeslot in the context
         self.assertEqual(response.status_code, 400)
+    
+    def test_delete_timeslot(self):
+        create_time_slot(self.testevent, self.user, self.example_timeslot)
+        events = Event.objects.all()
+        timeslots = TimeSlot.objects.all()
+        event_id = events[0].id
+        timeslot_id = timeslots[0].id
+        response = self.client.post('/event/%d/delete/%d/'%(event_id, timeslot_id))
+        self.assertEqual(response.status_code, 302)
+        timeslots = TimeSlot.objects.all()
+        self.assertEqual(len(timeslots), 0)
+
+    def test_delete_non_existing_timeslot_with_existing_event(self):
+        create_time_slot(self.testevent, self.user, self.example_timeslot)
+        events = Event.objects.all()
+        event_id = events[0].id
+        timeslot_id = 100
+        response = self.client.post('/event/%d/delete/%d/'%(event_id, timeslot_id))
+        self.assertEqual(response.status_code, 404)
+        timeslots = TimeSlot.objects.all()
+        self.assertEqual(len(timeslots), 1)
+    
+    def test_delete_timeslot_on_non_existing_event(self):
+        create_time_slot(self.testevent, self.user, self.example_timeslot)
+        event_id = 100
+        timeslot_id = 1
+        response = self.client.post('/event/%d/delete/%d/'%(event_id, timeslot_id))
+        self.assertEqual(response.status_code, 404)
+        timeslots = TimeSlot.objects.all()
+        self.assertEqual(len(timeslots), 1)
 
     @skip("need better form validation on the timeslots")
     def test_create_timeslot_outside_range(self):

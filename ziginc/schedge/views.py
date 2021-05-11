@@ -77,20 +77,17 @@ def create_event(request):
     if request.method == "POST":
         # pressed submit
         host = request.user
-        if host.is_authenticated:
-            # get info in the form
-            form = EventForm(request.POST, request.FILES)
-            if form.is_valid():
-                data = form.cleaned_data
-                # create new event with stuff in form
-                # because EventForm is model of Event, we can safely use kwarg
-                newevent = Event.objects.create(**data, host=host)
-                newevent.participants.add(host)
-                return redirect(event, newevent.id)
-            else:
-                return render(request, "createevent.html", {"form": form}, status=400)
+        # get info in the form
+        form = EventForm(request.POST, request.FILES)
+        if form.is_valid():
+            data = form.cleaned_data
+            # create new event with stuff in form
+            # because EventForm is model of Event, we can safely use kwarg
+            newevent = Event.objects.create(**data, host=host)
+            newevent.participants.add(host)
+            return redirect(event, newevent.id)
         else:
-            return HttpResponseBadRequest("Sign in to create an event!")
+            return render(request, "createevent.html", {"form": form}, status=400)
 
     # GET
     form = EventForm()  # empty form
@@ -117,6 +114,10 @@ def event(request, event_id):
             # TODO: rewrite maybe.
             # shouldn't be possible through the website though. only through manual post
             return HttpResponseBadRequest("Invalid Form!")
+
+    participating = this_event.participants.filter(id=request.user.id).exists()
+    if not participating:
+        return HttpResponse('Unauthorized', status=401)
 
     potentialtimeslots = PotentialTimeSlot.objects.filter(event=this_event)
     timeslots = TimeSlot.objects.filter(event=this_event)
@@ -349,9 +350,6 @@ def event_invite(request, event_id):
             "invite view does not support other than post method"
         )
 
-    # only participants are allowed to invite others
-    if not this_event.participants.filter(id=request.user.id).exists():
-        return HttpResponse("Unautherized", status=401)
 
     form = InviteForm(request.POST, user=request.user)
     if form.is_valid():
@@ -395,7 +393,7 @@ def invite_accept(request, invite_id):
     try:
         invite = Invite.objects.get(id=invite_id)
     except Invite.DoesNotExist:
-        return HttpResponseBadRequest("Unknown invite")
+        return HttpResponseNotFound("Unknown invite")
 
     if invite.invitee != request.user:
         return HttpResponse("Unautherized", status=401)
@@ -429,7 +427,7 @@ def invite_reject(request, invite_id):
     try:
         invite = Invite.objects.get(id=invite_id)
     except Invite.DoesNotExist:
-        return HttpResponseBadRequest("Unknown invite")
+        return HttpResponseNotFound("Unknown invite")
 
     if invite.invitee != request.user:
         return HttpResponse("Unautherized", status=401)
@@ -460,7 +458,7 @@ def invite_delete(request, invite_id):
         invite = Invite.objects.get(id=invite_id)
 
     except Invite.DoesNotExist:
-        return HttpResponseBadRequest("Unknown invite")
+        return HttpResponseNotFound("Unknown invite")
 
     if request.method != "POST":
         return HttpResponseBadRequest("Bad request")

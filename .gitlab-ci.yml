@@ -12,10 +12,11 @@ functional:
     - apt-get update
     - python3 -m pip install Pillow
     - python3 -m pip install django-notifications-hq
+    - python3 -m pip install tblib
     - cd ziginc
     - python3 manage.py makemigrations
     - python3 manage.py migrate
-    - python3 manage.py test schedge/tests/functional
+    - python3 manage.py test schedge/tests/functional --parallel
   only:
     - merge_requests
     - master
@@ -26,11 +27,12 @@ scenario:
     - apt-get update
     - python3 -m pip install Pillow
     - python3 -m pip install django-notifications-hq
+    - python3 -m pip install tblib
     - cd ziginc
     - python3 manage.py makemigrations
     - python3 manage.py migrate
     - python3 -m pip install selenium
-    - python3 manage.py test schedge/tests/scenario
+    - python3 manage.py test schedge/tests/scenario --parallel
   only:
     - merge_requests
     - master

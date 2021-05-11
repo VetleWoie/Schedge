@@ -1,0 +1,59 @@
+Abstract:
+	- Summarize the project
+	- TLDR
+
+Introduction:
+	-Overview
+	-What problems are we solving?
+	-How it will impact the user?
+
+Background:
+	- Similar project done in the past
+	- Our competitors
+	- What algorithm do we use?
+	- What problems do they have, that we solve?
+
+Methodology:
+	- Algorithm (more in depth?)
+	- TollersrudAmundsen algorithm
+	- GDPR, what is needed from us for it.
+	- What types of data have we collected
+	- How we analyze it.
+	- Agile/scrum/extreme/pair  programing develoment
+	- Algorithm (more in depth?)
+
+Design and architecture:
+	- User stories
+	- Flowchart
+	- ER diagrams
+	- Class based diagrams
+	- UML diagrams
+	- UX (Low fidelity charts)
+	 
+
+Implementation:
+	- WHich dependencies have we used
+	- Django
+	- Algorithm (more in depth?)
+ 	- GDPR
+	- UX/UI
+
+Experiment and analysis:
+	- Test and coverage - charts
+	- Human experiment for UX to find flaws.
+	- 
+
+Discussion:
+	- From the beginning - user stories etc.
+	- What we have learned
+	- How we have managed group work
+	- Git CI/CD
+	- Future plans
+	- How the result ended up.
+
+Conclusion:
+	- Conclude.
+	- Summarize
+	- Finish
+	- Presentation of perspectives (?)
+

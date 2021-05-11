@@ -111,9 +111,8 @@ class ParticipantTest(TestCase):
 
     @as_guest
     def test_participant_leave(self):
-        self.client.post(f"/event/{self.date.id}/participant_leave/{self.guest.id}/")
-        response = self.client.get(f"/event/{self.date.id}/")
-        self.assertNotIn(self.guest, response.context["participants"])
+        resp = self.client.post(f"/event/{self.date.id}/participant_leave/{self.guest.id}/")
+        self.assertNotIn(self.guest, self.date.participants.all())
 
     @as_guest
     def test_participant_leave_non_existent_event(self):
