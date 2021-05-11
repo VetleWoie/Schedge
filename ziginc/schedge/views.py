@@ -413,7 +413,7 @@ def invite_accept(request, invite_id):
         recipient=invite.inviter,
         target=None,
         action_object=invite.event,
-        verb=f"invite accepted",
+        verb=f"event invite accepted",
         title=invite.event.title,
         url=f"/event/{invite.event.id}/",
     )
@@ -445,7 +445,7 @@ def invite_reject(request, invite_id):
         recipient=invite.inviter,
         target=None,
         action_object=invite.event,
-        verb=f"invite rejected",
+        verb=f"event invite rejected",
         title=invite.event.title,
         url=f"/event/{invite.event.id}/",
     )
