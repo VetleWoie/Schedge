@@ -193,7 +193,6 @@ class InviteTest(TestCase):
         self.assertNotContains(response, "id='pending_invites'")
 
     def test_invite_invalid_event(self):
-        form = {"invitee": self.bob.id}
         invalid_event_id = 9999999
         response = self.client.post(f"/event/{invalid_event_id}/invite/", form)
         self.assertEqual(response.status_code, 404)
@@ -209,7 +208,7 @@ class InviteTest(TestCase):
     def test_accept_non_existing_invitation(self):
         # bob try to accept invite to unknown invite id.
         non_existing_invite_id = 999999999
-        response = self.client.post(f"/invite_accept/{non_existing_invite_id}/")
+        response = self.client.post(f"/event_invite_accept/{non_existing_invite_id}/")
         # the accept should yield a unknown invite response.
         self.assertEqual(response.status_code, 404)
 
@@ -218,7 +217,7 @@ class InviteTest(TestCase):
     def test_reject_non_existing_invitation(self):
         # bob try to accept invite to unknown invite id.
         non_existing_invite_id = 999999999
-        response = self.client.post(f"/invite_reject/{non_existing_invite_id}/")
+        response = self.client.post(f"/event_invite_reject/{non_existing_invite_id}/")
         # the reject should yield a unknown invite response.
         self.assertEqual(response.status_code, 404)
 
@@ -229,7 +228,7 @@ class InviteTest(TestCase):
         non_existing_invite_id = 999999999
         response = self.client.post(f"/invite_delete/{non_existing_invite_id}/")
         # the reject should yield a unknown invite response.
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
 
     def test_delete_invitation_wrong_method(self):
         response = self.client.get(f"/invite_delete/{self.inv.id}/")
