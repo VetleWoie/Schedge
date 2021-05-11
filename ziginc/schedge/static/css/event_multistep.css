@@ -78,7 +78,7 @@ html {
 }
 
 #msform .action-button {
-    width: 100px;
+    width: 150px;
     background: #58E1E0;
     font-weight: bold;
     color: white;
@@ -95,7 +95,7 @@ html {
 }
 
 #msform .action-button-previous {
-    width: 100px;
+    width: 150px;
     background: #616161;
     font-weight: bold;
     color: white;
@@ -322,3 +322,4 @@ select.list-dt:focus {
     visibility: hidden;
     z-index: -1;
 }
+

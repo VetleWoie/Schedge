@@ -146,9 +146,9 @@ class FriendFunctionalTest(TestCase):
         self.assertEqual(response.status_code, 400)
     
     def test_delete_existing_friend_request(self):
-        form = {'to_user': self.users[1].username}
+        friend_req = FriendRequest.objects.get(from_user=self.users[0], to_user=self.users[1])
         self.client.login(username=self.users[0].username, password=self.password)
-        response = self.client.post(f'/friend_invite_delete/', form)
+        response = self.client.post(f'/friend_invite_delete/{friend_req.id}')
         self.assertEqual(response.status_code, 200)
 
         friend_requests = FriendRequest.objects.all()
@@ -159,9 +159,9 @@ class FriendFunctionalTest(TestCase):
 
     def test_delete_non_existing_friend_request(self):
         #Respond to friend request
-        form = {'to_user': 'Gibberish'}
+        fake_request_id = 10191
         self.client.login(username=self.users[1].username, password=self.password)
-        response = self.client.post(f'/friend_invite_delete/', form)
+        response = self.client.post(f'/friend_invite_delete/{fake_request_id}', form)
         self.assertEqual(response.status_code, 404)
         friend_requests = FriendRequest.objects.all()
         self.assertEqual(len(friend_requests), 2)
@@ -180,7 +180,7 @@ class FriendFunctionalTest(TestCase):
     def test_delete_existing_friend_request_with_get_request(self):
         form = {'to_user': self.users[1].username}
         self.client.login(username=self.users[0].username, password=self.password)
-        response = self.client.get(f'/friend_invite_delete/', form)
+        response = self.client.get(f'/friend_invite_delete/{self.users[1].id}')
         self.assertEqual(response.status_code, 400)
 
 
@@ -218,30 +218,26 @@ class FriendFunctionalTest(TestCase):
         self.assertEqual(len(friends),0)
     
     def test_delete_existing_friend(self):
-        form = {'to_user': self.users[3].username}
-
         self.client.login(username=self.users[0].username, password=self.password)
-        response = self.client.post(f'/friend_delete/', form)
+        response = self.client.post(f'/friend_delete/{self.users[3].id}')
         self.assertEqual(response.status_code, 200)
 
         friends = self.users[0].profile.friends.all()
         self.assertEqual(len(friends), 0)
     
     def test_delete_non_existing_friend(self):
-        form = {'to_user': 'Gibberish'}
-
+        fake_user_id = 1729
+    
         self.client.login(username=self.users[0].username, password=self.password)
-        response = self.client.post(f'/friend_delete/', form)
+        response = self.client.post(f'/friend_delete/{fake_user_id}')
         self.assertEqual(response.status_code, 404)
 
         friends = self.users[0].profile.friends.all()
         self.assertEqual(len(friends), 1)
     
     def test_delete_friend_with_get_request(self):
-        form = {'to_user': self.users[3].username}
-
         self.client.login(username=self.users[0].username, password=self.password)
-        response = self.client.get(f'/friend_delete/', form)
+        response = self.client.get(f'/friend_delete/{self.users[3].id}')
         self.assertEqual(response.status_code, 400)
 
         friends = self.users[0].profile.friends.all()

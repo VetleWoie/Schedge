@@ -56,13 +56,16 @@ def mypage(request):
     in_seven_days = today + dt.timedelta(days=7)
     this_weeks_events = Event.objects.filter(participants=user, status="C", startdate__gte=today, enddate__lte=in_seven_days)
 
+    pending_friend_requests = FriendRequest.objects.filter(from_user=user)
+
     context = {
         "host_undecided": host_undecided,
         "host_decided": host_decided,
         "participant_as_guest": participant_as_guest,
         "invites": invites,
         "this_week": this_weeks_events,
-        "friends": friends
+        "friends": friends,
+        "pending_friends": pending_friend_requests
     }
     return render(request, "mypage.html", context)
 
@@ -197,7 +200,8 @@ def timeslot_select(request, event_id):
     notify.send(
         request.user,
         recipient=users,
-        target=this_event,
+        target=None,
+        action_object=this_event,
         verb="time selected",
         title=this_event.title,
         url=f"/event/{this_event.id}/",
@@ -217,7 +221,8 @@ def notify_if_changed(event, newdata, user):
         notify.send(
             user,
             recipient=users,
-            target=event,
+            target=None,
+            action_object=event,
             verb="event edited",
             title=event.title,
             url=f"/event/{event.id}/",
@@ -286,13 +291,14 @@ def event_delete(request, event_id):
     timeslots = TimeSlot.objects.filter(id=event_id)
     timeslots.delete()
 
-    Notification.objects.filter(target_object_id=event_del.id).delete()
+    Notification.objects.filter(action_object_object_id=event_del.id).delete()
     
     users = event_del.participants.exclude(id=request.user.id)
     notify.send(
         request.user,
         recipient=users,
         target=None,
+        action_object=event_del,
         verb="event deleted",
         title=event_del.title,
         url="/mypage/",
@@ -372,6 +378,7 @@ def event_invite(request, event_id):
                 inviter,
                 recipient=invitee,
                 target=invite,
+                action_object=this_event,
                 verb="event invite",
                 title=this_event.title,
                 url=f"/event/{invite.event.id}/",
@@ -404,7 +411,8 @@ def invite_accept(request, invite_id):
     notify.send(
         invite.invitee,
         recipient=invite.inviter,
-        target=invite,
+        target=None,
+        action_object=invite.event,
         verb=f"invite accepted",
         title=invite.event.title,
         url=f"/event/{invite.event.id}/",
@@ -436,6 +444,7 @@ def invite_reject(request, invite_id):
         invite.invitee,
         recipient=invite.inviter,
         target=None,
+        action_object=invite.event,
         verb=f"invite rejected",
         title=invite.event.title,
         url=f"/event/{invite.event.id}/",
@@ -495,7 +504,8 @@ def participant_delete(request, event_id, user_id):
     notify.send(
         request.user,
         recipient=user,
-        target=this_event,
+        target=None,
+        action_object=this_event,
         verb=f"participant deleted",
         title=this_event.title,
         url=f"/mypage/",
@@ -527,7 +537,8 @@ def participant_leave(request, event_id, user_id):
     notify.send(
         user,
         recipient=this_event.host,
-        target=this_event,
+        target=None,
+        action_object=this_event,
         verb=f"participant left",
         title=this_event.title,
         url=f"/event/{this_event.id}",
@@ -540,6 +551,9 @@ def mark_notification_as_read(request, notif_id):
         notif = Notification.objects.get(id=notif_id)
     except Notification.DoesNotExist:
         return HttpResponseNotFound("notification not found", status=404)
+    
+    if request.user != notif.recipient and request.user != notif.actor:
+        return HttpResponse("Unautherized", status=401)
     notif.mark_as_read()
     return HttpResponse("ok", status=200)
 
@@ -575,6 +589,8 @@ def friend_request_send(request):
             notify.send(
                 request.user,
                 recipient=to_user,
+                target=friend_req,
+                action_object=None,
                 verb="friend request",
                 request_id=friend_req.id,
                 url=f"",
@@ -586,16 +602,31 @@ def friend_request_send(request):
         return HttpResponseNotFound('user not found')
 
 @login_required(login_url='/login/')
-def friend_request_delete(request):
+def friend_request_delete(request, request_id):
+
     if request.method != 'POST':
         return HttpResponseBadRequest('Bad request') 
-    form = FriendForm(request.POST)
-    if form.is_valid() and FriendRequest.objects.filter(from_user=request.user, to_user=User.objects.get(username=form.cleaned_data['to_user'])).exists():
-        friend_req = FriendRequest.objects.get(from_user=request.user, to_user=User.objects.get(username=form.cleaned_data['to_user']))
-        friend_req.delete()
-        return HttpResponse('Request deleted')
+    
+    try:
+        friendrequest = FriendRequest.objects.get(id=request_id)
+    except FriendRequest.DoesNotExist:
+        return HttpResponseNotFound("could not find request id")
+    
+    if request.user != friendrequest.from_user:
+        return HttpResponse("Unautherized delete", status=401)
+
+    #  silently remove the notifications
+    try:
+        notification = Notification.objects.get(target_object_id=friendrequest.id)
+    except Notification.DoesNotExist:
+        pass
     else:
-        return HttpResponseNotFound('Not found')
+        notification.delete()
+
+
+    friendrequest.delete()
+    return HttpResponse("Friend request deleted", status=200)
+
 
 @login_required(login_url='/login/')
 def friend_request_accept(request, request_id):
@@ -612,9 +643,19 @@ def friend_request_accept(request, request_id):
     from_user = User.objects.get(username=friend_req.from_user)
     from_user.profile.friends.add(to_user)
     to_user.profile.friends.add(from_user)
-    
+
+    try:
+        notif = Notification.objects.get(target_object_id=friend_req.id)
+    except Notification.DoesNotExist:
+        pass
+    else:
+        notif.mark_as_read()
+
+
     notify.send(
         request.user,
+        target=None,
+        action_object=None,
         recipient=friend_req.from_user,
         verb="friend request accepted",
         url=f"", #TODO fix url?
@@ -634,18 +675,40 @@ def friend_request_reject(request, request_id):
     friend_request = FriendRequest.objects.get(id=request_id)
     if not friend_request.to_user == request.user:
         return HttpResponseBadRequest('Error')
+
+    try:
+        notif = Notification.objects.get(target_object_id=friend_request.id)
+    except Notification.DoesNotExist:
+        pass
+    else:
+        notif.mark_as_read()
+
+
     friend_request.delete()
     return HttpResponse('Friend request rejected')
 
 @login_required(login_url='/login/')
-def friend_delete(request):
+def friend_delete(request, user_id):
     if request.method != 'POST':
         return HttpResponseBadRequest('Bad request')
-    form = FriendForm(request.POST)
-    if form.is_valid() and request.user.profile.friends.filter(username=form.cleaned_data['to_user']).exists():
-        friend = request.user.profile.friends.get(username=form.cleaned_data['to_user'])
-        request.user.profile.friends.remove(friend)
-        friend.profile.friends.remove(request.user)
-        return HttpResponse('friend removed')
-        
-    return HttpResponseNotFound('Bad request')
+
+    friends = request.user.profile.friends
+    try:
+        deleted_friend = friends.get(id=user_id)
+    except User.DoesNotExist:
+        return HttpResponseNotFound("Could not delete user with this id")
+    
+    # they are not friends with me
+    deleted_friend.profile.friends.remove(request.user)
+    # im not friends with them
+    request.user.profile.friends.remove(deleted_friend)
+
+    return HttpResponse("friend removed")
+
+    # form = FriendForm(request.POST)
+    # if form.is_valid() and request.user.profile.friends.filter(username=form.cleaned_data['to_user']).exists():
+    # friend = request.user.profile.friends.get(username=form.cleaned_data['to_user'])
+    # request.user.profile.friends.remove(friend)
+    # friend.profile.friends.remove(request.user)
+    # return HttpResponse('friend removed')
+    

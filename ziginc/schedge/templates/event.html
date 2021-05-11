@@ -6,6 +6,9 @@
 
 {% block stylesheet %}
 <link rel="stylesheet" href="{% static 'css/event_style.css' %}" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+    crossorigin="anonymous" />
 {% endblock %}
 
 
@@ -76,6 +79,18 @@
 
             </div>
 
+            <div class="row justify-content-center m_top_med m_btm_small">
+
+                <div class="col txt_center">
+
+                    <form action="{% url 'participant_leave' event_id=event.id user_id=user.id %}" method="post"
+                        enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="submit" value="Leave event">
+                    </form>
+                </div>
+
+            </div>
 
         </div>
 
@@ -129,9 +144,9 @@
                         </div>
                         <div class="col displayright">
 
-
-                            <a href="/event/{{ event.id}}/edit/" class="btn btn-dark txt_large">Edit</a>
-
+                            {% if user == event.host%}
+                            <a href="{% url 'eventedit' event_id=event.id %}" class="btn btn-dark txt_large">Edit</a>
+                            {% endif %}
                         </div>
                     </div>
 

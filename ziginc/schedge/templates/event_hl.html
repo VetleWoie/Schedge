@@ -39,7 +39,7 @@
                     <form action="{% url 'invite_delete' invite_id=invite.id %}" method="POST"
                         enctype="multipart/form-data">
                         {% csrf_token %}
-                        <input type="submit" value="🗑">
+                        <button type="submit"  class="btn btn-icon"><i class='fas fa-trash-alt'></i></button>
                     </form>
                     {% endif %}
                 </td>

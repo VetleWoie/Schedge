@@ -41,10 +41,10 @@
 <body>
     <main>
         {% if user.is_authenticated %}
-        <div class="bell_dropdown">
-            <div class="busybell">
+        <div id="bell_dropdown">
+            <div id="busybell">
                 {%live_notify_badge%}
-                <img src="{% static 'icons/bell.svg' %}" class="notifimg" width="35px">
+                <img src="{% static 'icons/bell.svg' %}" id="notifimg" width="35px">
             </div>
             {% live_notify_list %}
         </div>
