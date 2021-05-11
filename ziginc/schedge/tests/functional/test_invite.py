@@ -194,7 +194,6 @@ class InviteTest(TestCase):
         form = {"invitee": self.bob.id}
         invalid_event_id = 9999999
         response = self.client.post(f"/event/{invalid_event_id}/invite/", form)
-        # TODO: Redirect to 'home' instead of 'signUpView'. Needs to be changed when home view is added
         self.assertEqual(response.status_code, 404)
 
     @as_bob
