@@ -170,6 +170,7 @@ class InviteTest(TestCase):
     def test_try_invite_as_invitee(self):
         # Logout as host user and log in as another invitee.
         # Make sure the invited person does not have access to invite others.
+        self.hiking.participants.add(self.bob)
         response = self.client.get(f"/event/{self.hiking.id}/")
         self.assertNotContains(response, 'id="Invite_box')
 
@@ -187,6 +188,7 @@ class InviteTest(TestCase):
     @as_bob
     def test_invisible_pending_invites_as_guest(self):
         # Check that an attendee is not able to see pending invites.
+        self.hiking.participants.add(self.bob)
         response = self.client.get(f"/event/{self.hiking.id}/")
         self.assertNotContains(response, "id='pending_invites'")
 
@@ -195,6 +197,13 @@ class InviteTest(TestCase):
         invalid_event_id = 9999999
         response = self.client.post(f"/event/{invalid_event_id}/invite/", form)
         self.assertEqual(response.status_code, 404)
+    
+    def test_invite_as_invalid_user(self):
+        self.client.logout()
+        self.client.login(username=self.other.username, password=PASSWORD)
+        form = {"invitee": self.bob.id}
+        response = self.client.post(f"/event/{self.hiking.id}/invite/", form)
+        self.assertEqual(response.status_code, 401)
 
     @as_bob
     def test_accept_non_existing_invitation(self):

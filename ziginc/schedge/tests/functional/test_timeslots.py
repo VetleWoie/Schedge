@@ -33,6 +33,7 @@ class TimeSlotFunctionalTest(TestCase):
                 "password" : "testPassword",
         }
         self.user = User.objects.create_user(**user)
+        self.testevent.participants.add(self.user)
 
         self.client.login(username=self.user.username, password=user["password"])
         self.tomorrow = (dt.datetime.now() + dt.timedelta(days=1)).strftime("%Y-%m-%d")
