@@ -1,11 +1,60 @@
+async function confirmform() {
+	const form = $("#msform")[0];
 
-$(document).ready(function () {
+	// Post data using the Fetch API
+	return await fetch(form.action, {
+		method: form.method,
+		body: new FormData(form),
+	}).then((response => {
+		if (!response.ok) {
+			response.text().then(txt => {
+				errors = JSON.parse(txt)
+				Object.keys(errors).forEach(field => {
+					fielderrors = errors[field]
+					fielderrors.forEach(error => {
+						target = $(`#id_${field}`)
+						if (field === "duration") {
+							// duration form must be handled differently
+							target.css('border', "thin solid red")
+							formelements = document.getElementsByClassName("duration-form")
+							for (var i = 0; i < formelements.length; i++) {
+								formelements[i].setCustomValidity(error.message)
+							}
+						} else {
+							target.css('color', 'red');
+							target.get(0).setCustomValidity(error.message)
+						}
+						// Click our way back to the first section
+						// delay looks cool
+						setTimeout(() => {  $("#previous5").click(); }, 0);
+						setTimeout(() => {  $("#previous4").click(); }, 300);
+						setTimeout(() => {  $("#previous3").click(); }, 600);
+						setTimeout(() => {  $("#previous2").click(); }, 900);
+					});
+				});
+			});
+			return -1;  // -1 means we should not go to the final section
+		} else {
+			// 0 means the form was ok
+			return 0;
+		}
+	}));
+}
+
+
+$(document).ready(() => {
 
 	var current_fs, next_fs, previous_fs; //fieldsets
 	var opacity;
 
-	$(".next").click(function () {
-
+	$(".next").click(async function () {
+		// we should not go to next if it is the last input and the form has errors
+		if ($(this).attr("id") === "next5") {
+			var ret = await confirmform()
+			if (ret === -1) {
+				return false;
+			}
+		}
 		current_fs = $(this).parent();
 		next_fs = $(this).parent().next();
 
@@ -31,7 +80,7 @@ $(document).ready(function () {
 	});
 
 	$(".previous").click(function () {
-
+		console.log("pressed prev")
 		current_fs = $(this).parent();
 		previous_fs = $(this).parent().prev();
 
@@ -62,12 +111,13 @@ $(document).ready(function () {
 		$(this).addClass('selected');
 	});
 
-	$('#msform').on('keyup keypress', function(e) {
+	$('#msform').on('keyup keypress', function (e) {
 		var keyCode = e.keyCode || e.which;
-		if (keyCode === 13 && !$(document.activeElement).is('textarea')) { 
-		  e.preventDefault();
-		  return false;
+		if (keyCode === 13 && !$(document.activeElement).is('textarea')) {
+			e.preventDefault();
+			return false;
 		}
 		return true;
-	  });
+	});
+
 });

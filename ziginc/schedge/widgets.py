@@ -27,7 +27,7 @@ class SplitDurationWidget(forms.MultiWidget):
         labeled = []
         for label, widget in zip(labels, rendered_widgets):
             labeled.append(f"<tr><td>{label}</td><td>{widget}</td></tr>")
-        return '<table id="duration">' + "".join(labeled) + "</table>"
+        return '<table id="id_duration">' + "".join(labeled) + "</table>"
 
     def value_from_datadict(self,data,files,name):
         duration = dict(data).get(name)

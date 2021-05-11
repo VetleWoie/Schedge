@@ -87,6 +87,7 @@ def create_event(request):
             newevent.participants.add(host)
             return redirect(event, newevent.id)
         else:
+            return HttpResponse(form.errors.as_json(), status=400)
             return render(request, "createevent.html", {"form": form}, status=400)
 
     # GET
@@ -705,7 +706,6 @@ def friend_delete(request, user_id):
     deleted_friend.profile.friends.remove(request.user)
     # im not friends with them
     request.user.profile.friends.remove(deleted_friend)
-    print("\n\nher\n\n")
 
     return HttpResponse("friend removed")
 
