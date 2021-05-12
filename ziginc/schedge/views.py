@@ -748,7 +748,7 @@ def mark_notification_as_read(request, notif_id):
 
     Returns
     -------
-        Return an approprite HttpResponse. TODO 
+        Return an approprite HttpResponse. TODO fix?
     """
     try:
         notif = Notification.objects.get(id=notif_id)
@@ -759,10 +759,12 @@ def mark_notification_as_read(request, notif_id):
 
 
 def termsandservices(request):
+    """ Renders the terms and services """
     return render(request, "termsandservices.html")
 
 @login_required
 def delete_user(request):
+    """ Delets the user in the request """
     if request.method != "POST":
         return HttpResponseBadRequest("Bad request")
     
@@ -772,19 +774,34 @@ def delete_user(request):
 
 @login_required(login_url="/login/")
 def friend_request_send(request):
+    """Sends a friend request.
+
+    Sends a friend request from one user, to another and
+    notifies the receiver.
+    
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user sending
+        the request and the HTTP method.
+    """
     if request.method != 'POST':
         return HttpResponseBadRequest('Bad Request')
     if not request.POST.get("to_user", False): 
         return HttpResponseBadRequest("The form is empty")
     form = FriendForm(request.POST)
+    
     if form.is_valid():
         from_user = request.user
         to_user = User.objects.get(username=request.POST['to_user'])
+
         if to_user == from_user:
             return HttpResponseBadRequest('You cannot add yourself as a friend')
         if from_user.profile.friends.filter(id=to_user.id).exists():
             return HttpResponseBadRequest("You are already friends with this user")
+            
         friend_req, created = FriendRequest.objects.get_or_create(from_user=from_user, to_user=to_user)
+
         if created:
             notify.send(
                 request.user,
@@ -801,6 +818,14 @@ def friend_request_send(request):
 
 @login_required(login_url='/login/')
 def friend_request_delete(request):
+    """Deletes a sent friend request.
+
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user deleting
+        the request and the HTTP method.
+    """
     if request.method != 'POST':
         return HttpResponseBadRequest('Bad request') 
     form = FriendForm(request.POST)
@@ -813,6 +838,16 @@ def friend_request_delete(request):
 
 @login_required(login_url='/login/')
 def friend_request_accept(request, request_id):
+    """Accepts friend request and notifies the sender.
+
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user accepting
+        the request and the HTTP method.
+    request_id : int
+        Id of the friend request that is to be accepted.
+    """
     if request.method != 'POST':
         return HttpResponseBadRequest('Bad Request')
     if not FriendRequest.objects.filter(id=request_id).exists():
@@ -831,7 +866,7 @@ def friend_request_accept(request, request_id):
         request.user,
         recipient=friend_req.from_user,
         verb="friend request accepted",
-        url=f"", #TODO fix url?
+        url=f"",
     )
     
     friend_req.delete()
@@ -840,6 +875,16 @@ def friend_request_accept(request, request_id):
 
 @login_required(login_url='/login/')
 def friend_request_reject(request, request_id):
+    """Rejects the friend request.
+
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user rejecting
+        the request and the HTTP method.
+    request_id : int
+        Id of the friend request that is to be rejected.
+    """
     if request.method != 'POST':
         return HttpResponseBadRequest('Bad Request')
     if not FriendRequest.objects.filter(id=request_id).exists():
@@ -853,6 +898,14 @@ def friend_request_reject(request, request_id):
 
 @login_required(login_url='/login/')
 def friend_delete(request):
+    """Delete a sent friend request.
+
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user deleting
+        the request and the HTTP method.
+    """
     if request.method != 'POST':
         return HttpResponseBadRequest('Bad request')
     form = FriendForm(request.POST)
