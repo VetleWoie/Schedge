@@ -690,6 +690,23 @@ def participant_delete(request, event_id, user_id):
 
 
 def participant_leave(request, event_id, user_id):
+    """Lets a participant leave an event and notifies the host.
+
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user
+        and the HTTP method.
+    event_id : int
+        Id of the event that the participant is
+        leaving from.
+    user_id : int
+        Id of participant that is trying to leave.
+
+    Returns
+    -------
+        Return a HttpResponse that redirects to 'mypage'.
+    """
     try:
         this_event = Event.objects.get(id=event_id)
     except Event.DoesNotExist:
