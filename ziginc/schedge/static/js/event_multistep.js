@@ -13,15 +13,14 @@ async function confirmform() {
 					fielderrors = errors[field]
 					fielderrors.forEach(error => {
 						target = $(`#id_${field}`)
+						target.css('border', "thin solid red")
 						if (field === "duration") {
 							// duration form must be handled differently
-							target.css('border', "thin solid red")
 							formelements = document.getElementsByClassName("duration-form")
 							for (var i = 0; i < formelements.length; i++) {
 								formelements[i].setCustomValidity(error.message)
 							}
 						} else {
-							target.css('color', 'red');
 							target.get(0).setCustomValidity(error.message)
 						}
 						// Click our way back to the first section
