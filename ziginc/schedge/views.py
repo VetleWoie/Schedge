@@ -402,6 +402,18 @@ def event_delete(request, event_id):
 
 
 def signUpView(request):
+    """Signs up a new user or provides the form used to sign up.
+    
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing sign up information
+        about the new user and which HTTP method.
+
+    Returns
+    -------
+        Return a HttpResponse that redirects to mypage.
+    """
     # if this is a POST request we need to process the form data
     if request.method == "POST":
         # create a form instance and populate it with data from the request:
