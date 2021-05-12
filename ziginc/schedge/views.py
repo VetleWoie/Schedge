@@ -358,7 +358,7 @@ def eventedit(request, event_id):
 @login_required(login_url="/login/")
 def event_delete(request, event_id):
     """Deletes an event and notifies the participants.
-    
+   
     Parameters
     ----------
     request : dict
@@ -366,7 +366,7 @@ def event_delete(request, event_id):
         and which HTTP method.
     event_id : int
         Id of the event that the request is trying to reach.
-    
+
     Returns
     -------
         Return a HttpResponse that redirects to mypage.
@@ -439,6 +439,20 @@ def signUpView(request):
 
 @login_required
 def event_invite(request, event_id):
+    """Invites a user to an event
+   
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user adding,
+        the user to be added and which HTTP method.
+    event_id : int
+        Id of the event that the request is trying to reach.
+
+    Returns
+    -------
+        Return a HttpResponse that redirects to 'event'.
+    """
     try:
         # select * from Event where id=event_id;
         this_event = Event.objects.get(id=event_id)
