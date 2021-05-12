@@ -506,12 +506,13 @@ def event_invite(request, event_id):
 
 
 def invite_accept(request, invite_id):
-    """Accepts an invite to an event
+    """Accepts an invite to an event and
+    notifies the inviter.
 
     Parameters
     ----------
     request : dict
-        A dictionary containing the user accepting,
+        A dictionary containing the user accepting
         and which HTTP method.
     invite_id : int
         Id of the invite that the request is trying to accept.
@@ -552,6 +553,21 @@ def invite_accept(request, invite_id):
 
 
 def invite_reject(request, invite_id):
+    """Rejects an invite to an event and
+    notifies the inviter.
+
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user rejecting
+        and the HTTP method.
+    invite_id : int
+        Id of the invite that the request is trying to reject.
+
+    Returns
+    -------
+        Return a HttpResponse that redirects to 'mypage'.
+    """
     try:
         invite = Invite.objects.get(id=invite_id)
     except Invite.DoesNotExist:
@@ -581,6 +597,22 @@ def invite_reject(request, invite_id):
 
 
 def invite_delete(request, invite_id):
+    """Deletes the event invite sent to a user
+    without notifying them.
+
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user deleting
+        and the HTTP method.
+    invite_id : int
+        Id of the invite that the request is trying to delete.
+
+    Returns
+    -------
+        Return a HttpResponse that redirects to the event.
+    """
+
     try:
         invite = Invite.objects.get(id=invite_id)
 
