@@ -638,6 +638,23 @@ def invite_delete(request, invite_id):
 
 
 def participant_delete(request, event_id, user_id):
+    """Deletes a participant from an event and notifies them.
+
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user deleting
+        and the HTTP method.
+    event_id : int
+        Id of the event that the request is trying to delete a
+        participant from.
+    user_id : int
+        Id of participant that is to be deleted.
+
+    Returns
+    -------
+        Return a HttpResponse that redirects to the event.
+    """
     try:
         this_event = Event.objects.get(id=event_id)
     except Event.DoesNotExist:
