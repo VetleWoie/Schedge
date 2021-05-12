@@ -324,6 +324,10 @@ select.list-dt:focus {
 }
 
 #id_duration {
-    display: inline-block;
-    padding: 12px;
+    width: 100%;
+}
+
+
+.duration-form {
+    width: 100%;
 }

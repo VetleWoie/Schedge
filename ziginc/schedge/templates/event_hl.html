@@ -2,21 +2,62 @@
 <div class="card">
     <div class="card-header" id="headingInvite">
         <h2 class="mb-0">
-            <button type="button" class="btn-accordion" data-toggle="collapse" data-target="#collapseInvite" id="show_invite">
+            <button type="button" class="btn-accordion" data-toggle="collapse" data-target="#collapseInvite"
+                id="show_invite">
                 Invite someone to the event
             </button>
         </h2>
     </div>
     <div id="collapseInvite" class="collapse" aria-labelledby="headingInvite" data-parent="#eventAccordion">
-        <div class="card-body txt_center">
-            <form action="{% url 'event_invite' event_id=event.id%}" method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <p>
-                    <label>Invite:</label>
-                    {{inviteform.invitee}}
-                </p>
-                <input type="submit" class="btn btn-light" value="Submit" id="invite-submit">
-            </form>
+        <div class="row">
+
+            <div class="col">
+                <div class="card-header txt_center">
+                    Invite a friend
+                </div>
+                <div class="card-body txt_center">
+                    <form action="{% url 'event_invite' event_id=event.id%}" method="post"
+                        enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <p>
+                            <label>Invite:</label>
+                            {{inviteform.invitee}}
+                        </p>
+                        <input type="submit" class="btn btn-light" value="Submit" id="invite-submit">
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col justify-content-center">
+                <div class="card-header txt_center">
+                    Or invite someone else
+                </div>
+                <div class="card-body txt_center ">
+                    <form class="card card-sm" id="friendadd" action="{% url 'event_invite' event_id=event.id %}"
+                        method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="card-body row no-gutters align-items-center">
+                            <div class="col-auto">
+                                <i class="fas fa-search h4 text-body" style="position:relative; top:3px;"></i>
+                            </div>
+                            <!--end of col-->
+                            <div class="col">
+                                <input class="form-control form-control-lg form-control-borderless" name="username"
+                                    type="search" placeholder="Username">
+                            </div>
+                            <!--end of col-->
+                            <div class="col-auto">
+                                <button class="btn btn-lg btn-dark" type="submit"><i class="fas fa-user-plus"
+                                        aria-hidden="true"></i>
+
+                                </button>
+                            </div>
+                            <!--end of col-->
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </div>

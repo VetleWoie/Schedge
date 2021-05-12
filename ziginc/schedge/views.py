@@ -334,6 +334,18 @@ def signUpView(request):
     return render(request, "registration/signup.html", {"form": form})
 
 
+def fix_invite_form(formdata):
+    postdata = formdata.copy()
+    if "username" in postdata:
+        try:
+            invitee_id = User.objects.get(username=postdata["username"])
+        except User.DoesNotExist:
+            invitee_id = -1
+        postdata["invitee"] = invitee_id
+        del postdata["username"]
+
+    return postdata
+
 @login_required
 def event_invite(request, event_id):
     try:
@@ -352,7 +364,9 @@ def event_invite(request, event_id):
         )
 
 
-    form = InviteForm(request.POST, user=request.user)
+    postdata = fix_invite_form(request.POST)
+
+    form = InviteForm(postdata, user=request.user)
     if form.is_valid():
         data = form.cleaned_data
         invitee = data["invitee"]

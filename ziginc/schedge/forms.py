@@ -1,5 +1,6 @@
 from django import forms
 import datetime as dt
+from django.db.models.query import QuerySet
 from django.forms.widgets import TextInput, Textarea
 from .models import Event, TimeSlot
 from django.contrib.auth.models import User
@@ -162,12 +163,15 @@ class InviteForm(forms.Form):
         if invites is None or accepted is None or user is None:
             return
 
+        friends = user.profile.friends.all().values_list("username", flat=True)
+
         excluded = invited_names | accepted_names
 
         # remove yourself from choises
         choices = self.fields["invitee"].choices
+        
         self.fields["invitee"].choices = [
-            (v, u) for v, u in choices if u not in excluded and u != user.username
+            (v, u) for v, u in choices if u not in excluded and u != user.username and u in friends or u == "---------"
         ]
 class FriendForm(forms.Form):
     to_user = forms.CharField(label='Username')
