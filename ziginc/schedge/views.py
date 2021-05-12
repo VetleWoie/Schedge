@@ -738,6 +738,18 @@ def participant_leave(request, event_id, user_id):
 
 
 def mark_notification_as_read(request, notif_id):
+    """Marks a specific notification as read
+
+    Parameters
+    ----------
+    request : dict
+    notif_id : int
+        Id of notification that is trying to be deleted.
+
+    Returns
+    -------
+        Return an approprite HttpResponse. TODO 
+    """
     try:
         notif = Notification.objects.get(id=notif_id)
     except Notification.DoesNotExist:
