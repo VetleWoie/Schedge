@@ -161,7 +161,7 @@ class FriendFunctionalTest(TestCase):
         #Respond to friend request
         fake_request_id = 10191
         self.client.login(username=self.users[1].username, password=self.password)
-        response = self.client.post(f'/friend_invite_delete/{fake_request_id}', form)
+        response = self.client.post(f'/friend_invite_delete/{fake_request_id}')
         self.assertEqual(response.status_code, 404)
         friend_requests = FriendRequest.objects.all()
         self.assertEqual(len(friend_requests), 2)

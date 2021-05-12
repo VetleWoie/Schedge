@@ -1,5 +1,6 @@
 {% extends 'framework.html' %}
 {% load static %}
+{% load placeholder %}
 {% block title %}Sign in{% endblock %}
 
 {% block stylesheet %}
@@ -38,19 +39,15 @@
         <div class="col d-flex justify-content-center">
           <form method="post" id="sign-in-form">
 
-
             {% csrf_token %}
-            <!-- <table>
-          <tr>
-            <td>{{ form.username.label_tag }}</td>
-            <td>{{ form.username }}</td>
-          </tr>
-          <tr>
-            <td>{{ form.password.label_tag }}</td>
-            <td>{{ form.password }}</td>
-          </tr>
-        </table> -->
-            {{ form.as_p }}
+            <table>
+              <tr>
+                <td>{{ form.username | placeholder:"Username" }}</td>
+              </tr>
+              <tr>
+                <td>{{ form.password | placeholder:"Password" }}</td>
+              </tr>
+            </table>
 
             <div class="txt_center">
 

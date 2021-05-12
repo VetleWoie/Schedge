@@ -1,13 +1,9 @@
 from django import forms
-from itertools import product
 import datetime as dt
 from django.forms.widgets import TextInput, Textarea
-from django.utils.dateparse import parse_duration
-from django.core.exceptions import ValidationError
-from django.forms.widgets import MultiWidget
-from .models import Event, TimeSlot, FriendRequest
+from .models import Event, TimeSlot
 from django.contrib.auth.models import User
-from .widgets import SplitDurationWidget, MultiValueDurationField
+from .widgets import MultiValueDurationField
 
 class DateInput(forms.DateInput):
     input_type = "date"
@@ -89,6 +85,7 @@ class TimeSlotForm(forms.ModelForm):
         self.fields["start_time"].widget.attrs["max"] = event.endtime
         self.fields["end_time"].widget.attrs["min"] = event.starttime
         self.fields["end_time"].widget.attrs["max"] = event.endtime
+
     def clean(self):
         start = dt.datetime.combine(self.cleaned_data.get("date"), self.cleaned_data.get("start_time"))
         end = dt.datetime.combine(self.cleaned_data.get("date"), self.cleaned_data.get("end_time"))
@@ -102,7 +99,7 @@ class TimeSlotForm(forms.ModelForm):
                     "end_time": ["Time slot is too short"],
                 }
             )
-        
+
         return self.cleaned_data
         
 

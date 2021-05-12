@@ -33,6 +33,8 @@ class FriendRequest(models.Model):
     to_user = models.ForeignKey(
         User, related_name='to_user', on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f"FriendRequest(id={self.id}, from={self.from_user}, to={self.to_user})"
     
 class Event(models.Model):
     """The event model"""
@@ -176,4 +178,4 @@ class Invite(models.Model):
     senttime = models.DateTimeField()
 
     def __str__(self):
-        return f"Invite(inviter={self.inviter}, invitee={self.invitee}, event={self.event}, sent={self.senttime})"
+        return f"Invite(id={self.id}, inviter={self.inviter}, invitee={self.invitee}, event={self.event}, sent={self.senttime})"

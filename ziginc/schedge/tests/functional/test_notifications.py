@@ -67,7 +67,7 @@ class NotificationTest(TestCase):
 
         notification = notifications[0]
         self.assertEqual(notification.actor, self.invitee)
-        self.assertEqual(notification.verb, "invite accepted")
+        self.assertEqual(notification.verb, "event invite accepted")
         self.assertEqual(notification.data["title"], "hiking")
         self.assertEqual(notification.data["url"], f"/event/{self.event_id}/")
         self.assertIs(notification.target, None)
@@ -87,7 +87,7 @@ class NotificationTest(TestCase):
 
         notification = notifications[0]
         self.assertEqual(notification.actor, self.invitee)
-        self.assertEqual(notification.verb, "invite rejected")
+        self.assertEqual(notification.verb, "event invite rejected")
         self.assertEqual(notification.data["title"], "hiking")
         self.assertEqual(notification.data["url"], f"/event/{self.event_id}/")
         self.assertIs(notification.target, None)

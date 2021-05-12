@@ -323,3 +323,7 @@ select.list-dt:focus {
     z-index: -1;
 }
 
+#id_duration {
+    display: inline-block;
+    padding: 12px;
+}

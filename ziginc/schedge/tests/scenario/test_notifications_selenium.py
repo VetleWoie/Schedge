@@ -77,6 +77,9 @@ class NotificationsSeleniumTest(StaticLiveServerTestCase):
         self.driver.get(self.live_server_url + f"/event/{self.event.id}")
         sleep(0.8)
         
+        self.driver.find_element_by_id("show_invite").click()
+        sleep(0.5)
+
         invite_form = self.driver.find_element_by_id("id_invitee")
         invite_form.send_keys("guest")
         invite_submit = self.driver.find_element_by_id("invite-submit")

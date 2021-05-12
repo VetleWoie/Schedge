@@ -41,6 +41,15 @@ class EventEditTest(TestCase):
 
         self.assertEqual(response.context["event"].title, "climbing")
 
+
+    def test_edit_changes_title_get_method(self):
+        edited_event_form = self.example_form.copy()
+        edited_event_form["title"] = "climbing"
+
+        response = self.client.get(f"/event/{self.event_id}/edit/")
+        self.assertEqual(response.status_code, 200)
+
+
     def test_edit_image(self):
         with open("schedge/tests/mandrill.jpg", "rb") as fp:
             edited_event_form = self.example_form.copy()
