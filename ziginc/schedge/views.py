@@ -357,6 +357,20 @@ def eventedit(request, event_id):
 
 @login_required(login_url="/login/")
 def event_delete(request, event_id):
+    """Deletes an event and notifies the participants.
+    
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user who sent the request
+        and which HTTP method.
+    event_id : int
+        Id of the event that the request is trying to reach.
+    
+    Returns
+    -------
+        Return a HttpResponse that redirects to mypage.
+    """
     try:
         event_del = Event.objects.get(id=event_id)
     except Event.DoesNotExist:
@@ -372,7 +386,7 @@ def event_delete(request, event_id):
     timeslots.delete()
 
     Notification.objects.filter(target_object_id=event_del.id).delete()
-    
+
     users = event_del.participants.exclude(id=request.user.id)
     notify.send(
         request.user,
