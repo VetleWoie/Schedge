@@ -30,7 +30,6 @@ from notifications.models import Notification
 
 
 def home(request):
-
     user_count = User.objects.count()
     context = {"user_count": user_count}
     if request.user.is_authenticated:
@@ -71,6 +70,22 @@ def mypage(request):
 # Create your views here.
 @login_required(login_url="/login/")
 def create_event(request):
+    """Creates an event.
+
+    Uses the 'request' argument passed to create a new event.
+
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user who sent the request,
+        which HTTP method, potential files.
+
+    Returns
+    -------
+        Return a HttpResponse whose content is filled with the result
+        of calling django.template.loader.render_to_string() with 'context'
+        or return an HttpResponseRedirect to the event.
+    """
     if request.method == "POST":
         # pressed submit
         host = request.user
@@ -94,6 +109,24 @@ def create_event(request):
 
 @login_required(login_url="/login/")
 def event(request, event_id):
+    """Gets an event or creats a timeslot.
+
+    Uses the 'request' argument to return an event or create a
+    new timeslot.
+
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user who sent the request
+        and which HTTP method.
+    event_id : int
+        Id of the event that the request is trying to reach
+    Returns
+    -------
+        Return a HttpResponse whose content is filled with the result
+        of calling django.template.loader.render_to_string() with 'context'
+        or return an HttpResponseRedirect to the event.
+    """
     try:
         # select * from Event where id=event_id;
         this_event = Event.objects.get(id=event_id)
@@ -112,10 +145,10 @@ def event(request, event_id):
             # shouldn't be possible through the website though. only through manual post
             return HttpResponseBadRequest("Invalid Form!")
 
+
     participating = this_event.participants.filter(id=request.user.id).exists()
     if not participating:
         return HttpResponse('Unauthorized', status=401)
-
     potentialtimeslots = PotentialTimeSlot.objects.filter(event=this_event)
     timeslots = TimeSlot.objects.filter(event=this_event)
     # new time slot form with this event's start date and end date
@@ -144,6 +177,21 @@ def event(request, event_id):
 
 @login_required(login_url="/login/")
 def timeslot_delete(request, event_id, timeslot_id):
+    """Deletes a timeslot and reevaluates the timeslots.
+
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user who sent the request
+        and which HTTP method.
+    event_id : int
+        Id of the event that the request is trying to reach
+    timeslot_id : int
+        Id of the timeslot in the event that will be deleted
+    Returns
+    -------
+        A HttpResonse that redirects to the event.
+    """
     if request.method == "POST":
         try:
             # select * from Event where id=event_id;
