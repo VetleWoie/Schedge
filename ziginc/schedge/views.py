@@ -211,7 +211,20 @@ def timeslot_delete(request, event_id, timeslot_id):
 
 
 def timeslot_select(request, event_id):
+    """ Selects the final timeslot.
 
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user who sent the request
+        and which HTTP method.
+    event_id : int
+        Id of the event that the request is trying to reach
+
+    Returns
+    -------
+        A HttpResonse that redirects back to the event.
+    """
     if request.method != "POST":
         return HttpResponseBadRequest("Request method not allowed")
 
@@ -255,8 +268,16 @@ def timeslot_select(request, event_id):
     return redirect(event, event_id)
 
 def notify_if_changed(event, newdata, user):
-    """sends notification from user to all participants
-    if the new data is different than the event's old data"""
+    """Sends notification from user to all participants
+    if the new data is different than the event's old data.
+    
+    Parameters
+    ----------
+    event : event_object
+        The event that has modified its data.
+    newdata : array
+        The new data that has been changed to.
+    """
     if any(getattr(event, k) != newdata[k] for k in newdata):
         # there is at least one difference
         # send notifications to all attendees except ourselves.
@@ -276,6 +297,21 @@ def notify_if_changed(event, newdata, user):
 
 @login_required(login_url="/login/")
 def eventedit(request, event_id):
+    """Edits an event
+    
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user who sent the request
+        and which HTTP method.
+    event_id : int
+        Id of the event that the request is trying to reach.
+    
+    Returns
+    -------
+        Return a HttpResponse whose content is filled with the result
+        of calling django.template.loader.render_to_string() with 'context'
+    """
     try:
         # select * from Event where id=event_id;
         this_event = Event.objects.get(id=event_id)
