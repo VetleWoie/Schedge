@@ -506,13 +506,27 @@ def event_invite(request, event_id):
 
 
 def invite_accept(request, invite_id):
+    """Accepts an invite to an event
+
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user accepting,
+        and which HTTP method.
+    invite_id : int
+        Id of the invite that the request is trying to accept.
+
+    Returns
+    -------
+        Return a HttpResponse that redirects to 'mypage'.
+    """
     try:
         invite = Invite.objects.get(id=invite_id)
     except Invite.DoesNotExist:
         return HttpResponseNotFound("Unknown invite")
 
     if invite.invitee != request.user:
-        return HttpResponse("Unautherized", status=401)
+        return HttpResponse("Unauthorized", status=401)
 
     try:
         notif = Notification.objects.get(target_object_id=invite.id)
@@ -544,7 +558,7 @@ def invite_reject(request, invite_id):
         return HttpResponseNotFound("Unknown invite")
 
     if invite.invitee != request.user:
-        return HttpResponse("Unautherized", status=401)
+        return HttpResponse("Unauthorized", status=401)
 
     try:
         notif = Notification.objects.get(target_object_id=invite.id)
