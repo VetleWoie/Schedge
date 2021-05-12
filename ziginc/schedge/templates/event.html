@@ -182,14 +182,122 @@
 
 
             <!-- TIMESLOT SECTION -->
-            <div class="row m_top_small txt_center">
-                <div class="col-md-1 folder_row"></div>
-                <div class="col-md-2 folder_active">overlapping ts</div>
-                <div class="col-md-2 folder_unactive">my ts</div>
-                <div class="col folder_row"></div>
+            <div class="row m_top_small justify-content-center txt_center">
+                <div class="col-md-5 folder_active btn btn-light"  id="overlapTS">
+                    <button class="btn-accordion full_width" onclick="tmslotToggle('overlapTS')">OVERLAP *</button>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-5 folder_unactive btn btn-light" id="ownTS">
+                    <button class="btn-accordion full_width" onclick="tmslotToggle('ownTS')">MY TS *</button>
+                </div>
+               
             </div>
 
 
+
+
+
+
+            
+            <div class="row m_top_med">
+                <!-- BUTTONS -->
+            
+                <!-- TIMESLOTS -->
+                <div class="col displayright">
+                    <div dir="overlapTS">
+
+                        <!-- overlap timeslots -->
+                        <div class="overlapTS_txt">
+                            <div class="card-columns">
+
+
+
+                                {% for pt in pts %}
+
+                                {% if user == event.host%}
+
+                                <button class="card" type="button" data-toggle="modal"
+                                    data-target="#exampleModalCenter{{pt.id}}">
+                                    {% else %}
+                                    <div class="card">
+
+
+                                        {% endif%}
+                                        <table>
+                                            <tr>
+                                                <td>Time: </td>
+                                                <td>{{pt.start_time|time:"H:i"}} - {{pt.end_time|time:"H:i"}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Date: </td>
+                                                <td>{{pt.date }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>{{pt.n_participants}} / {{event.n_attendees}}</td>
+                                            </tr>
+                                        </table>
+
+                                        {% if user == event.host%}
+                                </button>
+
+                                <!-- To get popup -->
+                                <div class="modal fade" id="exampleModalCenter{{pt.id}}" tabindex="-1" role="dialog"
+                                    aria-labelledby="exampleModalCenterTitle{{pt.id}}" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="{% url 'timeslot_select' event_id=event.id %}"
+                                                    method="post" id="selectform{{pt.id}}">
+                                                    {% csrf_token %}
+                                                    <ul>
+                                                        {% for starttime, endtime in pt.split %}
+                                                        <li>
+                                                            <input type="radio" class="btn-check" name="options"
+                                                                id="option{{starttime}}" autocomplete="off"
+                                                                value="{{starttime|time:'H:i'}},{{endtime|time:'H:i'}},{{pt.date|date:'Y/m/d'}}">
+                                                            <label class="btn btn-secondary"
+                                                                for="option{{starttime}}">{{starttime|time:"H:i"}} -
+                                                                {{endtime|time:"H:i"}}</label>
+                                                        </li>
+                                                        {% endfor %}
+                                                        <!-- <input type="submit" value="Submit" > -->
+                                                    </ul>
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-primary"
+                                                    form="selectform{{pt.id}}">Choose</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {%else %}
+                            </div>
+                            {% endif%}
+                            {% endfor %}
+
+
+
+                        </div>
+
+
+
+                    </div>
+
+                    <!-- own timeslots -->
+                    <div class="ownTS_txt">
+                        own times, to be implemented
+                    </div>
+                </div>
+            </div>
+         
         </div>
     </div>
 </div>

@@ -94,23 +94,29 @@ img {
 
 .folder_row {
     border-bottom: 1px solid black;
+    border-top: 1px solid black;
 }
 
 .folder_active {
-    border: 1px solid black;
+    /* border: 1px solid black;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
     border-bottom: 1px solid transparent !important;
-    /* border-left: none; */
+    border-left: none;
     border-right: none;
     padding-top: 2px;
+    background-color: white; */
+    background-image: linear-gradient(120deg, rgba(88, 225, 224, 0.75), rgba(255, 135, 74, 0.75));
+    border: 1px solid lightgrey;
 }
 
 .folder_unactive {
-    border: 1px solid black;
+    /* border: 1px solid black;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    background-color: lightgrey;
+    background-color: lightgrey; */
+    /* background: blue; */
+    border: 1px solid lightgrey;
 }
 
 

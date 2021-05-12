@@ -46,3 +46,17 @@ function validateSubmit(message, id) {
     }
 }
 
+
+var holder = document.querySelector("[dir]");
+var prev_section = "overlapTS";
+function tmslotToggle(new_section) {
+    if (document.getElementById(prev_section).classList.contains('folder_active')) {
+        document.getElementById(prev_section).classList.remove('folder_active');
+        document.getElementById(prev_section).classList.add('folder_unactive');
+    }
+    holder.setAttribute('dir', new_section);
+    document.getElementById(new_section).classList.remove('folder_unactive');
+    document.getElementById(new_section).classList.add('folder_active');
+    prev_section = new_section;
+}
+
