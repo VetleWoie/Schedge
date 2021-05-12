@@ -20,56 +20,80 @@
 
         <!-- LEFT SECTION - INVITE, ATTENDEES, PENDING, ADD TIME SLOT -->
         <div class="col-sm-3 left-section">
-            {% if user == event.host %}
-            {% include "event_hl.html" %}
-            {% endif %}
+            <div class="row">
 
-            <div class="row txt_center m_top_med">
-                <div class="col-lg-12">
+                <div class="accordion" id="eventAccordion">
+                    
+                    {% if user == event.host %}
+                    {% include "event_hl.html" %}
+                    {% endif %}
 
-                    <h4 class="white_txt">Attendees</h4>
-                </div>
+                    <!-- ATTENDEES -->
+                    <div class="card">
+                        <div class="card-header" id="headingAttendees">
+                            <h2 class="mb-0">
+                                <button type="button" class="btn-accordion" data-toggle="collapse"
+                                    data-target="#collapseAttendees">
+                                    Attendees 
+                                </button>
+                            </h2>
+                        </div>
+                        <div id="collapseAttendees" class="collapse" aria-labelledby="headingAttendees"
+                            data-parent="#eventAccordion">
+                            <div class="card-body txt_center">
+                                <table class="people">
+                                    {% for participant in participants %}
+                                    <tr>
+                                        <td>
+                                            {{participant.first_name}} {{participant.last_name}}
+                                        </td>
+                                        <td>
+                                            {% if participant == user %}
+                                            (you)
+                                            {% elif user == event.host %}
+                                            <form
+                                                action="{% url 'participant_delete' event_id=event.id user_id=participant.id %}"
+                                                method="POST" enctype="multipart/form-data">
+                                                {% csrf_token %}
+                                                <input type="submit" value="🗑">
+                                            </form>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+
+                                    {% endfor %}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
 
 
-            </div>
-            <div class="row txt_center">
-                <div class="col-lg-12">
-
-
-                    <table class="people">
-                        {% for participant in participants %}
-                        <tr>
-                            <td>
-                                {{participant.first_name}} {{participant.last_name}}
-                            </td>
-                            <td>
-                                {% if participant == user %}
-                                (you)
-                                {% elif user == event.host %}
-                                <form action="{% url 'participant_delete' event_id=event.id user_id=participant.id %}"
-                                    method="POST" enctype="multipart/form-data">
+                    <!-- ADD TIME SLOTS -->
+                    <div class="card">
+                        <div class="card-header" id="headingTS">
+                            <h2 class="mb-0">
+                                <button type="button" class="btn-accordion" data-toggle="collapse"
+                                    data-target="#collapseTS">
+                                    Add a time
+                                </button>
+                            </h2>
+                        </div>
+                        <div id="collapseTS" class="collapse" aria-labelledby="headingTS" data-parent="#eventAccordion">
+                            <div class="card-body txt_center">
+                                <form action="{% url 'event' event_id=event.id %}" method="post"
+                                    enctype="multipart/form-data">
                                     {% csrf_token %}
-                                    <input type="submit" value="🗑">
+                                    {{ timeslotform.as_p }}
+                                    <input type="submit" class="btn btn-light" value="Submit">
                                 </form>
-                                {% endif %}
-                            </td>
-                        </tr>
+                            </div>
+                        </div>
+                    </div>
 
-                        {% endfor %}
-                    </table>
+
                 </div>
             </div>
 
-            <div class="row txt_center m_top_med">
-                <div class="col-lg-12">
-                    <h4 class="white_txt">Pick a Time</h4>
-                    <form action="{% url 'event' event_id=event.id %}" method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        {{ timeslotform.as_p }}
-                        <input type="submit" class="btn btn-light" value="Submit">
-                    </form>
-                </div>
-            </div>
 
             <div class="row justify-content-center m_top_med m_btm_small">
 
@@ -91,7 +115,8 @@
                 </div>
 
             </div>
-            {%endif%}
+            {% endif %}
+
         </div>
 
 

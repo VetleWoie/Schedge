@@ -45,3 +45,4 @@ function validateSubmit(message, id) {
         $('#' + id).submit();
     }
 }
+

@@ -1,54 +1,60 @@
-<div class="row txt_center invite_box m_top_med" id="Invite_box">
-    <div class="col-lg-12">
-        <h4 class="white_txt m_btm_small ">Invite someone</h4>
-        <form action="{% url 'event_invite' event_id=event.id%}" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <p>
-                <label>Invite:</label>
-                {{inviteform.invitee}}
-            </p>
-            <input type="submit" class="btn btn-light" value="Submit" id="invite-submit">
-        </form>
+<!-- INVITE -->
+<div class="card">
+    <div class="card-header" id="headingInvite">
+        <h2 class="mb-0">
+            <button type="button" class="btn-accordion" data-toggle="collapse" data-target="#collapseInvite">
+                Invite someone to the event
+            </button>
+        </h2>
+    </div>
+    <div id="collapseInvite" class="collapse" aria-labelledby="headingInvite" data-parent="#eventAccordion">
+        <div class="card-body txt_center">
+            <form action="{% url 'event_invite' event_id=event.id%}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <p>
+                    <label>Invite:</label>
+                    {{inviteform.invitee}}
+                </p>
+                <input type="submit" class="btn btn-light" value="Submit" id="invite-submit">
+            </form>
+        </div>
     </div>
 </div>
 
+
+<!-- PENDING INVITATIONS -->
 {%if invites%}
-
-<div class="row txt_center m_top_med" id="pending_invites">
-    <div class="col-lg-12">
-
-        <h4 class="white_txt">Pending Invitations</h4>
+<div class="card">
+    <div class="card-header" id="headingPending">
+        <h2 class="mb-0">
+            <button type="button" class="btn-accordion collapsed" data-toggle="collapse" data-target="#collapsePending">
+                Pending invitations
+            </button>
+        </h2>
     </div>
-
-
-</div>
-<div class="row txt_center">
-    <div class="col-lg-12">
-
-
-        <table class="people">
-            {% for invite in invites %}
-            <tr>
-                <td>
-                    {{invite.invitee.first_name}} {{invite.invitee.last_name}}
-                </td>
-                <td>
-                    {% if invite.user == user %}
-                    (you)
-                    {% elif user == event.host %}
-                    <form action="{% url 'invite_delete' invite_id=invite.id %}" method="POST"
-                        enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <button type="submit"  class="btn btn-icon"><i class='fas fa-trash-alt'></i></button>
-                    </form>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
+    <div id="collapsePending" class="collapse" aria-labelledby="headingPending" data-parent="#eventAccordion">
+        <div class="card-body">
+            <table class="people">
+                {% for invite in invites %}
+                <tr>
+                    <td>
+                        {{invite.invitee.first_name}} {{invite.invitee.last_name}}
+                    </td>
+                    <td>
+                        {% if invite.user == user %}
+                        (you)
+                        {% elif user == event.host %}
+                        <form action="{% url 'invite_delete' invite_id=invite.id %}" method="POST"
+                            enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-icon"><i class='fas fa-trash-alt'></i></button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
     </div>
 </div>
-
-
-
 {%endif%}
