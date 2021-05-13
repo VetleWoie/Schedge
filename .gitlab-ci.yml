@@ -20,7 +20,6 @@ functional:
     - python3 manage.py test schedge/tests/functional --parallel
   only:
     - merge_requests
-    - master
 #Run scenario tests.
 scenario:
   stage: test
@@ -36,7 +35,6 @@ scenario:
     - python3 manage.py test schedge/tests/scenario --parallel
   only:
     - merge_requests
-    - master
 
 #Create coverage report
 coverage:
@@ -51,6 +49,8 @@ coverage:
     - python3 manage.py makemigrations
     - python3 manage.py migrate
     - coverage run
+    - pwd
+    - ls -alF
     - coverage xml
   only:
     - master
