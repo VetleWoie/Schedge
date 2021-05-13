@@ -116,7 +116,7 @@ class TimeSlotFunctionalTest(TestCase):
     def test_create_timeslot(self):
         response = self.client.post(f"/event/{self.testevent.id}/", self.example_timeslot)
         # there is a timeslot in the context
-        self.assertTrue(response.context["timeslots"])
+        self.assertTrue(response.context["your_timeslots"])
         self.assertEqual(response.status_code, 200)
 
     def test_create_timeslot_in_the_past(self):

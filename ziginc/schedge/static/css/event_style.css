@@ -86,28 +86,57 @@ img {
 
 .left-section {
     background-color: lightgray;
+    background-image: linear-gradient(120deg, rgba(88, 225, 224, 0.75), rgba(255, 135, 74, 0.75));
     /* height: 100%; */
-    box-shadow: 2px 0px 1px #A8A8A8;
+  
 }
 
 
 .folder_row {
     border-bottom: 1px solid black;
+    border-top: 1px solid black;
 }
 
 .folder_active {
-    border: 1px solid black;
+    /* border: 1px solid black;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
     border-bottom: 1px solid transparent !important;
-    /* border-left: none; */
+    border-left: none;
     border-right: none;
     padding-top: 2px;
+    background-color: white; */
+    background-image: linear-gradient(120deg, rgba(88, 225, 224, 0.75), rgba(255, 135, 74, 0.75));
+    border: 1px solid lightgrey;
 }
 
 .folder_unactive {
-    border: 1px solid black;
+    /* border: 1px solid black;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    background-color: lightgrey;
+    background-color: lightgrey; */
+    /* background: blue; */
+    border: 1px solid lightgrey;
+}
+
+
+/* ACCORDION STUFF DOWN HERE */
+#eventAccordion {
+    width: 100%;
+}
+
+.card-header, .card {
+    background-color: transparent !important;
+    border: none !important;
+}
+
+.btn-accordion {
+    border: none;
+    background-color: transparent;
+    outline: none;
+    font-size: 20px;
+}
+.btn-accordion:focus {
+
+    outline: none;
 }
