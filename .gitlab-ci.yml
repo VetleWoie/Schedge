@@ -49,11 +49,9 @@ coverage:
     - python3 manage.py makemigrations
     - python3 manage.py migrate
     - coverage run
-    - pwd
-    - ls -alF
     - coverage xml
   only:
     - master
   artifacts:
     reports:
-      cobertura: coverage.xml
+      cobertura: ziginc/coverage.xml
