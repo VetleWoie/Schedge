@@ -55,7 +55,7 @@ class FriendFunctionalTest(TestCase):
         form = {'to_user': self.users[1].username}
         self.client.login(username=self.users[0].username, password=self.password)
         response = self.client.post(f'/friend_invite_send/', form)
-        self.assertEqual(response.status_code, 200, msg = "Expected status code 200 got %d"%response.status_code)
+        self.assertEqual(response.status_code, 400, msg = "Expected status code 400 got %d"%response.status_code)
         friend_requests = FriendRequest.objects.all()
         self.assertEqual(len(friend_requests),2)
     
