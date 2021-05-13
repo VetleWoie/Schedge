@@ -13,7 +13,7 @@ functional:
     - apt-get update
     - python3 -m pip install Pillow
     - python3 -m pip install django-notifications-hq
-    - python3 -m pip install tblib
+    - python3 -m pip install tblib/
     - cd ziginc
     - python3 manage.py makemigrations
     - python3 manage.py migrate
@@ -45,6 +45,7 @@ coverage:
     - python3 -m pip install django-notifications-hq
     - python3 -m pip install tblib
     - python3 -m pip install selenium
+    - python3 -m pip install coverage
     - cd ziginc
     - python3 manage.py makemigrations
     - python3 manage.py migrate
@@ -54,4 +55,4 @@ coverage:
     - master
   artifacts:
     reports:
-      cobertura: ziginc/coverage.xml
+      cobertura: coverage.xml
