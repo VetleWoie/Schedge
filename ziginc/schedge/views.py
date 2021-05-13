@@ -57,6 +57,7 @@ def mypage(request):
     this_weeks_events = Event.objects.filter(participants=user, status="C", startdate__gte=today, enddate__lte=in_seven_days)
 
     pending_friend_requests = FriendRequest.objects.filter(from_user=user)
+    incoming_friend_requests = FriendRequest.objects.filter(to_user=user)
 
     context = {
         "host_undecided": host_undecided,
@@ -65,7 +66,8 @@ def mypage(request):
         "invites": invites,
         "this_week": this_weeks_events,
         "friends": friends,
-        "pending_friends": pending_friend_requests
+        "pending_friends": pending_friend_requests,
+        "incoming_friend_requests": incoming_friend_requests,
     }
     return render(request, "mypage.html", context)
 
