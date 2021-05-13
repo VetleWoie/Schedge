@@ -13,7 +13,7 @@ functional:
     - apt-get update
     - python3 -m pip install Pillow
     - python3 -m pip install django-notifications-hq
-    - python3 -m pip install tblib/
+    - python3 -m pip install tblib
     - cd ziginc
     - python3 manage.py makemigrations
     - python3 manage.py migrate
