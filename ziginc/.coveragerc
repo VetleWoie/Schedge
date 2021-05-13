@@ -1,0 +1,19 @@
+[run]
+command_line = manage.py test schedge/tests/
+
+source = .
+
+omit = 
+    /ziginc/*
+    */__init__.py
+    schedge/migrations/*
+    schedge/admin.py
+    schedge/apps.py
+    */tests/*
+    */wsgi.py
+    */settings.py
+    */asgi.py
+    */urls.py
+    manage.py
+
+

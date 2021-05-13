@@ -2,6 +2,7 @@ image: ato058/schedge:latest
 stages:
   #Jobs in the same stage run in parallel so we only need one stage but several jobs.
   - test
+  - coverage
     
 
 #Run functional tests.
@@ -36,3 +37,23 @@ scenario:
   only:
     - merge_requests
     - master
+
+#Create coverage report
+coverage:
+  stage: coverage
+  script:
+    - apt-get update
+    - python3 -m pip install Pillow
+    - python3 -m pip install django-notifications-hq
+    - python3 -m pip install tblib
+    - python3 -m pip install selenium
+    - cd ziginc
+    - python3 manage.py makemigrations
+    - python3 manage.py migrate
+    - coverage run
+    - coverage xml
+  only:
+    - master
+  artifacts:
+    reports:
+      cobertura: coverage.xml
