@@ -52,9 +52,10 @@ coverage:
     - coverage run
     - pwd
     - coverage xml
+    - echo "test" > test.txt
     - ls
   only:
     - master
   artifacts:
     reports:
-      cobertura: /builds/zig-inc/schedge/ziginc
+      cobertura: test.txt
