@@ -50,9 +50,8 @@ coverage:
     - python3 manage.py makemigrations
     - python3 manage.py migrate
     - coverage run
-    - pwd
     - coverage xml
-    - ls
+    - coverage report
   only:
     - master
   artifacts:
