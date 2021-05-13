@@ -121,7 +121,7 @@ def event(request, event_id):
         return HttpResponse('Unauthorized', status=401)
 
     potentialtimeslots = PotentialTimeSlot.objects.filter(event=this_event)
-    timeslots = TimeSlot.objects.filter(event=this_event)
+    your_timeslots = TimeSlot.objects.filter(event=this_event, creator=request.user)
     # new time slot form with this event's start date and end date
     timeslotform = TimeSlotForm()
     timeslotform.set_limits(this_event)
@@ -133,10 +133,11 @@ def event(request, event_id):
     
     friends = request.user.profile.friends
 
+
     context = {
         "event": this_event,
         "timeslotform": timeslotform,
-        "timeslots": timeslots,
+        "your_timeslots": your_timeslots,
         "inviteform": inviteform,
         "participants": participants,
         "invites": invites,
