@@ -46,16 +46,12 @@ window.addEventListener('keyup', (e) => {
     });
 });
 
+// all the forms where we don't redirect on submit
+silent_forms = document.getElementsByClassName("silent-form")
 
-friend_del_btns = document.getElementsByClassName("friend-del-btn")
-friend_req_del_btns = document.getElementsByClassName("friend-req-del-btn")
-friend_reqs_btns = document.getElementsByClassName("friend-req-btn")
-friend_add_search = document.getElementById("friendadd")
-submit_btns = [...friend_del_btns, ...friend_req_del_btns, ...friend_reqs_btns, friend_add_search]
-
-for (var i = 0; i < submit_btns.length; i++) {
-    // add the silent submit to all the friends forms
-    submit_btns[i].addEventListener("submit", silent_submit, false);
+for (var i = 0; i < silent_forms.length; i++) {
+    // add the submit listener function to all the forms
+    silent_forms[i].addEventListener("submit", silent_submit, false);
 }
 
 

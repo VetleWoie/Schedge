@@ -107,13 +107,21 @@
                                     {%comment%}
                                     <!-- <button type="button" class="btn btn-success" data-dismiss="modal">Accept</button> -->
                                     <!-- <button type="button" class="btn btn-danger" data-dismiss="modal">Decline</button> -->
-                                    {%endcomment%}
+<!--                                     
                                     <a href="{% url 'invite_accept' invite_id=invite.id%}"
                                         class="btn btn-success">Accept</a>
                                     <a href="{% url 'invite_reject' invite_id=invite.id%}"
-                                        class="btn btn-danger">Decline</a>
+                                        class="btn btn-danger">Decline</a> -->
+                                    {%endcomment%}
 
-
+                                        <form action="{% url 'invite_accept' invite_id=invite.id%}" method="POST">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-success">Accept</button>
+                                        </form>
+                                        <form action="{% url 'invite_reject' invite_id=invite.id%}" method="POST">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger">Reject</button>
+                                        </form>
                                 </div>
 
                             </div>
@@ -262,7 +270,7 @@
                 <div class="friendsTxt">
                     <div class="row justify-content-center ">
                         <div class="col-12 col-md-10 col-lg-8 m_top_med">
-                            <form class="card card-sm" id="friendadd" action="{% url 'friend_request_send' %}"
+                            <form class="card card-sm silent-form" id="friendadd" action="{% url 'friend_request_send' %}"
                                 method="POST">
                                 {% csrf_token %}
                                 <div class="card-body row no-gutters align-items-center">
@@ -334,11 +342,11 @@
                                     <!-- <button type="button" class="btn btn-success" data-dismiss="modal">Accept</button> -->
                                     <!-- <button type="button" class="btn btn-danger" data-dismiss="modal">Decline</button> -->
                                     {%endcomment%}
-                                    <form action="{% url 'friend_request_accept' request_id=friendreq.id%}" method="POST" class="friend-req-btn">
+                                    <form action="{% url 'friend_request_accept' request_id=friendreq.id%}" method="POST" class="friend-req-btn silent-form">
                                         {% csrf_token %}
                                         <button type="submit" class="btn btn-success">Accept</button>
                                     </form>
-                                    <form action="{% url 'friend_request_reject' request_id=friendreq.id %}" method="POST" class="friend-req-btn">
+                                    <form action="{% url 'friend_request_reject' request_id=friendreq.id %}" method="POST" class="friend-req-btn silent-form">
                                         {% csrf_token %}
                                         <button type="submit" class="btn btn-danger">Reject</button>
                                     </form>
@@ -369,7 +377,7 @@
                                     <div class="card-text">{{friend.username}}</div>
                                     <div class="card-text txt_right">
 
-                                        <form class="friend-del-btn" action="{% url 'friend_delete' user_id=friend.id %}"
+                                        <form class="friend-del-btn silent-form" action="{% url 'friend_delete' user_id=friend.id %}"
                                             method="POST">
                                             {% csrf_token %}
                                             <button type="submit" class="card-text txt_right btn btn-icon"><i
@@ -401,7 +409,7 @@
                                     </div>
                                     <div class="card-text">{{pending.to_user.username}}</div>
                                     <div class="card-text txt_right">
-                                        <form class="friend-req-del-btn"
+                                        <form class="friend-req-del-btn silent-form"
                                             action="{% url 'friend_request_delete' request_id=pending.id %}"
                                             method="POST">
                                             {% csrf_token %}
