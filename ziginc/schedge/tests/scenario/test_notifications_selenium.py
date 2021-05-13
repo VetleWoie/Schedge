@@ -37,6 +37,8 @@ class NotificationsSeleniumTest(StaticLiveServerTestCase):
 
         self.client.login(username=self.host.username, password=PASSWORD)
 
+        self.host.profile.friends.add(self.guest)
+
         # get session cookie
         cookie = self.client.cookies["sessionid"]
         # go to home page

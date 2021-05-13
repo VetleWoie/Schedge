@@ -2,6 +2,7 @@ image: ato058/schedge:latest
 stages:
   #Jobs in the same stage run in parallel so we only need one stage but several jobs.
   - test
+  - coverage
     
 
 #Run functional tests.
@@ -12,14 +13,13 @@ functional:
     - apt-get update
     - python3 -m pip install Pillow
     - python3 -m pip install django-notifications-hq
-    - python3 -m pip install tblib
+    - python3 -m pip install tblib/
     - cd ziginc
     - python3 manage.py makemigrations
     - python3 manage.py migrate
     - python3 manage.py test schedge/tests/functional --parallel
   only:
     - merge_requests
-    - master
 #Run scenario tests.
 scenario:
   stage: test
@@ -35,4 +35,25 @@ scenario:
     - python3 manage.py test schedge/tests/scenario --parallel
   only:
     - merge_requests
+
+#Create coverage report
+coverage:
+  stage: coverage
+  script:
+    - apt-get update
+    - python3 -m pip install Pillow
+    - python3 -m pip install django-notifications-hq
+    - python3 -m pip install tblib
+    - python3 -m pip install selenium
+    - python3 -m pip install coverage
+    - cd ziginc
+    - python3 manage.py makemigrations
+    - python3 manage.py migrate
+    - coverage run
+    - coverage xml
+    - coverage report
+  only:
     - master
+  artifacts:
+    reports:
+      cobertura: /builds/zig-inc/schedge/ziginc/coverage.xml

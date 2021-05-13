@@ -30,7 +30,6 @@ from notifications.models import Notification
 
 
 def home(request):
-
     user_count = User.objects.count()
     context = {"user_count": user_count}
     if request.user.is_authenticated:
@@ -76,6 +75,22 @@ def mypage(request):
 # Create your views here.
 @login_required(login_url="/login/")
 def create_event(request):
+    """Creates an event.
+
+    Uses the 'request' argument passed to create a new event.
+
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user who sent the request,
+        which HTTP method, potential files.
+
+    Returns
+    -------
+        Return a HttpResponse whose content is filled with the result
+        of calling django.template.loader.render_to_string() with 'context'
+        or return an HttpResponseRedirect to the event.
+    """
     if request.method == "POST":
         # pressed submit
         host = request.user
@@ -100,6 +115,24 @@ def create_event(request):
 
 @login_required(login_url="/login/")
 def event(request, event_id):
+    """Gets an event or creats a timeslot.
+
+    Uses the 'request' argument to return an event or create a
+    new timeslot.
+
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user who sent the request
+        and which HTTP method.
+    event_id : int
+        Id of the event that the request is trying to reach
+    Returns
+    -------
+        Return a HttpResponse whose content is filled with the result
+        of calling django.template.loader.render_to_string() with 'context'
+        or return an HttpResponseRedirect to the event.
+    """
     try:
         # select * from Event where id=event_id;
         this_event = Event.objects.get(id=event_id)
@@ -118,10 +151,10 @@ def event(request, event_id):
             # shouldn't be possible through the website though. only through manual post
             return HttpResponseBadRequest("Invalid Form!")
 
+
     participating = this_event.participants.filter(id=request.user.id).exists()
     if not participating:
         return HttpResponse('Unauthorized', status=401)
-
     potentialtimeslots = PotentialTimeSlot.objects.filter(event=this_event)
     your_timeslots = TimeSlot.objects.filter(event=this_event, creator=request.user)
     # new time slot form with this event's start date and end date
@@ -151,6 +184,21 @@ def event(request, event_id):
 
 @login_required(login_url="/login/")
 def timeslot_delete(request, event_id, timeslot_id):
+    """Deletes a timeslot and reevaluates the timeslots.
+
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user who sent the request
+        and which HTTP method.
+    event_id : int
+        Id of the event that the request is trying to reach
+    timeslot_id : int
+        Id of the timeslot in the event that will be deleted
+    Returns
+    -------
+        A HttpResonse that redirects to the event.
+    """
     if request.method == "POST":
         try:
             # select * from Event where id=event_id;
@@ -170,7 +218,20 @@ def timeslot_delete(request, event_id, timeslot_id):
 
 
 def timeslot_select(request, event_id):
+    """ Selects the final timeslot.
 
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user who sent the request
+        and which HTTP method.
+    event_id : int
+        Id of the event that the request is trying to reach
+
+    Returns
+    -------
+        A HttpResonse that redirects back to the event.
+    """
     if request.method != "POST":
         return HttpResponseBadRequest("Request method not allowed")
 
@@ -215,8 +276,16 @@ def timeslot_select(request, event_id):
     return redirect(event, event_id)
 
 def notify_if_changed(event, newdata, user):
-    """sends notification from user to all participants
-    if the new data is different than the event's old data"""
+    """Sends notification from user to all participants
+    if the new data is different than the event's old data.
+    
+    Parameters
+    ----------
+    event : event_object
+        The event that has modified its data.
+    newdata : array
+        The new data that has been changed to.
+    """
     if any(getattr(event, k) != newdata[k] for k in newdata):
         # there is at least one difference
         # send notifications to all attendees except ourselves.
@@ -237,6 +306,21 @@ def notify_if_changed(event, newdata, user):
 
 @login_required(login_url="/login/")
 def eventedit(request, event_id):
+    """Edits an event
+    
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user who sent the request
+        and which HTTP method.
+    event_id : int
+        Id of the event that the request is trying to reach.
+    
+    Returns
+    -------
+        Return a HttpResponse whose content is filled with the result
+        of calling django.template.loader.render_to_string() with 'context'
+    """
     try:
         # select * from Event where id=event_id;
         this_event = Event.objects.get(id=event_id)
@@ -282,6 +366,20 @@ def eventedit(request, event_id):
 
 @login_required(login_url="/login/")
 def event_delete(request, event_id):
+    """Deletes an event and notifies the participants.
+   
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user who sent the request
+        and which HTTP method.
+    event_id : int
+        Id of the event that the request is trying to reach.
+
+    Returns
+    -------
+        Return a HttpResponse that redirects to mypage.
+    """
     try:
         event_del = Event.objects.get(id=event_id)
     except Event.DoesNotExist:
@@ -314,6 +412,18 @@ def event_delete(request, event_id):
 
 
 def signUpView(request):
+    """Signs up a new user or provides the form used to sign up.
+    
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing sign up information
+        about the new user and which HTTP method.
+
+    Returns
+    -------
+        Return a HttpResponse that redirects to mypage.
+    """
     # if this is a POST request we need to process the form data
     if request.method == "POST":
         # create a form instance and populate it with data from the request:
@@ -351,6 +461,20 @@ def fix_invite_form(formdata):
 
 @login_required
 def event_invite(request, event_id):
+    """Invites a user to an event
+   
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user adding,
+        the user to be added and which HTTP method.
+    event_id : int
+        Id of the event that the request is trying to reach.
+
+    Returns
+    -------
+        Return a HttpResponse that redirects to 'event'.
+    """
     try:
         # select * from Event where id=event_id;
         this_event = Event.objects.get(id=event_id)
@@ -407,14 +531,28 @@ def event_invite(request, event_id):
 
 
 def invite_accept(request, invite_id):
+    """Accepts an invite to an event and
+    notifies the inviter.
 
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user accepting
+        and which HTTP method.
+    invite_id : int
+        Id of the invite that the request is trying to accept.
+
+    Returns
+    -------
+        Return a HttpResponse that redirects to 'mypage'.
+    """
     try:
         invite = Invite.objects.get(id=invite_id)
     except Invite.DoesNotExist:
         return HttpResponseNotFound("Unknown invite")
 
     if invite.invitee != request.user:
-        return HttpResponse("Unautherized", status=401)
+        return HttpResponse("Unauthorized", status=401)
 
     try:
         notif = Notification.objects.get(target_object_id=invite.id)
@@ -442,13 +580,28 @@ def invite_accept(request, invite_id):
 
 
 def invite_reject(request, invite_id):
+    """Rejects an invite to an event and
+    notifies the inviter.
+
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user rejecting
+        and the HTTP method.
+    invite_id : int
+        Id of the invite that the request is trying to reject.
+
+    Returns
+    -------
+        Return a HttpResponse that redirects to 'mypage'.
+    """
     try:
         invite = Invite.objects.get(id=invite_id)
     except Invite.DoesNotExist:
         return HttpResponseNotFound("Unknown invite")
 
     if invite.invitee != request.user:
-        return HttpResponse("Unautherized", status=401)
+        return HttpResponse("Unauthorized", status=401)
 
     try:
         notif = Notification.objects.get(target_object_id=invite.id)
@@ -472,6 +625,22 @@ def invite_reject(request, invite_id):
 
 
 def invite_delete(request, invite_id):
+    """Deletes the event invite sent to a user
+    without notifying them.
+
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user deleting
+        and the HTTP method.
+    invite_id : int
+        Id of the invite that the request is trying to delete.
+
+    Returns
+    -------
+        Return a HttpResponse that redirects to the event.
+    """
+
     try:
         invite = Invite.objects.get(id=invite_id)
 
@@ -497,6 +666,23 @@ def invite_delete(request, invite_id):
 
 
 def participant_delete(request, event_id, user_id):
+    """Deletes a participant from an event and notifies them.
+
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user deleting
+        and the HTTP method.
+    event_id : int
+        Id of the event that the request is trying to delete a
+        participant from.
+    user_id : int
+        Id of participant that is to be deleted.
+
+    Returns
+    -------
+        Return a HttpResponse that redirects to the event.
+    """
     try:
         this_event = Event.objects.get(id=event_id)
     except Event.DoesNotExist:
@@ -533,6 +719,23 @@ def participant_delete(request, event_id, user_id):
 
 
 def participant_leave(request, event_id, user_id):
+    """Lets a participant leave an event and notifies the host.
+
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user
+        and the HTTP method.
+    event_id : int
+        Id of the event that the participant is
+        leaving from.
+    user_id : int
+        Id of participant that is trying to leave.
+
+    Returns
+    -------
+        Return a HttpResponse that redirects to 'mypage'.
+    """
     try:
         this_event = Event.objects.get(id=event_id)
     except Event.DoesNotExist:
@@ -568,6 +771,18 @@ def participant_leave(request, event_id, user_id):
 
 
 def mark_notification_as_read(request, notif_id):
+    """Marks a specific notification as read
+
+    Parameters
+    ----------
+    request : dict
+    notif_id : int
+        Id of notification that is trying to be deleted.
+
+    Returns
+    -------
+        Return an approprite HttpResponse. TODO fix?
+    """
     try:
         notif = Notification.objects.get(id=notif_id)
     except Notification.DoesNotExist:
@@ -580,10 +795,12 @@ def mark_notification_as_read(request, notif_id):
 
 
 def termsandservices(request):
+    """ Renders the terms and services """
     return render(request, "termsandservices.html")
 
 @login_required
 def delete_user(request):
+    """ Delets the user in the request """
     if request.method != "POST":
         return HttpResponseBadRequest("Bad request")
     
@@ -593,19 +810,34 @@ def delete_user(request):
 
 @login_required(login_url="/login/")
 def friend_request_send(request):
+    """Sends a friend request.
+
+    Sends a friend request from one user, to another and
+    notifies the receiver.
+    
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user sending
+        the request and the HTTP method.
+    """
     if request.method != 'POST':
         return HttpResponseBadRequest('Bad Request')
     if not request.POST.get("to_user", False): 
         return HttpResponseBadRequest("The form is empty")
     form = FriendForm(request.POST)
+    
     if form.is_valid():
         from_user = request.user
         to_user = User.objects.get(username=request.POST['to_user'])
+
         if to_user == from_user:
             return HttpResponseBadRequest('You cannot add yourself as a friend')
         if from_user.profile.friends.filter(id=to_user.id).exists():
             return HttpResponseBadRequest("You are already friends with this user")
+            
         friend_req, created = FriendRequest.objects.get_or_create(from_user=from_user, to_user=to_user)
+
         if created:
             notify.send(
                 request.user,
@@ -624,7 +856,14 @@ def friend_request_send(request):
 
 @login_required(login_url='/login/')
 def friend_request_delete(request, request_id):
+    """Deletes a sent friend request.
 
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user deleting
+        the request and the HTTP method.
+    """
     if request.method != 'POST':
         return HttpResponseBadRequest('Bad request') 
     
@@ -651,6 +890,16 @@ def friend_request_delete(request, request_id):
 
 @login_required(login_url='/login/')
 def friend_request_accept(request, request_id):
+    """Accepts friend request and notifies the sender.
+
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user accepting
+        the request and the HTTP method.
+    request_id : int
+        Id of the friend request that is to be accepted.
+    """
     if request.method != 'POST':
         return HttpResponseBadRequest('Bad Request')
     if not FriendRequest.objects.filter(id=request_id).exists():
@@ -679,7 +928,7 @@ def friend_request_accept(request, request_id):
         action_object=None,
         recipient=friend_req.from_user,
         verb="friend request accepted",
-        url=f"", #TODO fix url?
+        url=f"",
     )
     
     friend_req.delete()
@@ -688,6 +937,16 @@ def friend_request_accept(request, request_id):
 
 @login_required(login_url='/login/')
 def friend_request_reject(request, request_id):
+    """Rejects the friend request.
+
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user rejecting
+        the request and the HTTP method.
+    request_id : int
+        Id of the friend request that is to be rejected.
+    """
     if request.method != 'POST':
         return HttpResponseBadRequest('Bad Request')
     if not FriendRequest.objects.filter(id=request_id).exists():
@@ -710,6 +969,14 @@ def friend_request_reject(request, request_id):
 
 @login_required(login_url='/login/')
 def friend_delete(request, user_id):
+    """Delete a sent friend request.
+
+    Parameters
+    ----------
+    request : dict
+        A dictionary containing the user deleting
+        the request and the HTTP method.
+    """
     if request.method != 'POST':
         return HttpResponseBadRequest('Bad request')
 

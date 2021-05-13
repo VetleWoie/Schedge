@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "schedge.apps.SchedgeConfig",
     "django.contrib.admin",
     "django.contrib.auth",
+    "django.contrib.admindocs",
     "notifications",
 ]
 
