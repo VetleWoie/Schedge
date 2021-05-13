@@ -850,7 +850,7 @@ def friend_request_send(request):
             )
             return HttpResponse('Friend request sent successfully')
         else:
-            return HttpResponse('Friend request was already sent')
+            return HttpResponseBadRequest('Friend request was already sent')
     else:
         return HttpResponseNotFound('user not found')
 
