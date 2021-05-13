@@ -57,4 +57,4 @@ coverage:
     - master
   artifacts:
     reports:
-      cobertura: builds/zig-inc/schedge/ziginc/coverage.xml
+      cobertura: /builds/zig-inc/schedge/ziginc/coverage.xml
