@@ -51,10 +51,10 @@ coverage:
     - python3 manage.py migrate
     - coverage run
     - pwd
-    - ls
     - coverage xml
+    - ls
   only:
     - master
   artifacts:
     reports:
-      cobertura: coverage.xml
+      cobertura: /ziginc/coverage.xml
