@@ -1,0 +1,11 @@
+paths: # list or string
+  - ./
+exclude: (.*/test)|(.*/__init__)|(.*/manage.py)|(.*/admin.py)|(.*/apps.py)|(.*/migrations/*)|(.*/ziginc/ziginc/*)|(.*/urls) # regex
+verbose: 3 # int (0-3)
+skip_magic: True # Boolean
+skip_file_doc: True # Boolean
+skip_init: True # Boolean
+skip_class_def: True # Boolean
+follow_links: True # Boolean
+accept_empty: True # Boolean
+fail_under: 90 # int 

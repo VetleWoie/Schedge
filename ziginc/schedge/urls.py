@@ -42,8 +42,8 @@ urlpatterns = [
     path("friend_invite_accept/<int:request_id>/", friend_request_accept, name='friend_request_accept'),
     path("friend_invite_reject/<int:request_id>/", friend_request_reject, name='friend_request_reject'),
     path("friend_invite_send/", friend_request_send, name='friend_request_send'),
-    path("friend_invite_delete/", friend_request_delete, name='friend_request_delete'),
-    path("friend_delete/", friend_delete, name='friend_delete'),
+    path("friend_invite_delete/<int:request_id>", friend_request_delete, name='friend_request_delete'),
+    path("friend_delete/<int:user_id>", friend_delete, name='friend_delete'),
 
 ]
 if settings.DEBUG:

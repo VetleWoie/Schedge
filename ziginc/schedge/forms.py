@@ -1,13 +1,10 @@
 from django import forms
-from itertools import product
 import datetime as dt
+from django.db.models.query import QuerySet
 from django.forms.widgets import TextInput, Textarea
-from django.utils.dateparse import parse_duration
-from django.core.exceptions import ValidationError
-from django.forms.widgets import MultiWidget
-from .models import Event, TimeSlot, FriendRequest
+from .models import Event, TimeSlot
 from django.contrib.auth.models import User
-from .widgets import SplitDurationWidget, MultiValueDurationField
+from .widgets import MultiValueDurationField
 
 class DateInput(forms.DateInput):
     input_type = "date"
@@ -89,6 +86,7 @@ class TimeSlotForm(forms.ModelForm):
         self.fields["start_time"].widget.attrs["max"] = event.endtime
         self.fields["end_time"].widget.attrs["min"] = event.starttime
         self.fields["end_time"].widget.attrs["max"] = event.endtime
+
     def clean(self):
         start = dt.datetime.combine(self.cleaned_data.get("date"), self.cleaned_data.get("start_time"))
         end = dt.datetime.combine(self.cleaned_data.get("date"), self.cleaned_data.get("end_time"))
@@ -102,7 +100,7 @@ class TimeSlotForm(forms.ModelForm):
                     "end_time": ["Time slot is too short"],
                 }
             )
-        
+
         return self.cleaned_data
         
 
@@ -165,12 +163,15 @@ class InviteForm(forms.Form):
         if invites is None or accepted is None or user is None:
             return
 
+        friends = user.profile.friends.all().values_list("username", flat=True)
+
         excluded = invited_names | accepted_names
 
         # remove yourself from choises
         choices = self.fields["invitee"].choices
+        
         self.fields["invitee"].choices = [
-            (v, u) for v, u in choices if u not in excluded and u != user.username
+            (v, u) for v, u in choices if u not in excluded and u != user.username and u in friends or u == "---------"
         ]
 class FriendForm(forms.Form):
     to_user = forms.CharField(label='Username')

@@ -185,3 +185,18 @@ body {
     border-radius: 10px;
     box-shadow: 2px 2px 2px #3d3d41;
 }
+
+.btn-icon {
+    background-color: transparent;
+}
+
+.nothing-text {
+    text-align: center;
+    color: 848484;
+    font-style: italic;
+    font-size: 15px;
+}
+
+.full_width {
+    width: 100%;
+}

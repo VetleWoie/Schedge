@@ -164,7 +164,7 @@ class InviteTest(TestCase):
 
     def test_invite_only_as_host(self):
         response = self.client.get(f"/event/{self.hiking.id}/")
-        self.assertContains(response, 'id="Invite_box"')
+        self.assertContains(response, 'id="headingInvite"')
 
     @as_bob
     def test_try_invite_as_invitee(self):
@@ -172,25 +172,25 @@ class InviteTest(TestCase):
         # Make sure the invited person does not have access to invite others.
         self.hiking.participants.add(self.bob)
         response = self.client.get(f"/event/{self.hiking.id}/")
-        self.assertNotContains(response, 'id="Invite_box')
+        self.assertNotContains(response, 'id="headingInvite')
 
     def test_pending_invites_as_host(self):
         # Check that the host is able to see pending invites
         response = self.client.get(f"/event/{self.hiking.id}/")
-        self.assertContains(response, 'id="pending_invites"')
+        self.assertContains(response, 'id="headingPending"')
     
     def test_no_pending_invites_as_host_if_no_invites(self):
         # Check that the host isnt able to see pending invites if there are none
         self.inv.delete()
         response = self.client.get(f"/event/{self.hiking.id}/")
-        self.assertNotContains(response, 'id="pending_invites"')
+        self.assertNotContains(response, 'id="headingPending"')
 
     @as_bob
     def test_invisible_pending_invites_as_guest(self):
         # Check that an attendee is not able to see pending invites.
         self.hiking.participants.add(self.bob)
         response = self.client.get(f"/event/{self.hiking.id}/")
-        self.assertNotContains(response, "id='pending_invites'")
+        self.assertNotContains(response, "id='headingPending'")
 
     def test_invite_invalid_event(self):
         invalid_event_id = 9999999
