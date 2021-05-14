@@ -127,6 +127,7 @@ def event(request, event_id):
         and which HTTP method.
     event_id : int
         Id of the event that the request is trying to reach
+
     Returns
     -------
         Return a HttpResponse whose content is filled with the result
@@ -195,6 +196,7 @@ def timeslot_delete(request, event_id, timeslot_id):
         Id of the event that the request is trying to reach
     timeslot_id : int
         Id of the timeslot in the event that will be deleted
+        
     Returns
     -------
         A HttpResonse that redirects to the event.
