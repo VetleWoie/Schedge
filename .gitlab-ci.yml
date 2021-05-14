@@ -78,3 +78,4 @@ documentation:
   artifacts:
     paths:
       - /builds/zig-inc/schedge/ziginc/docu_coverage.yaml
+    when: always
