@@ -71,10 +71,8 @@ documentation:
     - cd ziginc
     - python3 manage.py makemigrations
     - python3 manage.py migrate
-    - docstr-coverage --verbose=1
-    - docstr-coverage &> docu_coverage.yaml
-    - ls
     - echo For more thourogh report check the artifacts form this pipeline
+    - docstr-coverage 2>&1 | tee docu_coverage.yaml
   only:
     - master
   artifacts:
