@@ -70,8 +70,8 @@ documentation:
     - cd ziginc
     - python3 manage.py makemigrations
     - python3 manage.py migrate
-    - docstr-coverage &> docu_coverage.yaml
     - docstr-coverage --verbose=1
+    - docstr-coverage &> docu_coverage.yaml
     - echo For more thourogh report check the artifacts form this pipeline
   only:
     - master
