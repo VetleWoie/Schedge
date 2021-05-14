@@ -7,3 +7,4 @@ media/images/*
 *.log
 htmlcov
 *.coverage
+docu_coverage*

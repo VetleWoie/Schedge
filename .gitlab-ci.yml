@@ -2,7 +2,7 @@ image: ato058/schedge:latest
 stages:
   #Jobs in the same stage run in parallel so we only need one stage but several jobs.
   - test
-  - coverage
+  - statistics
     
 
 #Run functional tests.
@@ -38,7 +38,7 @@ scenario:
 
 #Create coverage report
 coverage:
-  stage: coverage
+  stage: statistics
   script:
     - apt-get update
     - python3 -m pip install Pillow
@@ -57,3 +57,24 @@ coverage:
   artifacts:
     reports:
       cobertura: /builds/zig-inc/schedge/ziginc/coverage.xml
+
+documentation:
+  stage: statistics
+  script:
+    - apt-get update
+    - python3 -m pip install Pillow
+    - python3 -m pip install django-notifications-hq
+    - python3 -m pip install tblib
+    - python3 -m pip install selenium
+    - python3 -m pip install docstr_coverage
+    - cd ziginc
+    - python3 manage.py makemigrations
+    - python3 manage.py migrate
+    - docstr-coverage &> docu_coverage.yaml
+    - docstr-coverage --verbose=1
+    - echo For more thourogh report check the artifacts form this pipline
+  only:
+    - master
+  artifacts:
+    paths:
+      - /builds/zig-inc/schedge/ziginc/docu_coverage.yaml
