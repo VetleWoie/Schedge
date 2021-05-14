@@ -16,7 +16,7 @@ def riise_hofsøy(event):
     """
     
     def get_key(k):
-        """ Returns the first element in the touple """
+        """ Returns the first element in the tuple """
         return k[0]
 
     time_slots = TimeSlot.objects.filter(event=event) # get all timeslots for this event
