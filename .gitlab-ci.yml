@@ -72,6 +72,7 @@ documentation:
     - python3 manage.py migrate
     - docstr-coverage --verbose=1
     - docstr-coverage &> docu_coverage.yaml
+    - ls
     - echo For more thourogh report check the artifacts form this pipeline
   only:
     - master
