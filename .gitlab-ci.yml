@@ -60,6 +60,7 @@ coverage:
 
 documentation:
   stage: statistics
+  allow_failure: True
   script:
     - apt-get update
     - python3 -m pip install Pillow
