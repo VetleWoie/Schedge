@@ -76,8 +76,8 @@ def create_event(request):
 
     Parameters
     ----------
-    request : dict
-        A dictionary containing the user who sent the request,
+    request : WSGI object
+        A WSGI object containing the user who sent the request,
         which HTTP method, potential files.
 
     Returns
@@ -116,8 +116,8 @@ def event(request, event_id):
 
     Parameters
     ----------
-    request : dict
-        A dictionary containing the user who sent the request
+    request : WSGI object
+        A WSGI object containing the user who sent the request
         and which HTTP method.
     event_id : int
         Id of the event that the request is trying to reach
@@ -181,8 +181,8 @@ def timeslot_delete(request, event_id, timeslot_id):
 
     Parameters
     ----------
-    request : dict
-        A dictionary containing the user who sent the request
+    request : WSGI object
+        A WSGI object containing the user who sent the request
         and which HTTP method.
     event_id : int
         Id of the event that the request is trying to reach
@@ -215,8 +215,8 @@ def timeslot_select(request, event_id):
 
     Parameters
     ----------
-    request : dict
-        A dictionary containing the user who sent the request
+    request : WSGI object
+        A WSGI object containing the user who sent the request
         and which HTTP method.
     event_id : int
         Id of the event that the request is trying to reach
@@ -301,8 +301,8 @@ def eventedit(request, event_id):
     
     Parameters
     ----------
-    request : dict
-        A dictionary containing the user who sent the request
+    request : WSGI object
+        A WSGI object containing the user who sent the request
         and which HTTP method.
     event_id : int
         Id of the event that the request is trying to reach.
@@ -361,8 +361,8 @@ def event_delete(request, event_id):
    
     Parameters
     ----------
-    request : dict
-        A dictionary containing the user who sent the request
+    request : WSGI object
+        A WSGI object containing the user who sent the request
         and which HTTP method.
     event_id : int
         Id of the event that the request is trying to reach.
@@ -406,8 +406,8 @@ def signUpView(request):
     
     Parameters
     ----------
-    request : dict
-        A dictionary containing sign up information
+    request : WSGI object
+        A WSGI object containing sign up information
         about the new user and which HTTP method.
 
     Returns
@@ -443,8 +443,8 @@ def event_invite(request, event_id):
    
     Parameters
     ----------
-    request : dict
-        A dictionary containing the user adding,
+    request : WSGI object
+        A WSGI object containing the user adding,
         the user to be added and which HTTP method.
     event_id : int
         Id of the event that the request is trying to reach.
@@ -511,8 +511,8 @@ def invite_accept(request, invite_id):
 
     Parameters
     ----------
-    request : dict
-        A dictionary containing the user accepting
+    request : WSGI object
+        A WSGI object containing the user accepting
         and which HTTP method.
     invite_id : int
         Id of the invite that the request is trying to accept.
@@ -558,8 +558,8 @@ def invite_reject(request, invite_id):
 
     Parameters
     ----------
-    request : dict
-        A dictionary containing the user rejecting
+    request : WSGI object
+        A WSGI object containing the user rejecting
         and the HTTP method.
     invite_id : int
         Id of the invite that the request is trying to reject.
@@ -602,8 +602,8 @@ def invite_delete(request, invite_id):
 
     Parameters
     ----------
-    request : dict
-        A dictionary containing the user deleting
+    request : WSGI object
+        A WSGI object containing the user deleting
         and the HTTP method.
     invite_id : int
         Id of the invite that the request is trying to delete.
@@ -642,8 +642,8 @@ def participant_delete(request, event_id, user_id):
 
     Parameters
     ----------
-    request : dict
-        A dictionary containing the user deleting
+    request : WSGI object
+        A WSGI object containing the user deleting
         and the HTTP method.
     event_id : int
         Id of the event that the request is trying to delete a
@@ -694,8 +694,8 @@ def participant_leave(request, event_id, user_id):
 
     Parameters
     ----------
-    request : dict
-        A dictionary containing the user
+    request : WSGI object
+        A WSGI object containing the user
         and the HTTP method.
     event_id : int
         Id of the event that the participant is
@@ -742,7 +742,7 @@ def mark_notification_as_read(request, notif_id):
 
     Parameters
     ----------
-    request : dict
+    request : WSGI object
     notif_id : int
         Id of notification that is trying to be deleted.
 
@@ -781,8 +781,8 @@ def friend_request_send(request):
     
     Parameters
     ----------
-    request : dict
-        A dictionary containing the user sending
+    request : WSGI object
+        A WSGI object containing the user sending
         the request and the HTTP method.
     """
     if request.method != 'POST':
@@ -822,8 +822,8 @@ def friend_request_delete(request):
 
     Parameters
     ----------
-    request : dict
-        A dictionary containing the user deleting
+    request : WSGI object
+        A WSGI object containing the user deleting
         the request and the HTTP method.
     """
     if request.method != 'POST':
@@ -842,8 +842,8 @@ def friend_request_accept(request, request_id):
 
     Parameters
     ----------
-    request : dict
-        A dictionary containing the user accepting
+    request : WSGI object
+        A WSGI object containing the user accepting
         the request and the HTTP method.
     request_id : int
         Id of the friend request that is to be accepted.
@@ -879,8 +879,8 @@ def friend_request_reject(request, request_id):
 
     Parameters
     ----------
-    request : dict
-        A dictionary containing the user rejecting
+    request : WSGI object
+        A WSGI object containing the user rejecting
         the request and the HTTP method.
     request_id : int
         Id of the friend request that is to be rejected.
@@ -902,8 +902,8 @@ def friend_delete(request):
 
     Parameters
     ----------
-    request : dict
-        A dictionary containing the user deleting
+    request : WSGI object
+        A WSGI object containing the user deleting
         the request and the HTTP method.
     """
     if request.method != 'POST':
