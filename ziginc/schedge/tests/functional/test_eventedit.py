@@ -25,7 +25,7 @@ class EventEditTest(TestCase):
             "endtime": "23:00",
             "startdate": self.tomorrow,
             "enddate": self.next_week,
-            "duration": ["0", "10", "0"],
+            "duration": ["10", "0"],
         }
         response = self.client.post("/createevent/", self.example_form)
         self.event_id = "".join(c for c in response.url if c.isnumeric())
@@ -95,7 +95,7 @@ class EventEditTest(TestCase):
             "endtime": "23:00",
             "startdate": self.tomorrow,
             "enddate": self.next_week,
-            "duration": ["0", "5", "0"],
+            "duration": ["5", "0"],
         }
 
         response = self.client.post(f"/event/{self.event_id}/edit/", self.invalid_form)

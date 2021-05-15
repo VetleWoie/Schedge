@@ -18,7 +18,7 @@ class CreateEventTest(TestCase):
             "endtime": "23:00",
             "startdate": self.tomorrow,
             "enddate": self.next_week,
-            "duration": ["0", "10", "0"],
+            "duration": ["10", "0"],
         }
         user = User.objects.create_user("tester", "myemail@test.com", "Elias123")
 
@@ -70,7 +70,7 @@ class CreateEventTest(TestCase):
             "endtime": "18:00",
             "startdate": self.tomorrow,
             "enddate": self.tomorrow,
-            "duration": ["0", "2", "0"],
+            "duration": ["2", "0"],
         }
 
         response = self.client.post("/createevent/", invalid_form)
@@ -78,7 +78,7 @@ class CreateEventTest(TestCase):
 
     def test_event_negative_duration(self):
         invalid_form = self.example_form.copy()
-        invalid_form["duration"] = ["0", "-2", "0"]
+        invalid_form["duration"] = ["-2", "0"]
 
         response = self.client.post("/createevent/", invalid_form)
         self.assertEqual(response.status_code, 400)  # didn't create event

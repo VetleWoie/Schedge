@@ -27,7 +27,7 @@ class NotificationTest(TestCase):
             "endtime": "23:00",
             "startdate": self.tomorrow,
             "enddate": self.next_week,
-            "duration": ["0", "10", "0"],
+            "duration": ["10", "0"],
         }
         response = self.client.post("/createevent/", self.example_form)
 
