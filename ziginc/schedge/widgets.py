@@ -16,14 +16,14 @@ class SplitDurationWidget(forms.MultiWidget):
         super().__init__(widgets, attrs)
 
     def render(self, name, value, attrs=None, renderer=None):
-        # render the widget as a table
+        """Render the widget as a table"""
         if not value:
             value = [False] * len(self.widgets)
         rendered_widgets = [
             x.render(name, value[i]) for i, x in enumerate(self.widgets)
         ]
 
-        labels = ["Days", "Hours", "Minutes"]
+        labels = ["Hours", "Minutes"]
         labeled = []
         for label, widget in zip(labels, rendered_widgets):
             labeled.append(f"<tr><td>{label}</td><td>{widget}</td></tr>")
@@ -33,42 +33,48 @@ class SplitDurationWidget(forms.MultiWidget):
         duration = dict(data).get(name)
         if duration:
             try:
-                d, h, m = [int(s) if s else 0 for s in duration]
+                h, m = [int(s) if s else 0 for s in duration]
             except ValueError:
                 return None
             minutes = m % 60
             hours = (h + m // 60) % 24
-            days = d + h // 24 + m // 1440
-            return [d, h, m]
-        return [0, 1, 0]
+            return [h, m]
+        return [1, 0]
 
     def decompress(self, value):
+        """Decompresses timedelta and splits into seperate values
+        
+        Parameters
+        ----------
+        value : dt.timedelta
+            Hours and minutes.
+        """
         if value:
             d = value
             if d:
                 hours = d.minutes // 60
                 minutes = (d.minutes % 60)
-                return [int(d.days), int(hours), int(minutes)]
-        return [0, 1, 0]
+                return [int(hours), int(minutes)]
+        return [1, 0]
 
 
 class MultiValueDurationField(forms.MultiValueField):
+
     widget = SplitDurationWidget
 
     def __init__(self, *args, **kwargs):
         fields = (
             forms.IntegerField(),
             forms.IntegerField(),
-            forms.IntegerField(),
         )
         super().__init__(fields=fields, require_all_fields=True, *args, **kwargs)
 
     def compress(self, data_list):
-        if len(data_list) == 3:
+        """Compresses the time date in to a timedelta"""
+        if len(data_list) == 2:
             return timedelta(
-                days=int(data_list[0]),
-                hours=int(data_list[1]),
-                minutes=int(data_list[2]),
+                hours=int(data_list[0]),
+                minutes=int(data_list[1]),
             )
         else:
             return timedelta(0)
