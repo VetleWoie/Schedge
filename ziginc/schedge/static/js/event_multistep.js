@@ -6,6 +6,7 @@ async function confirmform() {
 		method: form.method,
 		body: new FormData(form),
 	}).then((response => {
+		console.log("hei")
 		if (!response.ok) {
 			response.text().then(txt => {
 				errors = JSON.parse(txt)
@@ -35,6 +36,9 @@ async function confirmform() {
 			return -1;  // -1 means we should not go to the final section
 		} else {
 			// 0 means the form was ok
+			var go2event_btn = document.getElementById("event_url")
+			go2event_btn.href = response.url
+		
 			return 0;
 		}
 	}));

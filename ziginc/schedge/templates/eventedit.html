@@ -1,3 +1,193 @@
+{% extends 'framework.html' %}
+{% load static %}
+{% load notifications_tags %}
+{% notifications_unread as unread_count %}
+{% block stylesheet%}
+
+<link rel="stylesheet" href="{% static 'css/mypage_new.css' %}">
+<link rel="stylesheet" href="{% static 'css/event_multistep.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+    crossorigin="anonymous" />
+
+{%endblock%}
+
+{%block title%}Edit Event{%endblock%}
+
+{% block content %}
+
+
+<div class="container-fluid h-100">
+    <div class="row h-100">
+        <!-- MultiStep Form -->
+        <div class="col displayright" id="grad1">
+            <div class="row m_left_small m_top_small">
+                <span class="return"></span>
+                <a class="simple_link" href="{% url 'mypage' %}"><i class="fas fa-angle-double-left fa-2x fa"></i></a>
+                <!-- <button class="nav_btn m_top_med" onclick="toggle('home')">My page</button> -->
+            </div>
+            <div class="row justify-content-center m_top_small">
+
+                <!--  -->
+
+
+                <!-- MultiStep Form -->
+
+                <div class="col-11 col-sm-9 col-md-7 col-lg-6 text-center p-0 mt-3 mb-2">
+                    <h2><strong>Edit Event</strong></h2>
+                    <div class="card px-0 pt-4 pb-0 mt-3 mb-3">
+
+                        <div class="row">
+                            <div class="col-md-12 mx-0">
+                                <form method="POST" id="msform" action="/event/{{ event.id }}/edit/#/"
+                                    enctype="multipart/form-data""
+                                    enctype=" multipart/form-data">
+                                    {% csrf_token %}
+                                    <!-- progressbar -->
+                                    <ul id="progressbar">
+                                        <li class="active" id="event_det"><strong>Details</strong></li>
+                                        <li id="location"><strong>Location</strong></li>
+                                        <li id="calender"><strong>Dates</strong></li>
+                                        <li id="durtimer"><strong>Duration</strong></li>
+                                        <li id="clock"><strong>Time</strong></li>
+                                    </ul> <!-- fieldsets -->
+                                    <fieldset>
+                                        <div class="form-card">
+                                            <h2 class="fs-title">Event Details</h2>
+                                            <div class="explanation">Give your event a title and a fitting description.
+                                            </div><br>
+                                            {{ form.title }}
+                                            {{ form.description }}
+                                            {{ form.image }}
+                                        </div> <input type="button" name="next" class="next action-button"
+                                            value="Next Step" id="next1" />
+                                    </fieldset>
+                                    <fieldset>
+                                        <div class="form-card">
+                                            <h2 class="fs-title">Place of the event</h2>
+                                            <div class="explanation">Where will the event take place?</div><br>
+                                            {{ form.location }}
+                                            <td id="loc-td">
+                                                <div class="row justify-content-center" id="loc-div">
+
+                                                    <button onclick="getLocation()" type="button" id="curlocbutton"
+                                                        class="btn-info p_side_s">Use Your Current Location</button>
+                                                    <span class="invis" id="loc-err-msg"></span>
+                                                </div>
+                                            </td>
+                                        </div> <input type="button" name="previous"
+                                            class="previous action-button-previous" value="Previous" id="previous2" />
+                                        <input type="button" name="next" class="next action-button" value="Next Step"
+                                            id="next2" />
+                                    </fieldset>
+                                    <fieldset>
+                                        <div class="form-card">
+                                            <h2 class="fs-title">Possible Dates *</h2>
+                                            <div class="explanation">Between which two dates will the event take place?
+                                                (Including those
+                                                dates)</div><br>
+                                            <div>Start date:</div>
+                                            {% if form.startdate.errors %}
+                                            <td class="errormsg">
+                                                <p class="invalid">{{ form.startdate }}</p>
+                                                <span class="errormsgtext">{{form.startdate.errors}}</span>
+                                            </td>
+                                            {%else%}
+                                            <td>{{ form.startdate }}</td>
+                                            {% endif %}
+                                            <div class="">End date:</div>
+                                            {{ form.enddate }}
+                                        </div> <input type="button" name="previous"
+                                            class="previous action-button-previous" value="Previous" id="previous3" />
+                                        <input type="button" name="next" class="next action-button" value="Next Step"
+                                            id="next3" />
+                                    </fieldset>
+
+                                    <fieldset>
+                                        <div class="form-card">
+                                            <h2 class="fs-title">Duration</h2>
+                                            <div class="explanation">How long does this event last?</div><br>
+                                            {{ form.duration }}
+                                        </div> <input type="button" name="previous"
+                                            class="previous action-button-previous" value="Previous" id="previous4" />
+                                        <input type="button" name="next" class="next action-button" value="Next Step"
+                                            id="next4" />
+                                    </fieldset>
+
+                                    <fieldset>
+                                        <div class="form-card">
+                                            <h2 class="fs-title">Time of Day</h2>
+                                            <div class="explanation">Between what times can the event take place?</div>
+                                            <br>
+                                            <div>Start time:</div>
+                                            {{ form.starttime }}
+                                            <div>End time:</div>
+                                            {{ form.endtime }}
+                                        </div> <input type="button" name="previous"
+                                            class="previous action-button-previous" value="Previous" id="previous5" />
+                                        <input type="button" name="make_payment" class="next action-button"
+                                            value="Save Edits" id="next5" />
+                                    </fieldset>
+
+                                    <fieldset>
+                                        <div class="form-card">
+                                            <h2 class="fs-title text-center">Success!</h2> <br><br>
+                                            <div class="row justify-content-center">
+                                                <div class="col-3"> <img src="{% static 'icons/tick.svg' %}"
+                                                        class="fit-image"> </div>
+                                            </div> <br><br>
+                                            <div class="row justify-content-center">
+                                                <div class="col-7 text-center">
+                                                    <h5>You Have Successfully Edited the Event</h5>
+                                                </div>
+                                            </div>
+                                            <div class="row justify-content-center">
+                                                <div class="col-7 text-center">
+                                                    <a href="" id="event_url" class="submit action-button">Go to the
+                                                        event</a>
+                                                    <!-- <input type="submit" name="submitform" class="submit action-button"
+                                                        value="Go to the event" id="confirmbtn" /> -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <form method="POST" action="/event/{{ event.id }}/edit/delete/" enctype="multipart/form-data"
+                    id="delete_form">
+                    {% csrf_token %}
+                    <!-- Make pop up work -->
+                    <input type="submit" value="Delete event" class="btn btn-secondary"
+                        onclick="validateSubmit('Are you sure you want to delete?', 'delete_form');return false;">
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+</div>
+
+
+
+
+<script src="{% static 'js/event.js' %}"></script>
+<script src="{% static 'js/event_multistep.js' %}"></script>
+
+
+
+{% endblock %}
+
+
+{%comment%}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -22,9 +212,11 @@
     <form method="POST" action="/event/{{ event.id }}/edit/delete/" enctype="multipart/form-data" id="delete_form">
         {% csrf_token %}
         <!-- Make pop up work -->
-        <input type="submit" value="Delete event" class="btn" onclick="validateSubmit('Are you sure you want to delete?', 'delete_form');return false;">
+        <input type="submit" value="Delete event" class="btn"
+            onclick="validateSubmit('Are you sure you want to delete?', 'delete_form');return false;">
     </form>
     <script src="{% static 'js/event.js' %}"></script>
 </body>
 
 </html>
+{%endcomment%}
