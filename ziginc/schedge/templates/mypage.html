@@ -46,7 +46,12 @@
                 <a class="simple_link" href="{% url 'logout' %}">Sign out</a>
             </div>
             <div class="so m_top_l txt_ls_small">
-                <a class="simple_link" href="{% url 'delete_user_account' %}" onclick="validateSubmit('Are you sure you want to delete?', 'delete_form');return false;">Delete your account</a>
+                <form method="POST" action="{% url 'delete_user_account' %}" id="del-user-btn">
+                {% csrf_token %}
+
+                <input type="submit" class="btn btn-accordion" onclick="validateSubmit('Are you sure you want to delete?', 'del-user-btn');return false;" value="Delete your account"/>
+
+                </form>
                 
             </div>
         </div>
