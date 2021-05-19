@@ -45,6 +45,10 @@
             <div class="so m_top_l txt_ls_small">
                 <a class="simple_link" href="{% url 'logout' %}">Sign out</a>
             </div>
+            <div class="so m_top_l txt_ls_small">
+                <a class="simple_link" href="{% url 'delete_user_account' %}" onclick="validateSubmit('Are you sure you want to delete?', 'delete_form');return false;">Delete your account</a>
+                
+            </div>
         </div>
 
 
