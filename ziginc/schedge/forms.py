@@ -27,6 +27,29 @@ def max_date(years=10):
 
 
 class EventForm(forms.ModelForm):
+    """A class that represents an event form
+    
+    Fields
+    ------
+    title : string
+        The title of the event
+    location : string
+        The location of the event
+    description : string
+        Description of the event (may be blank)
+    starttime : time
+        Earliest time of the day the event may start
+    endtime : time
+        Latest time of the day the event may end
+    startdate : time
+        Earliest date the event may occur
+    enddate : time
+        Latest date the event may occur
+    duration : timedelta 
+        Minimum duration of the event (may be zero)
+    image : image file
+        Header image of the event
+    """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['duration'] = MultiValueDurationField()
@@ -70,6 +93,17 @@ class EventForm(forms.ModelForm):
         }
 
 class TimeSlotForm(forms.ModelForm):
+    """A class that represents a time slot form
+    
+    Fields
+    ------
+    start_time : time
+        Start time of suggested time slot
+    end_time : time 
+        End time of suggested time slot
+    date : date
+        Date of suggested time slot
+    """
     class Meta:
         model = TimeSlot
         fields = ["start_time", "end_time", "date"]
@@ -80,6 +114,7 @@ class TimeSlotForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
     def set_limits(self, event):
+        """Restricts the UI to valid date and time inputs"""
         self.fields["date"].widget.attrs["min"] = event.startdate
         self.fields["date"].widget.attrs["max"] = event.enddate
         self.fields["start_time"].widget.attrs["min"] = event.starttime
@@ -88,6 +123,7 @@ class TimeSlotForm(forms.ModelForm):
         self.fields["end_time"].widget.attrs["max"] = event.endtime
 
     def clean(self):
+        """Validates the time inputs"""
         start = dt.datetime.combine(self.cleaned_data.get("date"), self.cleaned_data.get("start_time"))
         end = dt.datetime.combine(self.cleaned_data.get("date"), self.cleaned_data.get("end_time"))
         if end < start: # is rollover timeslot
@@ -108,6 +144,22 @@ class TimeSlotForm(forms.ModelForm):
 
 
 class NameForm(forms.Form):
+    """A class that represents the credentials a new user
+    must inpur when signing up
+
+    Fields
+    ------
+    username : string
+        The username the user wishes to have
+    first_name : string
+        The users first name
+    last_name : string
+        the users last name
+    password : string
+        The secure password the user wishes to have
+    password2 : string
+        Validation of the same secure password
+    """
     username = forms.CharField(
         label="Username",
         max_length=100,
@@ -120,7 +172,7 @@ class NameForm(forms.Form):
     password2 = forms.CharField(label="Rewrite password", widget=forms.PasswordInput)
 
     def clean(self):
-        # Check that passwords match
+        """Validates that passwords match"""
         password = self.cleaned_data.get("password")
         password2 = self.cleaned_data.get("password2")
         if password and password != password2:
@@ -128,14 +180,14 @@ class NameForm(forms.Form):
         return self.cleaned_data
 
     def clean_username(self):
-        # Check that username hasn't been used before
+        """Validate that the username isn't already in use"""
         username = self.cleaned_data["username"]
         if User.objects.filter(username=username).exists():
             raise forms.ValidationError("Username already taken.")
         return username
 
     def clean_email(self):
-        # Check that email is unique
+        """Validate that the email is unique"""
         email = self.cleaned_data["email"]
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError("Email is already in use.")
@@ -143,6 +195,13 @@ class NameForm(forms.Form):
 
 
 class InviteForm(forms.Form):
+    """A class that represents the form used to invite someone to an event
+
+    Fields
+    ------
+    invitee : Django user object
+        The user who was invited
+    """
     invitee = forms.ModelChoiceField(
         queryset=User.objects.exclude(is_superuser=True).order_by("username")
     )
@@ -173,10 +232,21 @@ class InviteForm(forms.Form):
         self.fields["invitee"].choices = [
             (v, u) for v, u in choices if u not in excluded and u != user.username and u in friends or u == "---------"
         ]
+
 class FriendForm(forms.Form):
+    """A class that represents the form used to address afriend
+
+    For example when sending a friend request
+
+    Fields
+    ------
+    to_user : string
+        The user being addressed
+    """
     to_user = forms.CharField(label='Username')
 
     def clean(self):
+        """Validates that the user exists"""
         user = self.cleaned_data['to_user']
         if not User.objects.filter(username=user).exists():
             raise forms.ValidationError('Username does not exist')
