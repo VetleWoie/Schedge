@@ -234,7 +234,7 @@ class InviteForm(forms.Form):
         ]
 
 class FriendForm(forms.Form):
-    """A class that represents the form used to address afriend
+    """A class that represents the form used to address a friend
 
     For example when sending a friend request
 
