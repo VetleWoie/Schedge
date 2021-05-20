@@ -122,3 +122,9 @@ function put_welcome_message(first_name) {
     welcomeelement.innerHTML = `${text} ${adjective} ${first_name}`;
 }
 
+function validateSubmit(message, id) {
+    result = confirm(message);
+    if (result) {
+        $('#' + id).submit();
+    }
+}
