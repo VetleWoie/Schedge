@@ -6,7 +6,6 @@ async function confirmform() {
 		method: form.method,
 		body: new FormData(form),
 	}).then((response => {
-		console.log("hei")
 		if (!response.ok) {
 			response.text().then(txt => {
 				errors = JSON.parse(txt)

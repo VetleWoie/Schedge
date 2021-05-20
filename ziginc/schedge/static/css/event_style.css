@@ -1,3 +1,4 @@
+@import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css");
 html, body, main{
     height: 100%;
 }
@@ -10,35 +11,40 @@ html, body, main{
 }
 
 
-img {
+.img_test {
     /* border-radius: 8px; */
     margin-left: auto;
     margin-right: auto;
-    display: block;
-    max-height: 20em;
-    max-width: 100%; 
-    object-fit:contain;
-    margin-top: 2%;
+    /* display: block; */
+    /* max-height: 20em; */
+    max-width: 100%;
+    /* object-fit:fill; */
+    /* margin-top: 2%; */
     /* border: 1px solid transparent; */
     /* width: 100%; */
     /* float: right !important; */
     /* text-align: right; */
     
     /* border-radius: 12px;
-    border: 2.5px solid #8d8d8d;
+    border: 2.5px solid #8d8d8d; */
+    /* border: 1px solid rgba(187, 53, 53, 0.945); */
+    border-radius: .5rem;
 }
 
 
 .img_test {
-    float: right;
+    /* width: 100%; */
 }
 
 .event_info_wrap {
-    /* border-bottom: 1px solid black; */
+    padding-bottom: 50px;
+    border-bottom: 1px solid rgb(156, 156, 156);
 }
 
 
-
+.event_image {
+    padding: 0 !important;
+}
 
 
 .event_tit {
@@ -58,7 +64,7 @@ img {
 }
 
 .event_desc {
-    font-size: 1em;
+    font-size: 1.25em;
 }
 
 .white_txt {
@@ -80,7 +86,10 @@ img {
     text-align: center;
 }
 
-
+.v-center {
+    display: flex;
+    align-items: center;
+ }
 
 
 
@@ -125,7 +134,7 @@ img {
     width: 100%;
 }
 
-.card-header, .card {
+.card-accordion {
     background-color: transparent !important;
     border: none !important;
 }
@@ -140,3 +149,71 @@ img {
 
     outline: none;
 }
+
+
+.accordion .fa{
+    margin-right: 0.5rem;
+}
+
+
+
+
+
+/* TIME SLOT STUFF */
+
+/* Hide all steps by default: */
+.tab {
+    display: none;
+}
+
+/* Make circles that indicate the steps of the form: */
+.step {
+height: 15px;
+width: 15px;
+margin: 0 2px;
+background-color: white;
+border: none;  
+border-radius: 50%;
+display: inline-block;
+opacity: 1  ;
+}
+
+.step.active {
+    background-color: #FF874A;
+opacity: 1;
+}
+
+/* Mark the steps that are finished and valid: */
+.step.finish {
+background-color: #FF874A;
+opacity: 0.5;
+}
+
+
+
+input[type=radio] {
+visibility: hidden;
+width: 0;
+padding: 0;
+margin: 0;
+}
+
+input[type=radio]:checked ~ label{
+    /* Or `#a1:checked+label` if you only want it for that input */
+    background-color: rgb(205, 252, 166) !important;
+}
+.tmp label {
+    /* Or `#a1:checked+label` if you only want it for that input */
+    background-color: rgb(238, 159, 145) !important;
+}
+
+.desc {
+    max-width: 50ch;
+  
+    
+}
+
+/* .event_info {
+    border: 1px solid red;
+    border-radius: 20px;
+} */

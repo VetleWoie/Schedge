@@ -29,11 +29,12 @@
                     {% endif %}
 
                     <!-- ATTENDEES -->
-                    <div class="card">
-                        <div class="card-header" id="headingAttendees">
+                    <div class="card card-accordion">
+                        <div class="card-header card-accordion" id="headingAttendees">
                             <h2 class="mb-0">
                                 <button type="button" class="btn-accordion" data-toggle="collapse"
                                     data-target="#collapseAttendees">
+                                    <i class="fas fa-plus fa"></i>
                                     Attendees
                                 </button>
                             </h2>
@@ -72,11 +73,12 @@
 
 
                     <!-- ADD TIME SLOTS -->
-                    <div class="card">
-                        <div class="card-header" id="headingTS">
+                    <div class="card card-accordion">
+                        <div class="card-header card-accordion" id="headingTS">
                             <h2 class="mb-0">
                                 <button type="button" class="btn-accordion" data-toggle="collapse"
                                     data-target="#collapseTS">
+                                    <i class="fas fa-plus fa"></i>
                                     Add a time
                                 </button>
                             </h2>
@@ -86,12 +88,47 @@
                                 <form action="{% url 'event' event_id=event.id %}" method="post"
                                     enctype="multipart/form-data">
                                     {% csrf_token %}
-                                    {{ timeslotform.as_p }}
-                                    <input type="submit" class="btn btn-light" value="Submit">
+
+                                    <div class="tab">
+                                        1. Select a date
+                                        <br>
+                                        {{timeslotform.date}}
+                                    </div>
+                                    <div class="tab">
+                                        2. Select the earliest start time<br>
+                                        {{timeslotform.start_time}}
+                                    </div>
+                                    <div class="tab">
+                                        3. Select the latest end time<br>
+                                        {{timeslotform.end_time}} <br><br>
+                                        <input type="submit" class="btn btn-light" value="Submit">
+                                    </div>
+
+                                    <div style="overflow:auto;">
+                                        <div class="txt_center">
+                                            <button class="btn btn-dark m_top_small" type="button" id="prevBtn"
+                                                onclick="nextPrev(-1)">Previous</button>
+                                            <button class="btn btn-dark m_top_small" type="button" id="nextBtn"
+                                                onclick="nextPrev(1)">Next</button>
+                                        </div>
+                                    </div>
+
+                                    <div style="text-align:center;margin-top:10px;">
+                                        <span class="step"></span>
+                                        <span class="step"></span>
+                                        <span class="step"></span>
+
+                                    </div>
+
+
+                                    {%comment%}
+                                    {{ timeslotform.start_time }}
+                                    {%endcomment%}
                                 </form>
                             </div>
                         </div>
                     </div>
+
 
 
                 </div>
@@ -100,10 +137,14 @@
 
             <div class="row justify-content-center m_top_med m_btm_small">
 
-                <div class="col txt_center">
-                    <a href="{% url 'mypage' %}" class="btn btn-dark">Dashboard</a>
+                <div class="col-md-4 txt_center">
+                    <a href="{% url 'mypage' %}" class="btn btn-dark">My page</a>
                 </div>
-
+                {% if user == event.host %}
+                <div class="col-md-3 txt_center">
+                    <a href="{% url 'eventedit' event_id=event.id %}" class="btn btn-dark">Edit</a>
+                </div>
+                {% endif %}
             </div>
             {% if user != event.host %}
             <div class="row justify-content-center m_top_med m_btm_small">
@@ -127,65 +168,72 @@
         <div class="col m_top_med">
             <!-- EVENT INFO -->
             <div class="row justify-content-center event_info_wrap">
-                {% if event.image.url != "/media/default.jpg" %}
-                <div class="col-md-4 event_image">
-                    <img class="img_test" src="{{event.image.url}}" />
-                </div>
-                {% endif %}
-                <div class="col-md-8 displayright event_txt txt_center">
+                <div class="col-md-11 event_info">
+                    <div class="row v-center">
 
-                    <span class="event_tit" id="id_event_title"> {{event.title}}</span>
-                    <br>
+                        {% if event.image.url != "/media/default.jpg" %}
+                        <div class="col-md-4 event_image">
+                            <img class="img_test" src="{{event.image.url}}" />
+                        </div>
+                        {% endif %}
+                        <div class="col-md-8 displayright event_txt">
+                            <div class="txt_center m_top_xsmall m_btm_small">
 
-                    <div class="txt_large">
+                                <span class="event_tit " id="id_event_title"> {{event.title}}</span>
+                                <br>
+                                <i class="fas fa-user"></i>
+                                {% if user != event.host %}
+                                {{event.host}}
+                                {%else%}
+                                You
+                                {% endif %}
+                            </div>
 
-                        {{event.location}}
+                            <div class="row justify-content-center">
+                                <div class="col-md-2"></div>
+                                <div class="col-md-3 txt_large">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    {{event.location}}
+                                    
+                                </div>
+                                
+                                <div class="col-md-7 txt_large">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    {%if event.startdate == event.enddate%}
+                                    {{event.startdate}}
+                                    {%else%}
+                                    {{event.startdate}} - {{event.enddate}}
+                                    {%endif%}
+                                </div>
+                            </div>
+                            <div class="row justify-content-center">
+                                <div class="col-md-2"></div>
+                                <div class="col-md-3 txt_large">
+                                    
+                                    <i class="fas fa-stopwatch"></i> {{event.duration|nicedelta}}
+                                    
+                                </div>
+                                <div class="col-md-7 txt_large">
+                                    
+                                    <i class="far fa-clock"></i>
+                                    {{event.starttime|time:'H:i'}} - {{event.endtime|time:'H:i'}}
+                                    
+                                </div>
+                            </div>
 
-                    </div>
 
-                    <div class="txt_large">
-                        {%if event.startdate == event.enddate%}
-                        {{event.startdate}}
-                        {%else%}
-                        {{event.startdate}} - {{event.enddate}}
-                        {%endif%}
-                    </div>
-                    <div class="txt_large">
+                            <div class="row justify-content-center">
 
-                        {{event.starttime|time:'H:i'}} - {{event.endtime|time:'H:i'}}
-
-                    </div>
-                    <div class="txt_large">
-
-                        Duration: {{event.duration|nicedelta}}
-
-                    </div>
-                    <div class="txt_large">
-
-                        Hosted by: {{event.host.first_name|capfirst}} {{event.host.last_name|capfirst}}
-
-                    </div>
-
-
-                    <div class="event_desc txt_center m_top_small p_side_s">
-                        {{event.description}}
-                    </div>
-
-                    <div class="row m_top_med">
-                        <div class="col-md-10">
+                                <div class="col-md-8 event_desc m_top_small p_side_s">
+                                    {{event.description}}
+                                </div>
+                                
+                            </div>
+                        
 
                         </div>
-                        <div class="col displayright">
-
-                            {% if user == event.host%}
-                            <a href="{% url 'eventedit' event_id=event.id %}" class="btn btn-dark txt_large">Edit</a>
-                            {% endif %}
-                        </div>
                     </div>
-
-
                 </div>
-
             </div>
 
 
@@ -216,145 +264,188 @@
 
                         <!-- overlap timeslots -->
                         <div class="overlapTS_txt">
-                            <div class="card-columns">
+                            <div class="row">
+
+
+                                <div class="col-md-1">
+
+                                </div>
+                                <div class="col">
+
+                                    <div class="card-columns">
 
 
 
-                                {% for pt in pts %}
-
-                                {% if user == event.host%}
-
-                                <button class="card" type="button" data-toggle="modal"
-                                    data-target="#exampleModalCenter{{pt.id}}">
-                                    {% else %}
-                                    <div class="card">
-
-
-                                        {% endif%}
-                                        <table>
-                                            <tr>
-                                                <td>Time: </td>
-                                                <td>{{pt.start_time|time:"H:i"}} - {{pt.end_time|time:"H:i"}}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Date: </td>
-                                                <td>{{pt.date }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>{{pt.n_participants}} / {{event.n_attendees}}</td>
-                                            </tr>
-                                        </table>
+                                        {% for pt in pts %}
 
                                         {% if user == event.host%}
-                                </button>
 
-                                <!-- To get popup -->
-                                <div class="modal fade" id="exampleModalCenter{{pt.id}}" tabindex="-1" role="dialog"
-                                    aria-labelledby="exampleModalCenterTitle{{pt.id}}" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
-                                                <button type="button" class="close" data-dismiss="modal"
-                                                    aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
+                                        <div class="card" type="button" data-toggle="modal"
+                                            data-target="#exampleModalCenter{{pt.id}}">
+                                            {% else %}
+                                            <div class="card">
+
+
+                                                {% endif%}
+                                                <div class=" card-body">
+                                                    <div class=" card-text">
+                                                        <div class="row justify-content-center">
+                                                            <i class="fas fa-clock m_right_small"></i>
+                                                            {{pt.start_time|time:"H:i"}} -
+                                                            {{pt.end_time|time:"H:i"}}
+                                                        </div>
+                                                        <div class="row justify-content-center">
+                                                            <i class="fas fa-calendar-alt m_right_small"></i>
+                                                            {{pt.date }}
+                                                        </div>
+                                                        <div class="row justify-content-center">
+                                                            <i class="fas fa-users m_right_small"></i>
+                                                            {{pt.n_participants}} / {{event.n_attendees}}
+                                                        </div>
+                                                        {% if user == event.host%}
+                                                        <div class="row justify-content-center m_top_small">
+                                                            <div class="btn btn-dark">See Overlaps</div>
+                                                        </div>
+                                                        {%endif%}
+                                                    </div>
+
+                                                </div>
+                                                {% if user == event.host%}
                                             </div>
-                                            <div class="modal-body">
-                                                <form action="{% url 'timeslot_select' event_id=event.id %}"
-                                                    method="post" id="selectform{{pt.id}}">
-                                                    {% csrf_token %}
-                                                    <ul>
-                                                        {% for starttime, endtime in pt.split %}
-                                                        <li>
-                                                            <input type="radio" class="btn-check" name="options"
-                                                                id="option{{starttime}}" autocomplete="off"
-                                                                value="{{starttime|time:'H:i'}},{{endtime|time:'H:i'}},{{pt.date|date:'Y-m-d'}}">
-                                                            <label class="btn btn-secondary"
-                                                                for="option{{starttime}}">{{starttime|time:"H:i"}} -
-                                                                {{endtime|time:"H:i"}}</label>
-                                                        </li>
-                                                        {% endfor %}
-                                                        <!-- <input type="submit" value="Submit" > -->
-                                                    </ul>
-                                                </form>
+
+                                            <!-- To get popup -->
+                                            <div class="modal fade" id="exampleModalCenter{{pt.id}}" tabindex="-1"
+                                                role="dialog" aria-labelledby="exampleModalCenterTitle{{pt.id}}"
+                                                aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="exampleModalLongTitle">Overlaps
+                                                                {{pt.date}}
+                                                            </h5>
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form action="{% url 'timeslot_select' event_id=event.id %}"
+                                                                method="post" id="selectform{{pt.id}}">
+                                                                {% csrf_token %}
+                                                                <div class="row  justify-content-center m_btm_small">
+                                                                    <div class="desc">
+
+                                                                        Click on the desired time slot and confirm if
+                                                                        this is the day you want the event to be on.
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    {% for starttime, endtime in pt.split %}
+                                                                    <div class="col-md-4 tmp">
+
+                                                                        <input type="radio" class="btn-check"
+                                                                            name="options" id="option{{starttime}}"
+                                                                            autocomplete="off"
+                                                                            value="{{starttime|time:'H:i'}},{{endtime|time:'H:i'}},{{pt.date|date:'Y-m-d'}}">
+                                                                        <label class="btn" for="option{{starttime}}"
+                                                                            style="width:100%;">
+                                                                            {{starttime|time:"H:i"}}
+                                                                            -
+                                                                            {{endtime|time:"H:i"}}</label>
+                                                                    </div>
+                                                                    {% endfor %}
+                                                                    <!-- <input type="submit" value="Submit" > -->
+                                                                </div>
+
+                                                            </form>
+                                                        </div>
+                                                        <div class="modal-footer justify-content-center">
+                                                            <button type="submit" class="btn btn-dark"
+                                                                form="selectform{{pt.id}}">Confirm time slot</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="modal-footer">
-                                                <button type="submit" class="btn btn-primary"
-                                                    form="selectform{{pt.id}}">Choose</button>
-                                            </div>
+                                            {%else %}
                                         </div>
+                                        {% endif%}
+                                        {% endfor %}
+
                                     </div>
                                 </div>
-                                {%else %}
+
                             </div>
-                            {% endif%}
-                            {% endfor %}
 
 
 
                         </div>
 
+                        <!-- own timeslots -->
+                        <div class="ownTS_txt">
+
+                            <!-- overlap timeslots -->
+                            <div class="overlapTS_txt">
+                                <div class="row">
 
 
-                    </div>
+                                    <div class="col-md-1">
 
-                    <!-- own timeslots -->
-                    <div class="ownTS_txt">
-
-                        <!-- overlap timeslots -->
-                        <div class="overlapTS_txt">
-                            <div class="card-columns">
+                                    </div>
+                                    <div class="col">
 
 
+                                        <div class="card-columns">
 
-                                {% for timeslot in your_timeslots %}
 
 
-                                <div class="card">
+                                            {% for timeslot in your_timeslots %}
 
-                                    <table>
-                                        <tr>
-                                            <td>Time: </td>
-                                            <td>{{timeslot.start_time|time:"H:i"}} - {{timeslot.end_time|time:"H:i"}}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Date: </td>
-                                            <td>{{timeslot.date }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>
 
-                                                <form action="/event/{{event.id}}/delete/{{timeslot.id}}/" method="POST"
-                                                    enctype="multipart/form-data">
-                                                    {% csrf_token %}
-                                                    <button type="submit" class="btn btn-icon"><i
-                                                            class='fas fa-trash-alt'></i></button>
-                                                </form>
-                                            </td>
-                                        </tr>
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div class=" card-text">
+                                                        <div class="row justify-content-center m_top_small">
+                                                            <i class="fas fa-clock m_right_small"></i>
+                                                            {{timeslot.start_time|time:"H:i"}} -
+                                                            {{timeslot.end_time|time:"H:i"}}
+                                                        </div>
+                                                        <div class="row justify-content-center">
+                                                            <i class="fas fa-calendar-alt m_right_small"></i>
+                                                            {{timeslot.date }}
+                                                        </div>
+                                                        <div class="row p-card justify-content-end">
+                                                            <form action="/event/{{event.id}}/delete/{{timeslot.id}}/"
+                                                                method="POST" enctype="multipart/form-data">
+                                                                {% csrf_token %}
+                                                                <button type="submit" class="btn btn-icon"><i
+                                                                        class='fas fa-trash-alt'></i></button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
 
-                                    </table>
+
+                                            </div>
+
+                                            {% endfor %}
+                                        </div>
+
+                                    </div>
+
+
 
                                 </div>
-                                {% endfor %}
-
-
-
-
-
                             </div>
                         </div>
-                    </div>
 
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
 
 
 
-    <script src="{% static 'js/event.js' %}"></script>
-    {% endblock %}
+        <script src="{% static 'js/event.js' %}"></script>
+        <script src="{% static 'js/add_ts.js' %}"></script>
+        {% endblock %}

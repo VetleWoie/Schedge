@@ -558,7 +558,7 @@ def invite_accept(request, invite_id):
 
     try:
         notif = Notification.objects.get(target_object_id=invite.id)
-    except Notification.DoesNotExist:
+    except (Notification.DoesNotExist, Notification.MultipleObjectsReturned):
         pass
     else:
         notif.mark_as_read()

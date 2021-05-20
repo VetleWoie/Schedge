@@ -1,9 +1,10 @@
 <!-- INVITE -->
-<div class="card">
-    <div class="card-header" id="headingInvite">
+<div class="card card-accordion">
+    <div class="card-header card-accordion" id="headingInvite">
         <h2 class="mb-0">
             <button type="button" class="btn-accordion" data-toggle="collapse" data-target="#collapseInvite"
                 id="show_invite">
+                <i class="fas fa-plus fa"></i> 
                 Invite someone to the event
             </button>
         </h2>
@@ -12,7 +13,7 @@
         <div class="row">
 
             <div class="col">
-                <div class="card-header txt_center">
+                <div class="card-header card-accordion txt_center">
                     Invite a friend
                 </div>
                 <div class="card-body txt_center">
@@ -20,21 +21,21 @@
                         enctype="multipart/form-data">
                         {% csrf_token %}
                         <p>
-                            <label>Invite:</label>
+                        
                             {{inviteform.invitee}}
+                            <input type="submit" class="btn btn-light" value="Submit" id="invite-submit">
                         </p>
-                        <input type="submit" class="btn btn-light" value="Submit" id="invite-submit">
                     </form>
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col justify-content-center">
-                <div class="card-header txt_center">
+                <div class="card card-accordion txt_center ">
+                <div class="card-header card-accordion txt_center">
                     Or invite someone else
                 </div>
-                <div class="card-body txt_center ">
-                    <form class="card card-sm" id="friendadd" action="{% url 'event_invite' event_id=event.id %}"
+                    <form class="card-body" id="friendadd" action="{% url 'event_invite' event_id=event.id %}"
                         method="POST" enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class="card-body row no-gutters align-items-center">
@@ -65,10 +66,11 @@
 
 <!-- PENDING INVITATIONS -->
 {%if invites%}
-<div class="card">
-    <div class="card-header" id="headingPending">
+<div class="card card-accordion">
+    <div class="card-header card-accordion" id="headingPending">
         <h2 class="mb-0">
             <button type="button" class="btn-accordion collapsed" data-toggle="collapse" data-target="#collapsePending">
+                <i class="fas fa-plus fa"></i> 
                 Pending invitations
             </button>
         </h2>

@@ -143,22 +143,7 @@
                     {%if this_weeks_events%}
                     <div class="row">
                         {% for event in this_weeks_events%}
-                        <!-- for loop -->
-                        <div class="col-sm-4">
-
-                            <div class="card">
-                                <!-- <img class="card-img-top" src="img_avatar1.png" alt="Card image" style="width:100%"> -->
-                                <div class="card-body">
-                                    <h4 class="card-title">{{event.title}}</h4>
-                                    <p class="card-text">{{event.description}}</p>
-                                    <a href="{% url 'event' event_id=event.id %}"
-                                        class="btn btn-secondary stretched-link">See event</a>
-                                </div>
-                            </div>
-
-                        </div>
-
-
+                        {% include "event_card.html" %}
                         {%endfor%}
                     </div>
                     {% else %}
@@ -179,22 +164,7 @@
                     {%if host_undecided%}
                     <div class="row">
                         {% for event in host_undecided%}
-                        <!-- for loop -->
-                        <div class="col-sm-4">
-
-                            <div class="card">
-                                <!-- <img class="card-img-top" src="img_avatar1.png" alt="Card image" style="width:100%"> -->
-                                <div class="card-body">
-                                    <h4 class="card-title">{{event.title}}</h4>
-                                    <p class="card-text">{{event.description}}</p>
-                                    <a href="{% url 'event' event_id=event.id %}"
-                                        class="btn btn-secondary stretched-link">See event</a>
-                                </div>
-                            </div>
-
-                        </div>
-
-
+                        {% include "event_card.html" %}
                         {%endfor%}
                     </div>
                     {% else %}
@@ -209,22 +179,7 @@
                     {%if host_decided%}
                     <div class="row">
                         {% for event in host_decided%}
-                        <!-- for loop -->
-                        <div class="col-sm-4">
-
-                            <div class="card">
-                                <!-- <img class="card-img-top" src="img_avatar1.png" alt="Card image" style="width:100%"> -->
-                                <div class="card-body">
-                                    <h4 class="card-title">{{event.title}}</h4>
-                                    <p class="card-text">{{event.description}}</p>
-                                    <a href="{% url 'event' event_id=event.id %}"
-                                        class="btn btn-secondary stretched-link">See event</a>
-                                </div>
-                            </div>
-
-                        </div>
-
-
+                        {% include "event_card.html" %}
                         {%endfor%}
                     </div>
                     {% else %}
@@ -243,22 +198,7 @@
                     {%if participant_as_guest%}
                     <div class="row">
                         {% for event in participant_as_guest%}
-                        <!-- for loop -->
-                        <div class="col-sm-4">
-
-                            <div class="card">
-                                <!-- <img class="card-img-top" src="img_avatar1.png" alt="Card image" style="width:100%"> -->
-                                <div class="card-body">
-                                    <h4 class="card-title">{{event.title}}</h4>
-                                    <p class="card-text">{{event.description}}</p>
-                                    <a href="{% url 'event' event_id=event.id %}"
-                                        class="btn btn-secondary stretched-link">See event</a>
-                                </div>
-                            </div>
-
-                        </div>
-
-
+                        {% include "event_card.html" %}
                         {%endfor%}
                     </div>
                     {% else %}
@@ -308,53 +248,27 @@
                     <div class="row inbox_box align-self-center p_all_small">
 
                         <!-- <div class="col inbox_event">{{friendreq.event.title}}</div> -->
-                        <div class="col inbox_host">From {{friendreq.from_user.first_name}}
+                        <div class="col inbox_host txt_large">From {{friendreq.from_user.first_name}}
                             {{friendreq.from_user.last_name}}</div>
                         <div class="col inbox_popbtn txt_right">
-                            <button type="button" class="btn btn-secondary" data-toggle="modal"
-                                data-target="#friendModal{{friendreq.id}}">
-                                Open
-                            </button>
-                        </div>
+                            <div class="row justify-content-end">
 
-                    </div>
-
-                    <!-- invite popup -->
-                    <div class="modal fade" id="friendModal{{friendreq.id}}">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-
-                                <!-- Modal Header -->
-                                <div class="modal-header">
-                                    <h4 class="modal-title">{{friendreq.from_user.first_name}}
-                                        {{friendreq.from_user.last_name}}</h4>
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                </div>
-
-                                <!-- Modal body
-                                <div class="modal-body">
-                                    {{invite.event.description}}
-                                </div> -->
-
-                                <!-- Modal footer -->
-                                <div class="modal-footer justify-content-center">
-                                    {%comment%}
-                                    <!-- <button type="button" class="btn btn-success" data-dismiss="modal">Accept</button> -->
-                                    <!-- <button type="button" class="btn btn-danger" data-dismiss="modal">Decline</button> -->
-                                    {%endcomment%}
-                                    <form action="{% url 'friend_request_accept' request_id=friendreq.id%}" method="POST" class="friend-req-btn silent-form">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-success">Accept</button>
-                                    </form>
-                                    <form action="{% url 'friend_request_reject' request_id=friendreq.id %}" method="POST" class="friend-req-btn silent-form">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-danger">Reject</button>
-                                    </form>
-                                </div>
-
+                                <form action="{% url 'friend_request_accept' request_id=friendreq.id%}" method="POST" class="friend-req-btn silent-form">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success">Accept</button>
+                                </form>
+                                <form action="{% url 'friend_request_reject' request_id=friendreq.id %}" method="POST" class="friend-req-btn silent-form">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger m_left_small">Reject</button>
+                                </form>
                             </div>
                         </div>
+
                     </div>
+
+
+                              
+
 
                     {%endfor%}
                     <!-- <div class="row justify-content-center nothing">Your inbox is empty</div> -->

@@ -95,10 +95,18 @@ body {
     padding-right: 20px;
 }
 
+.p_card {
+    padding: 0 1.25rem;
+}
+
 /* MARGIN */
 
 .m_top_xsmall {
     margin-top: 10px;
+}
+
+.m_card_top {
+    margin-top: 1.25rem;
 }
 
 .m_top_small {

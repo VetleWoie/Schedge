@@ -1,0 +1,46 @@
+<!-- for loop -->
+<div class="col-sm-4">
+
+    <div class="card">
+        <!-- <img class="card-img-top" src="img_avatar1.png" alt="Card image" style="width:100%"> -->
+        {% if event.image.url != "/media/default.jpg" %}
+
+        <img class="card-img-top" src="{{event.image.url}}" alt="Card image" style="width:100%">
+        {% endif %}
+        <div class="card-body">
+            <h4 class="card-title">{{event.title}}</h4>
+            {% if user != event.host %}
+            <div class="row p_card">
+                <i class="fas fa-user m_right_small"></i>
+                {{event.host}}
+            </div>
+            {% endif%}
+
+            <p class="card-text">
+            <div class="row p_card ">
+                <i class="fas fa-map-marker-alt m_right_small"></i>
+                {{event.location}}
+            </div>
+            <div class="row p_card">
+                <i class="fas fa-calendar-alt m_right_small"></i>
+                {%if event.startdate == event.enddate%}
+                {{event.startdate}}
+                {%else%}
+                {{event.startdate}} - {{event.enddate}}
+                {%endif%}
+            </div>
+            <div class="row p_card m_card_top">
+
+                {{event.description}}
+            </div>
+            </p>
+            <div class="row justify-content-center">
+
+                <a href="{% url 'event' event_id=event.id %}" class="btn btn-secondary stretched-link">See event</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- <i class="fas fa-plus fa"></i> -->
