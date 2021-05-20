@@ -557,7 +557,7 @@ def invite_accept(request, invite_id):
         return HttpResponse("Unauthorized", status=401)
 
     try:
-        notif = Notification.objects.get(target_object_id=invite.id)
+        notif = Notification.objects.get(target_object_id=invite.id, verb="event invite")
     except Notification.DoesNotExist:
         pass
     else:
@@ -606,7 +606,7 @@ def invite_reject(request, invite_id):
         return HttpResponse("Unauthorized", status=401)
 
     try:
-        notif = Notification.objects.get(target_object_id=invite.id)
+        notif = Notification.objects.get(target_object_id=invite.id, verb="event invite")
     except Notification.DoesNotExist:
         pass
     else:
@@ -657,7 +657,7 @@ def invite_delete(request, invite_id):
 
     #  silently remove the notifications
     try:
-        notification = Notification.objects.get(target_object_id=invite.id)
+        notification = Notification.objects.get(target_object_id=invite.id, verb="event invite")
     except Notification.DoesNotExist:
         pass
     else:
@@ -879,7 +879,7 @@ def friend_request_delete(request, request_id):
 
     #  silently remove the notifications
     try:
-        notification = Notification.objects.get(target_object_id=friendrequest.id)
+        notification = Notification.objects.get(target_object_id=friendrequest.id, verb="friend request")
     except Notification.DoesNotExist:
         pass
     else:
@@ -917,7 +917,7 @@ def friend_request_accept(request, request_id):
     to_user.profile.friends.add(from_user)
 
     try:
-        notif = Notification.objects.get(target_object_id=friend_req.id)
+        notif = Notification.objects.get(target_object_id=friend_req.id, verb="friend request")
     except Notification.DoesNotExist:
         pass
     else:
@@ -959,7 +959,7 @@ def friend_request_reject(request, request_id):
         return HttpResponseBadRequest('Error')
 
     try:
-        notif = Notification.objects.get(target_object_id=friend_request.id)
+        notif = Notification.objects.get(target_object_id=friend_request.id, verb="friend request")
     except Notification.DoesNotExist:
         pass
     else:
