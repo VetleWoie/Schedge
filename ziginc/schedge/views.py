@@ -119,7 +119,6 @@ def create_event(request):
             return redirect(event, newevent.id)
         else:
             return HttpResponse(form.errors.as_json(), status=400)
-            return render(request, "createevent.html", {"form": form}, status=400)
 
     # GET
     form = EventForm()  # empty form
@@ -127,7 +126,7 @@ def create_event(request):
     return render(request, "createevent.html", context)
 
 
-@login_required(login_url="/login/")
+# @login_required(login_url="/login/")
 def event(request, event_id):
     """Gets an event or creats a timeslot.
 
@@ -153,7 +152,6 @@ def event(request, event_id):
         this_event = Event.objects.get(id=event_id)
     except Event.DoesNotExist:
         raise Http404("404: not valid event id")
-
     if request.method == "POST":
         timeslotform = TimeSlotForm(request.POST, duration=this_event.duration)
         creator = request.user
@@ -171,6 +169,7 @@ def event(request, event_id):
     if not participating:
         return HttpResponse('Unauthorized', status=401)
 
+    # set status to F if event is in the past
     this_event.set_finished()  # set status to F is event is in the past
 
     potentialtimeslots = PotentialTimeSlot.objects.filter(event=this_event)
