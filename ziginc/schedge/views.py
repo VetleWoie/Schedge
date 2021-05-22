@@ -105,7 +105,6 @@ def create_event(request):
             return redirect(event, newevent.id)
         else:
             return HttpResponse(form.errors.as_json(), status=400)
-            return render(request, "createevent.html", {"form": form}, status=400)
 
     # GET
     form = EventForm()  # empty form
@@ -148,9 +147,7 @@ def event(request, event_id):
             create_time_slot(this_event, creator, timeslotdata)
 
         else:
-            # TODO: rewrite maybe.
-            # shouldn't be possible through the website though. only through manual post
-            return HttpResponseBadRequest("Invalid Form!")
+            return HttpResponseBadRequest(timeslotform.errors.as_text())
 
 
     participating = this_event.participants.filter(id=request.user.id).exists()
