@@ -247,6 +247,34 @@ class TimeSlotFunctionalTest(TestCase):
         self.assertNotIn("end_time", form.errors)
 
     
+    def test_normal_timeslot_completely_outside_rollover_event(self):
+        shortevent_model = self.example_event_model.copy()
+        shortevent_model["starttime"] = dt.time(20)
+        shortevent_model["endtime"] = dt.time(5)
+
+        event = Event.objects.create(**shortevent_model)
+        t1 = {
+            "start_time": dt.time(10,00,00),
+            "end_time": dt.time(15,0,00),
+            "date": dt.datetime.now(),
+        }
+        form = TimeSlotForm(event=event,data=t1)
+        self.assertIn("start_time", form.errors)
+
+    def test_rollover_timeslot_completely_outside_normal_event(self):
+        shortevent_model = self.example_event_model.copy()
+        shortevent_model["starttime"] = dt.time(13)
+        shortevent_model["endtime"] = dt.time(17)
+
+        event = Event.objects.create(**shortevent_model)
+        t1 = {
+            "start_time": dt.time(20,00,00),
+            "end_time": dt.time(10,0,00),
+            "date": dt.datetime.now(),
+        }
+        form = TimeSlotForm(event=event,data=t1)
+        self.assertIn("start_time", form.errors)
+
     def test_create_timeslot(self):
         response = self.client.post(f"/event/{self.testevent.id}/", self.example_timeslot)
         # there is a timeslot in the context
