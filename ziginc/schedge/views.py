@@ -14,10 +14,11 @@ from django.contrib.auth.decorators import login_required
 from django.template import loader
 from django.urls import reverse_lazy, reverse
 from django.views import generic
+from django.db.models import Q
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.models import User
-from django.utils.timezone import get_current_timezone
+from django.utils.timezone import get_current_timezone, now
 from collections import namedtuple
 import re
 
@@ -41,10 +42,23 @@ def home(request):
 @login_required(login_url="/login/")
 def mypage(request):
     user = request.user
+
+    yesterday = now() - dt.timedelta(days=1)
+    # set status of finished events
+    finished_events = Event.objects.filter(
+        Q(chosen_time__lte=yesterday)
+        | Q(enddate__lte=yesterday.date()) & ~Q(status="F"),
+        Q(host=user) | Q(participants=user),
+    )
+    for event in finished_events:
+        event.status = "F"
+        event.save()
+
     host_undecided = Event.objects.filter(host=user, status="U")
     host_decided = Event.objects.filter(host=user, status="C")
 
-    participant_as_guest = Event.objects.filter(participants=user).exclude(host=user)
+    # all guest you are a partipant of, which is not finished and youre not the host of
+    participant_as_guest = Event.objects.filter(~Q(status="F"), participants=user).exclude(host=user)
 
     invites = Invite.objects.filter(invitee=user)
 
@@ -156,6 +170,9 @@ def event(request, event_id):
     participating = this_event.participants.filter(id=request.user.id).exists()
     if not participating:
         return HttpResponse('Unauthorized', status=401)
+
+    this_event.set_finished()  # set status to F is event is in the past
+
     potentialtimeslots = PotentialTimeSlot.objects.filter(event=this_event)
     your_timeslots = TimeSlot.objects.filter(event=this_event, creator=request.user)
     # new time slot form with this event's start date and end date
