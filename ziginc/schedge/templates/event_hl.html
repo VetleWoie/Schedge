@@ -34,7 +34,7 @@
                     Or invite someone else
                 </div>
                 <div class="card-body txt_center ">
-                    <form class="card card-sm" id="friendadd" action="{% url 'event_invite' event_id=event.id %}"
+                    <form class="card card-sm silent-form" id="friendadd" action="{% url 'event_invite' event_id=event.id %}"
                         method="POST" enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class="card-body row no-gutters align-items-center">
