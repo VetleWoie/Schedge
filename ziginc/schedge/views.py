@@ -126,7 +126,7 @@ def create_event(request):
     return render(request, "createevent.html", context)
 
 
-# @login_required(login_url="/login/")
+@login_required(login_url="/login/")
 def event(request, event_id):
     """Gets an event or creats a timeslot.
 
