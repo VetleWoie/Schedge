@@ -110,7 +110,7 @@ class TimeSlotForm(forms.ModelForm):
 
         widgets = {"start_time": TimeInput(), "end_time": TimeInput(), "date": DateInput()}
     def __init__(self, *args, **kwargs):
-        self.duration = kwargs.pop("duration", None)
+        self.event = kwargs.pop("event", None)
         super().__init__(*args, **kwargs)
 
     def set_limits(self, event):
@@ -126,10 +126,11 @@ class TimeSlotForm(forms.ModelForm):
         """Validates the time inputs"""
         start = dt.datetime.combine(self.cleaned_data.get("date"), self.cleaned_data.get("start_time"))
         end = dt.datetime.combine(self.cleaned_data.get("date"), self.cleaned_data.get("end_time"))
+        
         if end < start: # is rollover timeslot
             end += dt.timedelta(1)
 
-        if end - start < self.duration: # time slot is too short
+        if end - start < self.event.duration: # time slot is too short
             raise forms.ValidationError(
                 {
                     "start_time": ["Time slot is too short"],

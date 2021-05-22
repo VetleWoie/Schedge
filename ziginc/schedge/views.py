@@ -141,7 +141,7 @@ def event(request, event_id):
         raise Http404("404: not valid event id")
 
     if request.method == "POST":
-        timeslotform = TimeSlotForm(request.POST, duration=this_event.duration)
+        timeslotform = TimeSlotForm(request.POST, event=this_event)
         creator = request.user
         if timeslotform.is_valid() and creator.is_authenticated:
             timeslotdata = timeslotform.cleaned_data

@@ -88,7 +88,7 @@ class TimeSlotFunctionalTest(TestCase):
             "date": dt.datetime.now(),
         }
         
-        form = TimeSlotForm(duration=self.testevent.duration,data=t1)
+        form = TimeSlotForm(event=self.testevent,data=t1)
         #Check errors in start time
         with self.assertRaises(KeyError,msg="Expected no errors but got error(s) in starttime."):
             print("\nExpected no errors in start time but got %d \n Errors: \n %s" % (len(form.errors["start_time"]),form.errors["start_time"]))
@@ -104,7 +104,7 @@ class TimeSlotFunctionalTest(TestCase):
             "date": dt.datetime.now(),
         }
         
-        form = TimeSlotForm(duration=self.testevent.duration,data=t1)
+        form = TimeSlotForm(event=self.testevent,data=t1)
         try:
             #Check errors in start time
             self.assertEqual(len(form.errors["start_time"]), 1, msg="Expected 1 error in start time got %d" % len(form.errors["start_time"]))            
