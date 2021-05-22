@@ -11,7 +11,6 @@ class SplitDurationWidget(forms.MultiWidget):
         widgets = (
             forms.NumberInput(attrs=attrs),
             forms.NumberInput(attrs=attrs),
-            forms.NumberInput(attrs=attrs),
         )
         super().__init__(widgets, attrs)
 
