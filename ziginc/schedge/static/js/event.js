@@ -39,13 +39,6 @@ function errorCallBack(error) {
     loc_errmsg.innerHTML = "Enable location services to use this feature"
 }
 
-function validateSubmit(message, id) {
-    result = confirm(message);
-    if (result) {
-        $('#' + id).submit();
-    }
-}
-
 
 var holder = document.querySelector("[dir]");
 var prev_section = "overlapTS";

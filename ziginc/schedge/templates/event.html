@@ -84,7 +84,7 @@
                         <div id="collapseTS" class="collapse" aria-labelledby="headingTS" data-parent="#eventAccordion">
                             <div class="card-body txt_center">
                                 <form action="{% url 'event' event_id=event.id %}" method="post"
-                                    enctype="multipart/form-data">
+                                    enctype="multipart/form-data" class="silent-form">
                                     {% csrf_token %}
                                     {{ timeslotform.as_p }}
                                     <input type="submit" class="btn btn-light" value="Submit">

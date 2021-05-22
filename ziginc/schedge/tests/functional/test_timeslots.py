@@ -159,25 +159,3 @@ class TimeSlotFunctionalTest(TestCase):
         self.assertEqual(response.status_code, 404)
         timeslots = TimeSlot.objects.all()
         self.assertEqual(len(timeslots), 1)
-
-    @skip("need better form validation on the timeslots")
-    def test_create_timeslot_outside_range(self):
-        # even't time interval is 8:30 am to 11:45 am
-        # posting timeslot at 13:00 should fail
-        timeslot = {
-            "date": self.tomorrow,
-            "start_time": "13:00",
-            "end_time": "15:00",
-        }
-        response = self.client.post(f"/event/{self.testevent.id}/", timeslot)
-        self.assertEqual(response.status_code, 400)
-
-        # enddate is in one week. try posting timeslot in two weeks
-        in_two_weeks = (dt.datetime.now() + dt.timedelta(days=14)).strftime("%Y-%m-%d")
-        timeslot = {
-            "date": in_two_weeks,
-            "start_time": "09:10",
-            "end_time": "13:00",
-        }
-        response = self.client.post(f"/event/{self.testevent.id}/", timeslot)
-        self.assertEqual(response.status_code, 400)
