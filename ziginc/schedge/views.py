@@ -357,7 +357,7 @@ def eventedit(request, event_id):
         "starttime": this_event.starttime.strftime("%H:%M"),
         "endtime": this_event.endtime.strftime("%H:%M"),
         # [days, hours, minutes]
-        "duration": [seconds // 86400, (seconds // 3600) % 24, (seconds // 60) % 60],
+        "duration": [(seconds // 3600) % 24, (seconds // 60) % 60],
     }
 
     form = EventForm(instance=this_event, initial=initial_times)
