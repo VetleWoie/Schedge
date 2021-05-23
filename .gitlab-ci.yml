@@ -54,7 +54,7 @@ coverage:
     - python3 manage.py migrate
     - coverage run
     - coverage xml
-    - coverage report
+    - coverage report --fail-under=90
   only:
     - master
   artifacts:
