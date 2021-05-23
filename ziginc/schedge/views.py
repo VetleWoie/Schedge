@@ -31,6 +31,23 @@ from notifications.models import Notification
 
 
 def home(request):
+    """Displays the homepage for schedge.
+
+    Uses the 'request' argument passed to know is user is logged in.
+
+    Parameters
+    ----------
+    request : WSGI object
+        A WSGI object containing the user who sent the request,
+        which HTTP method, potential files.
+
+    Returns
+    -------
+        Return a HttpResponse whose content is filled with the result
+        of calling django.template.loader.render_to_string() with 'context' containing homepage 
+        and number of user in the database.
+        Or return an HttpResponseRedirect to the mypage/dashboard if a user is logged in.
+    """
     user_count = User.objects.count()
     context = {"user_count": user_count}
     if request.user.is_authenticated:
@@ -41,6 +58,22 @@ def home(request):
 
 @login_required(login_url="/login/")
 def mypage(request):
+    """Displays the dashboard/mypage for a spesific user.
+
+    Uses the 'request' argument passed to know what user to show dashboard for.
+
+    Parameters
+    ----------
+    request : WSGI object
+        A WSGI object containing the user who sent the request,
+        which HTTP method, potential files.
+
+    Returns
+    -------
+        Return a HttpResponse whose content is filled with the result
+        of calling django.template.loader.render_to_string() with 'context'
+        or return an HttpResponseRedirect to the login page if user is not  already logged in.
+    """
     user = request.user
 
     yesterday = now() - dt.timedelta(days=1)
