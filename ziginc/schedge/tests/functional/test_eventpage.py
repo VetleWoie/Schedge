@@ -55,3 +55,39 @@ class EventTest(TestCase):
         self.client.login(username=self.other.username, password='Elias123')
         response = self.client.get(f"/event/{self.golf.id}/")
         self.assertEqual(response.status_code, 401)
+
+    def test_event_on_mypage(self):
+        response = self.client.get(f"/mypage/")
+        self.assertIn(self.golf, response.context["host_undecided"])
+    
+    def test_finished_event(self):
+        old_event = self.example_model.copy()
+        old_event["startdate"] = dt.datetime.now() - dt.timedelta(days=2)
+        old_event["enddate"] = dt.datetime.now() - dt.timedelta(days=1)
+
+        oldgolf = Event.objects.create(**old_event)
+        oldgolf.participants.add(self.user)
+
+        self.assertEqual(oldgolf.status, "U")
+    
+        response = self.client.get(f"/mypage/")
+        self.assertNotIn(oldgolf, response.context["host_undecided"])
+        oldgolf = Event.objects.get(id=oldgolf.id)
+        self.assertEqual(oldgolf.status, "F")
+    
+    def test_finished_event_set_by_eventpage(self):
+        # self.client.login(username=self.user.username, password="Elias123")
+        old_event = self.example_model.copy()
+        old_event["startdate"] = dt.datetime.now() - dt.timedelta(days=20)
+        old_event["enddate"] = dt.datetime.now() - dt.timedelta(days=10)
+        oldgolf = Event.objects.create(**old_event)
+        oldgolf.participants.add(self.user)
+    
+        self.assertEqual(oldgolf.status, "U")
+        response = self.client.get(f"/event/{oldgolf.id}/")
+        self.assertEqual(response.status_code, 200)
+
+        oldgolf = Event.objects.get(id=oldgolf.id)
+
+        self.assertEqual(oldgolf.status, "F")
+    
