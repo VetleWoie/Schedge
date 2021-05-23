@@ -160,9 +160,7 @@ def event(request, event_id):
             create_time_slot(this_event, creator, timeslotdata)
 
         else:
-            # TODO: rewrite maybe.
-            # shouldn't be possible through the website though. only through manual post
-            return HttpResponseBadRequest("Invalid Form!")
+            return HttpResponseBadRequest(timeslotform.errors.as_text())
 
 
     participating = this_event.participants.filter(id=request.user.id).exists()
