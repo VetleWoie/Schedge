@@ -4,11 +4,12 @@
 {% notifications_unread as unread_count %}
 {% block stylesheet%}
 
-<link rel="stylesheet" href="{% static 'css/mypage_new.css' %}">
+<link rel="stylesheet" href="{% static 'css/mypage_style.css' %}">
 <link rel="stylesheet" href="{% static 'css/event_multistep.css' %}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css">
 
 {%endblock%}
 
@@ -24,11 +25,9 @@
             <div class="row m_left_small m_top_small">
                 <span class="return"></span>
                 <a class="simple_link" href="{% url 'mypage' %}"><i class="fas fa-angle-double-left fa-2x fa"></i></a>
-                <!-- <button class="nav_btn m_top_med" onclick="toggle('home')">My page</button> -->
+
             </div>
             <div class="row justify-content-center m_top_small">
-
-                <!--  -->
 
 
                 <!-- MultiStep Form -->
@@ -57,6 +56,8 @@
                                             </div><br>
                                             {{ form.title }}
                                             {{ form.description }}
+                                            <div class="explanation">Add an optional image</div><br>
+                                            
                                             {{ form.image }}
                                         </div> <input type="button" name="next" class="next action-button"
                                             value="Next Step" id="next1" />
@@ -70,7 +71,7 @@
                                                 <div class="row justify-content-center" id="loc-div">
 
                                                     <button onclick="getLocation()" type="button" id="curlocbutton"
-                                                        class="btn-info p_side_s">Use Your Current Location</button>
+                                                        class="btn p_side_s">Use Your Current Location</button>
                                                     <span class="invis" id="loc-err-msg"></span>
                                                 </div>
                                             </td>
@@ -124,7 +125,7 @@
                                             {{ form.endtime }}
                                         </div> <input type="button" name="previous"
                                             class="previous action-button-previous" value="Previous" id="previous5" />
-                                        <input type="button" name="make_payment" class="next action-button"
+                                        <input type="button" name="make_event" class="next action-button"
                                             value="Confirm" id="next5" />
                                     </fieldset>
 

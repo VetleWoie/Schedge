@@ -128,3 +128,44 @@ function validateSubmit(message, id) {
         $('#' + id).submit();
     }
 }
+
+
+
+function hostEvents(){
+    var hostUD = document.getElementById("hostUD");
+    var hostD = document.getElementById("hostD");
+
+    hostUD.style.display = (hostUD.style.display == "none" ? "block" : "none"); 
+    hostD.style.display = (hostD.style.display == "none" ? "block" : "none"); 
+    if(hostUD.style.display == "none") {
+        document.getElementById("hostUDbtn").classList.remove("folder_active");
+        document.getElementById("hostUDbtn").classList.add("folder_unactive");
+        document.getElementById("hostDbtn").classList.remove("folder_unactive");
+        document.getElementById("hostDbtn").classList.add("folder_active");
+    } else {
+        document.getElementById("hostDbtn").classList.remove("folder_active");
+        document.getElementById("hostDbtn").classList.add("folder_unactive");
+        document.getElementById("hostUDbtn").classList.remove("folder_unactive");
+        document.getElementById("hostUDbtn").classList.add("folder_active");
+    } 
+}
+
+function partiEvents(){
+    var hostUD = document.getElementById("partiUD");
+    var hostD = document.getElementById("partiD");
+
+    hostUD.style.display = (hostUD.style.display == "none" ? "block" : "none"); 
+    hostD.style.display = (hostD.style.display == "none" ? "block" : "none"); 
+    if(hostUD.style.display == "none") {
+        document.getElementById("partiUDbtn").classList.remove("folder_active");
+        document.getElementById("partiUDbtn").classList.add("folder_unactive");
+        document.getElementById("partiDbtn").classList.remove("folder_unactive");
+        document.getElementById("partiDbtn").classList.add("folder_active");
+    } else {
+        document.getElementById("partiDbtn").classList.remove("folder_active");
+        document.getElementById("partiDbtn").classList.add("folder_unactive");
+        document.getElementById("partiUDbtn").classList.remove("folder_unactive");
+        document.getElementById("partiUDbtn").classList.add("folder_active");
+    } 
+}
+

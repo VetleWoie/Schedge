@@ -24,6 +24,7 @@ import re
 from .model_utils import riise_hofsøy, create_time_slot
 from .utils import time_diff
 
+from django.db.models import Q
 from django.db.models.signals import post_save
 from notifications.signals import notify
 from notifications.models import Notification
@@ -43,9 +44,10 @@ def mypage(request):
     user = request.user
     host_undecided = Event.objects.filter(host=user, status="U")
     host_decided = Event.objects.filter(host=user, status="C")
-
-    participant_as_guest = Event.objects.filter(participants=user).exclude(host=user)
-
+    host_all = Event.objects.filter(Q(host=user, status="U") | Q(host=user, status="C"))
+    participant_as_guest = Event.objects.filter(Q(participants=user, status="U") | Q(participants=user, status="C")).exclude(host=user)
+    participant_as_guest_undecided = Event.objects.filter(participants=user, status="U").exclude(host=user)
+    participant_as_guest_decided = Event.objects.filter(participants=user, status="C").exclude(host=user)
     invites = Invite.objects.filter(invitee=user)
 
     friends = request.user.profile.friends.all()
@@ -61,7 +63,10 @@ def mypage(request):
     context = {
         "host_undecided": host_undecided,
         "host_decided": host_decided,
+        "host_all": host_all,
         "participant_as_guest": participant_as_guest,
+        "participant_undecided": participant_as_guest_undecided,
+        "participant_decided": participant_as_guest_decided,
         "invites": invites,
         "this_week": this_weeks_events,
         "friends": friends,

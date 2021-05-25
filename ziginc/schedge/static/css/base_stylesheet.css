@@ -1,7 +1,8 @@
-body {
-
+html, body, main{
     padding: 0;
+    color: #16161d;
 }
+
 
 /* TEXT */
 
@@ -26,7 +27,7 @@ body {
 }
 
 .txt_bold {
-    font-weight: bolder;
+    font-weight: bold;
 }
 
 .txt_cursive {
@@ -52,6 +53,9 @@ body {
     padding-left: 10px;
 }
 
+.txt_reset {
+    font-size: 20px;
+}
 
 /* PADDING */
 
@@ -105,6 +109,13 @@ body {
     margin-top: 10px;
 }
 
+.m_top_em {
+    margin-top: 1em;
+}
+
+.m_top_em_s {
+    margin-top: 0.75em;
+}
 .m_card_top {
     margin-top: 1.25rem;
 }
@@ -184,15 +195,6 @@ body {
     color: white;
 }
 
-.box {
-    background-color: white;
-    border: 1px solid black  !important;
-    /* width: 50% !important; */
-    margin: auto;
-    margin-top: 20px;
-    border-radius: 10px;
-    box-shadow: 2px 2px 2px #3d3d41;
-}
 
 .btn-icon {
     background-color: transparent;
@@ -208,3 +210,55 @@ body {
 .full_width {
     width: 100%;
 }
+
+.div_top {
+    border-top: 1px solid rgb(156, 156, 156);
+    padding-top: 1em;
+}
+
+
+.folder_active {
+    background-image: linear-gradient(120deg, rgba(88, 225, 224, 0.75), rgba(255, 135, 74, 0.75));  
+    border: 1px solid lightgrey;
+}
+
+.folder_unactive {
+    border: 1px solid lightgrey;
+}
+
+
+.card-accordion {
+    background-color: transparent !important;
+    border: none !important;
+}
+
+.btn-accordion {
+    border: none;
+    background-color: transparent;
+    outline: none;
+
+}
+.btn-accordion:focus {
+
+    outline: none;
+}
+
+.btn-register {
+    width: 100%;
+    border-radius: 50px;
+}
+
+
+.card-event {
+    border: 1px solid #777777;
+}
+
+.desc_card {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.v-center {
+    display: flex;
+    align-items: center;
+ }

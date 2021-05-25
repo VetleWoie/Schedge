@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block stylesheet %}
-<link rel="stylesheet" href="{% static 'css/mypage_new.css' %}">
+<link rel="stylesheet" href="{% static 'css/mypage_style.css' %}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" />
@@ -25,7 +25,8 @@
             </div> -->
             <div class="row">
                 <div class="col-10 txt_left sub_title txt_large"><a href="{% url 'mypage' %}" class="simple_link"
-                        onclick="sessionStorage.setItem('whence', 'home')">Schedge</a></div>
+                        onclick="sessionStorage.setItem('whence', 'home')"><img src="{%static 'icons/logo.svg'%}"
+                            alt="Schedge" width="50%"></a></div>
             </div>
             <div class="row">
                 <button class="nav_btn nav_btn_selected m_top_small" id="home" onclick="toggle('home')">Home</button>
@@ -47,12 +48,14 @@
             </div>
             <div class="so m_top_l txt_ls_small">
                 <form method="POST" action="{% url 'delete_user_account' %}" id="del-user-btn">
-                {% csrf_token %}
+                    {% csrf_token %}
 
-                <input type="submit" class="btn btn-accordion" onclick="validateSubmit('Are you sure you want to delete?', 'del-user-btn');return false;" value="Delete your account"/>
+                    <input type="submit" class="btn btn-accordion"
+                        onclick="validateSubmit('Are you sure you want to delete?', 'del-user-btn');return false;"
+                        value="Delete your account" />
 
                 </form>
-                
+
             </div>
         </div>
 
@@ -83,8 +86,8 @@
                     <!-- for loop -->
                     <div class="row inbox_box align-self-center p_all_small">
 
-                        <div class="col inbox_event">{{invite.event.title}}</div>
-                        <div class="col inbox_host">From {{invite.event.host.first_name}}
+                        <div class="col inbox_event txt_large"><b>{{invite.event.title}}</b></div>
+                        <div class="col inbox_host txt_large">From {{invite.event.host.first_name}}
                             {{invite.event.host.last_name}}</div>
                         <div class="col inbox_popbtn txt_right">
                             <button type="button" class="btn btn-secondary" data-toggle="modal"
@@ -108,29 +111,37 @@
 
                                 <!-- Modal body -->
                                 <div class="modal-body">
+                                    <div class="row p_card justify-content-center">
+                                        <div class="col-8">
+
+                                            <i class="fas fa-map-marker-alt m_right_small"></i>
+                                            {{invite.event.location}}
+                                        </div>
+                                    </div>
+                                    <div class="row p_card justify-content-center m_btm_small">
+                                        <div class="col-8">
+
+                                            <i class="fas fa-calendar-alt m_right_small"></i>
+                                            {%if invite.event.startdate == invite.event.enddate%}
+                                            {{invite.event.startdate}}
+                                            {%else%}
+                                            {{invite.event.startdate}} - {{invite.event.enddate}}
+                                            {%endif%}
+                                        </div>
+                                    </div>
                                     {{invite.event.description}}
                                 </div>
 
                                 <!-- Modal footer -->
                                 <div class="modal-footer justify-content-center">
-                                    {%comment%}
-                                    <!-- <button type="button" class="btn btn-success" data-dismiss="modal">Accept</button> -->
-                                    <!-- <button type="button" class="btn btn-danger" data-dismiss="modal">Decline</button> -->
-<!--                                     
-                                    <a href="{% url 'invite_accept' invite_id=invite.id%}"
-                                        class="btn btn-success">Accept</a>
-                                    <a href="{% url 'invite_reject' invite_id=invite.id%}"
-                                        class="btn btn-danger">Decline</a> -->
-                                    {%endcomment%}
-
-                                        <form action="{% url 'invite_accept' invite_id=invite.id%}" method="POST">
-                                            {% csrf_token %}
-                                            <button type="submit" class="btn btn-success">Accept</button>
-                                        </form>
-                                        <form action="{% url 'invite_reject' invite_id=invite.id%}" method="POST">
-                                            {% csrf_token %}
-                                            <button type="submit" class="btn btn-danger">Reject</button>
-                                        </form>
+                                    <form action="{% url 'invite_accept' invite_id=invite.id%}" method="POST">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-success">Accept</button>
+                                    </form>
+                                    <form action="{% url 'invite_reject' invite_id=invite.id%}" method="POST">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger">Reject</button>
+                                    </form>
                                 </div>
 
                             </div>
@@ -149,78 +160,193 @@
                     </div>
 
 
-                    {%if this_weeks_events%}
+
+                    {%if this_week%}
                     <div class="row">
-                        {% for event in this_weeks_events%}
+                        {% for event in this_week%}
                         {% include "event_card.html" %}
                         {%endfor%}
                     </div>
                     {% else %}
-                    <div class="row justify-content-center nothing">No events this week</div>
+                    <div class="row justify-content-center nothing">You don't have any events this week</div>
                     {% endif %}
 
                 </div>
 
                 <!-- HOST SECTION -->
 
+
+
                 <div class="hostTxt">
-                    <div class="row">
-                        <div class="col sub_title m_top_med m_btm_small m_left_small txt_large">undecided *skal
-                            endre*
+                    <div class="row justify-content-center">
+                        <div class="col-auto m_top_med txt_large welcome_message txt_center">
+                            <div class="txt_large">Your Events</div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col">
+                            <div class="row txt_center">
+
+
+
+                                <div class="col radio-events">
+
+
+                                    <input type="radio" name="hostradio" value="all-h" checked>
+                                    <span class="hostradio_txt m_right_small">
+                                        All events
+                                    </span>
+
+
+                                    <input type="radio" name="hostradio" value="tbd-h">
+                                    <span class="hostradio_txt m_right_small">
+
+                                        To be determined
+                                    </span>
+
+                                    <input type="radio" name="hostradio" value="set-h">
+                                    <span class="hostradio_txt ">
+                                        Time set
+                                    </span>
+
+
+                                    <div class="host_event" id="all-host">
+                                        {%if host_all%}
+
+                                        <div class="card-columns">
+
+                                            {% for event in host_all%}
+                                            {% include "event_card.html" %}
+                                            {%endfor%}
+                                        </div>
+
+                                        {% else %}
+                                        <div class="row justify-content-center nothing">You do not host any
+                                            upcoming events
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="host_event" id="tbd-host">
+                                        {%if host_undecided%}
+                                        <div class="card-columns">
+                                            {% for event in host_undecided%}
+                                            {% include "event_card.html" %}
+                                            {%endfor%}
+                                        </div>
+                                        {% else %}
+                                        <div class="row justify-content-center nothing">You do not host any
+                                            upcoming events
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="host_event" id="set-host">
+                                        {%if host_decided%}
+                                        <div class="card-columns">
+                                            {% for event in host_decided%}
+                                            {% include "event_card.html" %}
+                                            {%endfor%}
+                                        </div>
+                                        {% else %}
+                                        <div class="row justify-content-center nothing">You do not host any
+                                            upcoming events
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
 
-                    {%if host_undecided%}
-                    <div class="row">
-                        {% for event in host_undecided%}
-                        {% include "event_card.html" %}
-                        {%endfor%}
-                    </div>
-                    {% else %}
-                    <div class="row m_left_small nothing">No events</div>
-                    {% endif %}
-
-                    <div class="row">
-                        <div class="col sub_title m_top_med m_btm_small m_left_small txt_large">decided *skal endre*
-                        </div>
-                    </div>
-
-                    {%if host_decided%}
-                    <div class="row">
-                        {% for event in host_decided%}
-                        {% include "event_card.html" %}
-                        {%endfor%}
-                    </div>
-                    {% else %}
-                    <div class="row m_left_small nothing">No events</div>
-                    {% endif %}
                 </div>
 
 
                 <!-- PARTICIPANT -->
                 <div class="partiTxt">
-                    <div class="row">
-                        <div class="col sub_title m_top_med m_btm_small m_left_small txt_large"> attending
+                    <div class="row justify-content-center">
+                        <div class="col-auto m_top_med txt_large welcome_message txt_center">
+                            <div class=" txt_large">Events you are a part of</div>
                         </div>
                     </div>
+                    <div class="row justify-content-center">
+                        <div class="col">
+                            <div class="row txt_center">
 
-                    {%if participant_as_guest%}
-                    <div class="row">
-                        {% for event in participant_as_guest%}
-                        {% include "event_card.html" %}
-                        {%endfor%}
+
+
+                                <div class="col radio-events">
+
+
+                                    <input type="radio" name="partradio" value="all-p" checked>
+                                    <span class="hostradio_txt m_right_small">
+                                        All events
+                                    </span>
+
+
+                                    <input type="radio" name="partradio" value="tbd-p">
+                                    <span class="hostradio_txt m_right_small">
+
+                                        To be determined
+                                    </span>
+
+                                    <input type="radio" name="partradio" value="set-p">
+                                    <span class="hostradio_txt ">
+                                        Time set
+                                    </span>
+
+
+                                    <div class="part_event" id="all-part">
+                                        {%if participant_as_guest%}
+                                        <div class="card-columns">
+                                            {% for event in participant_as_guest%}
+                                            {% include "event_card.html" %}
+                                            {%endfor%}
+                                        </div>
+                                        {% else %}
+                                        <div class="row justify-content-center nothing">You do not participate in any
+                                            upcoming events
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="part_event" id="tbd-part">
+                                        {%if participant_undecided%}
+                                        <div class="card-columns">
+                                            {% for event in participant_undecided%}
+                                            {% include "event_card.html" %}
+                                            {%endfor%}
+                                        </div>
+                                        {% else %}
+                                        <div class="row justify-content-center nothing">You do not participate in any
+                                            upcoming events
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="part_event" id="set-part">
+                                        {%if participant_decided%}
+                                        <div class="card-columns">
+                                            {% for event in participant_decided%}
+                                            {% include "event_card.html" %}
+                                            {%endfor%}
+                                        </div>
+                                        {% else %}
+                                        <div class="row justify-content-center nothing">You do not participate in any
+                                            upcoming events
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
-                    {% else %}
-                    <div class="row justify-content-center nothing">you do not participate in any upcoming events
-                    </div>
-                    {% endif %}
+              
                 </div>
                 <!-- FRIENDS -->
                 <div class="friendsTxt">
                     <div class="row justify-content-center ">
                         <div class="col-12 col-md-10 col-lg-8 m_top_med">
-                            <form class="card card-sm silent-form" id="friendadd" action="{% url 'friend_request_send' %}"
-                                method="POST">
+                            <form class="card card-sm silent-form" id="friendadd"
+                                action="{% url 'friend_request_send' %}" method="POST">
                                 {% csrf_token %}
                                 <div class="card-body row no-gutters align-items-center">
                                     <div class="col-auto">
@@ -262,11 +388,13 @@
                         <div class="col inbox_popbtn txt_right">
                             <div class="row justify-content-end">
 
-                                <form action="{% url 'friend_request_accept' request_id=friendreq.id%}" method="POST" class="friend-req-btn silent-form">
+                                <form action="{% url 'friend_request_accept' request_id=friendreq.id%}" method="POST"
+                                    class="friend-req-btn silent-form">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-success">Accept</button>
                                 </form>
-                                <form action="{% url 'friend_request_reject' request_id=friendreq.id %}" method="POST" class="friend-req-btn silent-form">
+                                <form action="{% url 'friend_request_reject' request_id=friendreq.id %}" method="POST"
+                                    class="friend-req-btn silent-form">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-danger m_left_small">Reject</button>
                                 </form>
@@ -276,7 +404,7 @@
                     </div>
 
 
-                              
+
 
 
                     {%endfor%}
@@ -296,16 +424,20 @@
                             <!-- for loop -->
                             <div class="card">
                                 <div class="card-body">
-                                    <div class="card-title">{{friend.first_name}} {{friend.last_name}}</div>
-                                    <div class="card-text">{{friend.username}}</div>
-                                    <div class="card-text txt_right">
+                                    <div class="card-title txt_center"><b>{{friend.first_name}} {{friend.last_name}}</b>
+                                    </div>
+                                    <div class="p_card row">
 
-                                        <form class="friend-del-btn silent-form" action="{% url 'friend_delete' user_id=friend.id %}"
-                                            method="POST">
-                                            {% csrf_token %}
-                                            <button type="submit" class="card-text txt_right btn btn-icon"><i
-                                                    class="fas fa-user-slash"></i></button>
-                                        </form>
+                                        <div class="col card-text">{{friend.username}}</div>
+                                        <div class="col card-text">
+
+                                            <form class="friend-del-btn silent-form"
+                                                action="{% url 'friend_delete' user_id=friend.id %}" method="POST">
+                                                {% csrf_token %}
+                                                <button type="submit" class="card-text txt_right btn btn-icon"><i
+                                                        class="fas fa-user-slash"></i></button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

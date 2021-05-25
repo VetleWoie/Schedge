@@ -99,7 +99,7 @@ class CreateEventSeleniumTest(StaticLiveServerTestCase):
         nextbtn.click()
 
         # submit form
-        submit_btn = self.driver.find_element_by_id("confirmbtn")
+        submit_btn = self.driver.find_element_by_id("event_url")
         submit_btn.click()
 
         # wait for new site to load

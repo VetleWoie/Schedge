@@ -32,7 +32,7 @@
                     <div class="card card-accordion">
                         <div class="card-header card-accordion" id="headingAttendees">
                             <h2 class="mb-0">
-                                <button type="button" class="btn-accordion" data-toggle="collapse"
+                                <button type="button" class="btn-accordion txt_reset" data-toggle="collapse"
                                     data-target="#collapseAttendees">
                                     <i class="fas fa-plus fa"></i>
                                     Attendees
@@ -73,10 +73,11 @@
 
 
                     <!-- ADD TIME SLOTS -->
+                    {%if event.status == "U" %}
                     <div class="card card-accordion">
                         <div class="card-header card-accordion" id="headingTS">
                             <h2 class="mb-0">
-                                <button type="button" class="btn-accordion" data-toggle="collapse"
+                                <button type="button" class="btn-accordion txt_reset" data-toggle="collapse"
                                     data-target="#collapseTS">
                                     <i class="fas fa-plus fa"></i>
                                     Add a time
@@ -90,26 +91,39 @@
                                     {% csrf_token %}
 
                                     <div class="tab">
-                                        1. Select a date
-                                        <br>
-                                        {{timeslotform.date}}
-                                    </div>
-                                    <div class="tab">
-                                        2. Select the earliest start time<br>
-                                        {{timeslotform.start_time}}
-                                    </div>
-                                    <div class="tab">
-                                        3. Select the latest end time<br>
-                                        {{timeslotform.end_time}} <br><br>
-                                        <input type="submit" class="btn btn-light" value="Submit">
-                                    </div>
+                                        <div class="ts-txt">
+                                            <strong>1.</strong> Select a date
+                                        </div>
+                                        <div class="ts-field">
 
+                                            {{timeslotform.date}}
+                                        </div>
+                                    </div>
+                                    <div class="tab">
+                                        <div class="ts-txt">
+                                            <strong>2.</strong> Select the earliest start time
+                                        </div>
+                                        <div class="ts-field">
+
+                                            {{timeslotform.start_time}}
+                                        </div>
+                                    </div>
+                                    <div class="tab">
+                                        <div class="ts-txt">
+                                            <strong>3.</strong> Select the latest end time
+                                        </div>
+                                        <div class="ts-field">
+                                            {{timeslotform.end_time}}
+                                        </div>
+                                    </div>
+                                    
                                     <div style="overflow:auto;">
                                         <div class="txt_center">
                                             <button class="btn btn-dark m_top_small" type="button" id="prevBtn"
-                                                onclick="nextPrev(-1)">Previous</button>
+                                            onclick="nextPrev(-1)">Previous</button>
                                             <button class="btn btn-dark m_top_small" type="button" id="nextBtn"
-                                                onclick="nextPrev(1)">Next</button>
+                                            onclick="nextPrev(1)">Next</button>
+                                            <input id="ts_submit_btn" type="submit" class="btn btn-dark m_top_small" value="Submit" style="display:none;">
                                         </div>
                                     </div>
 
@@ -128,7 +142,7 @@
                             </div>
                         </div>
                     </div>
-
+                    {%endif%}
 
 
                 </div>
@@ -137,12 +151,14 @@
 
             <div class="row justify-content-center m_top_med m_btm_small">
 
-                <div class="col-md-4 txt_center">
-                    <a href="{% url 'mypage' %}" class="btn btn-dark">My page</a>
+                <div class="col-md-5 txt_center">
+                    <a href="{% url 'mypage' %}" class="btn btn-dark full_width">My page</a>
                 </div>
                 {% if user == event.host %}
-                <div class="col-md-3 txt_center">
-                    <a href="{% url 'eventedit' event_id=event.id %}" class="btn btn-dark">Edit</a>
+                <div class="col-auto txt_center">
+                    <a href="{% url 'eventedit' event_id=event.id %}" class="btn btn-dark">
+                        <i class="fas fa-edit"></i>
+                        Edit</a>
                 </div>
                 {% endif %}
             </div>
@@ -154,7 +170,7 @@
                     <form action="{% url 'participant_leave' event_id=event.id user_id=user.id %}" method="post"
                         enctype="multipart/form-data">
                         {% csrf_token %}
-                        <input type="submit" value="Leave event">
+                        <input type="submit" class="btn btn-dark" value="Leave event">
                     </form>
                 </div>
 
@@ -167,56 +183,65 @@
         <!-- RIGHT SECTION - EVENT INFO, TIME SLOTS -->
         <div class="col m_top_med">
             <!-- EVENT INFO -->
-            <div class="row justify-content-center event_info_wrap">
-                <div class="col-md-11 event_info">
-                    <div class="row v-center">
+            <div class="row justify-content-center">
+                <div class="col-md-11">
+                    <div class="row justify-content-center v-center">
 
                         {% if event.image.url != "/media/default.jpg" %}
-                        <div class="col-md-4 event_image">
-                            <img class="img_test" src="{{event.image.url}}" />
+                        <div class="col-md-4 event-img-wrap">
+                            <img class="event-img" src="{{event.image.url}}" />
                         </div>
                         {% endif %}
-                        <div class="col-md-8 displayright event_txt">
+                        <div class="col-md-8 displayright event-txt">
                             <div class="txt_center m_top_xsmall m_btm_small">
 
-                                <span class="event_tit " id="id_event_title"> {{event.title}}</span>
+                                <span class="event-title " id="id_event_title"> {{event.title}}</span>
                                 <br>
                                 <i class="fas fa-user"></i>
                                 {% if user != event.host %}
-                                {{event.host}}
+                                {{event.host.first_name}} {{event.host.last_name}}
                                 {%else%}
                                 You
                                 {% endif %}
                             </div>
 
                             <div class="row justify-content-center">
-                                <div class="col-md-2"></div>
-                                <div class="col-md-3 txt_large">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    {{event.location}}
-                                    
+                                <!-- <div class="col-md-2"></div> -->
+                                {%if event.status == "C"%}
+                                <div class="col txt_center txt_large final-time"> 
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <i class="far fa-clock m_right_small"></i>
+                                    {{event.chosen_time}}
                                 </div>
-                                
-                                <div class="col-md-7 txt_large">
+                                {%else%}
+                                <div class="col-md txt_large txt_right">
                                     <i class="fas fa-calendar-alt"></i>
                                     {%if event.startdate == event.enddate%}
                                     {{event.startdate}}
                                     {%else%}
                                     {{event.startdate}} - {{event.enddate}}
                                     {%endif%}
+
                                 </div>
-                            </div>
-                            <div class="row justify-content-center">
-                                <div class="col-md-2"></div>
-                                <div class="col-md-3 txt_large">
-                                    
-                                    <i class="fas fa-stopwatch"></i> {{event.duration|nicedelta}}
-                                    
-                                </div>
-                                <div class="col-md-7 txt_large">
+
+                                <div class="col-md txt_large">
                                     
                                     <i class="far fa-clock"></i>
                                     {{event.starttime|time:'H:i'}} - {{event.endtime|time:'H:i'}}
+                                   
+                                
+                                </div>
+                                {%endif%}
+                            </div>
+                            <div class="row justify-content-center">
+                                <!-- <div class="col-md-2"></div> -->
+                                <div class="col-md txt_large txt_right">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    {{event.location}}
+                                    
+                                </div>
+                                <div class="col-md txt_large">
+                                    <i class="fas fa-stopwatch"></i> {{event.duration|nicedelta}}
                                     
                                 </div>
                             </div>
@@ -224,21 +249,22 @@
 
                             <div class="row justify-content-center">
 
-                                <div class="col-md-8 event_desc m_top_small p_side_s">
+                                <div class="col-md-8 event-desc m_top_small">
                                     {{event.description}}
                                 </div>
-                                
+
                             </div>
-                        
+
 
                         </div>
                     </div>
                 </div>
             </div>
 
+            {%if event.status == "U"%}
 
             <!-- TIMESLOT SECTION -->
-            <div class="row m_top_small justify-content-center txt_center">
+            <div class="row div_top m_top_small justify-content-center txt_center">
                 <div class="col-md-5 folder_active btn btn-light" id="overlapTS">
                     <button class="btn-accordion full_width" onclick="tmslotToggle('overlapTS')">OVERLAP *</button>
                 </div>
@@ -254,7 +280,6 @@
 
 
 
-
             <div class="row m_top_med">
                 <!-- BUTTONS -->
 
@@ -263,7 +288,7 @@
                     <div dir="overlapTS">
 
                         <!-- overlap timeslots -->
-                        <div class="overlapTS_txt">
+                        <div class="overlapts-txt">
                             <div class="row">
 
 
@@ -381,10 +406,10 @@
                         </div>
 
                         <!-- own timeslots -->
-                        <div class="ownTS_txt">
+                        <div class="ownts-txt">
 
                             <!-- overlap timeslots -->
-                            <div class="overlapTS_txt">
+                            <div class="overlapts-txt">
                                 <div class="row">
 
 
@@ -441,6 +466,7 @@
                     </div>
                 </div>
             </div>
+            {%endif%}
         </div>
 
 

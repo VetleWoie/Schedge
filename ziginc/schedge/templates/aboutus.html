@@ -6,47 +6,36 @@
 {% endblock %}
 
 {% block content%}
-
-
-<div class="container-fluid">
-    <div class="container-fluid">
-        <div class="row txt_ls_med m_top_small">
-          <div class="col logo txt_large p_side_m">
-            <a href="{% url 'home' %}" class="simple_link">Schedge</a>
-          </div>
-        </div>
-      
-      
-    <div class="row">
-        <div class="col txt_center main_title txt_ls_l">About us</div>
-    </div>
+<div class="container-fluid h-100">
+    {%include "startpage_header.html"%}
 
     <div class="row">
-        <div class="col txt_center sub_txt m_top_med txt_ls_small">
-            Hi! We're Zig Inc.
+        <div class="col main_title txt_center txt_ls_med m_top_med">
+            Hi, we are Zig Inc.
         </div>
     </div>
-
-    <div class="row">
-        <div class="col txt_center sub_txt m_top_med txt_ls_small">
+    <div class="row justify-content-center m_top_em">
+        <div class="col txt_center sub_txt txt_ls_small">
             We are commited to making scheduling your events as easy as possible.
-        </div>        
+        </div>
     </div>
+
     <div class="row">
-        <div class="col txt_center under_title txt_ls_l">Who are we?</div>
+        <div class="col txt_center under_title txt_ls_med m_top_em">Who are we?</div>
     </div>
-    <div class="row">
-        <div class="col txt_center sub_txt m_top_med txt_ls_small">
+    <div class="row justify-content-center">
+        <div class="col txt_center sub_txt txt_ls_small">
             We are Alexander, Elias, Iris, Marte, Theodor and Vetle.
-        </div>        
+        </div>
     </div>
+    
     <div class="row">
-        <div class="col txt_center under_title txt_ls_l">Where can you find us?</div>
+        <div class="col txt_center under_title txt_ls_med m_top_em">Where can you find us?</div>
     </div>
-    <div class="row">
-        <div class="col txt_center sub_txt m_top_med txt_ls_small">
+    <div class="row justify-content-center">
+        <div class="col txt_center sub_txt txt_ls_small">
             At Realfagsbygget Monday through Sunday between 10:00 AM and 10:00 PM
-        </div>        
+        </div>
     </div>
 </div>
 {%endblock%}

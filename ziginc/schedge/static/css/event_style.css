@@ -1,4 +1,3 @@
-@import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css");
 html, body, main{
     height: 100%;
 }
@@ -11,65 +10,34 @@ html, body, main{
 }
 
 
-.img_test {
-    /* border-radius: 8px; */
+.event-img {
     margin-left: auto;
     margin-right: auto;
-    /* display: block; */
-    /* max-height: 20em; */
-    max-width: 100%;
-    /* object-fit:fill; */
-    /* margin-top: 2%; */
-    /* border: 1px solid transparent; */
-    /* width: 100%; */
-    /* float: right !important; */
-    /* text-align: right; */
-    
-    /* border-radius: 12px;
-    border: 2.5px solid #8d8d8d; */
-    /* border: 1px solid rgba(187, 53, 53, 0.945); */
+    max-width: 80%;
+    object-fit:contain;
     border-radius: .5rem;
 }
 
-
-.img_test {
-    /* width: 100%; */
-}
-
-.event_info_wrap {
-    padding-bottom: 50px;
-    border-bottom: 1px solid rgb(156, 156, 156);
-}
-
-
-.event_image {
+.event-img-wrap {
     padding: 0 !important;
 }
 
 
-.event_tit {
+
+.event-title {
     font-size: 2em;
-    letter-spacing: 5px;
-    padding-left: 5pxmål;
-    /* color: red; */
 }
 
-.event_txt {
+.event-txt {
     padding-right: 40px;
 }
 
 
-.event_inf_text {
-    text-transform: uppercase;
-}
 
-.event_desc {
+.event-desc {
     font-size: 1.25em;
 }
 
-.white_txt {
-    color: black;
-}
 
 .people td{
     text-align: center;
@@ -86,70 +54,18 @@ html, body, main{
     text-align: center;
 }
 
-.v-center {
-    display: flex;
-    align-items: center;
- }
-
-
 
 .left-section {
     background-color: lightgray;
-    background-image: linear-gradient(120deg, #58E1E0, #FF874A);
-    /* height: 100%; */
-  
+    background-image: linear-gradient(120deg, rgba(88, 225, 224, 0.75), rgba(255, 135, 74, 0.75));  
 }
 
 
-.folder_row {
-    border-bottom: 1px solid black;
-    border-top: 1px solid black;
-}
 
-.folder_active {
-    /* border: 1px solid black;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    border-bottom: 1px solid transparent !important;
-    border-left: none;
-    border-right: none;
-    padding-top: 2px;
-    background-color: white; */
-    background-image: linear-gradient(120deg, #58E1E0, #FF874A);
-    border: 1px solid lightgrey;
-}
-
-.folder_unactive {
-    /* border: 1px solid black;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    background-color: lightgrey; */
-    /* background: blue; */
-    border: 1px solid lightgrey;
-}
-
-
-/* ACCORDION STUFF DOWN HERE */
+/* ACCORDION */
 #eventAccordion {
     width: 100%;
 }
-
-.card-accordion {
-    background-color: transparent !important;
-    border: none !important;
-}
-
-.btn-accordion {
-    border: none;
-    background-color: transparent;
-    outline: none;
-    font-size: 20px;
-}
-.btn-accordion:focus {
-
-    outline: none;
-}
-
 
 .accordion .fa{
     margin-right: 0.5rem;
@@ -157,10 +73,8 @@ html, body, main{
 
 
 
-
-
 /* TIME SLOT STUFF */
-
+/* SOURCE: https://www.w3schools.com/howto/howto_js_form_steps.asp*/
 /* Hide all steps by default: */
 .tab {
     display: none;
@@ -207,13 +121,26 @@ input[type=radio]:checked ~ label{
     background-color: rgb(238, 159, 145) !important;
 }
 
-.desc {
-    max-width: 50ch;
-  
-    
+
+.final-time {
+    font-size: 1.5em;
 }
 
-/* .event_info {
-    border: 1px solid red;
-    border-radius: 20px;
-} */
+.invitefriend-field {
+    width: 80%;
+}
+
+#id_invitee {
+    font-size: 1.25em;
+    width: 50%;
+}
+
+.ts-txt {
+    font-size: 1.25em;
+    padding-bottom: 1em;
+}
+
+.ts-field {
+    width: 100%;
+}
+
