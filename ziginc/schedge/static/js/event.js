@@ -39,13 +39,6 @@ function errorCallBack(error) {
     loc_errmsg.innerHTML = "Enable location services to use this feature"
 }
 
-function validateSubmit(message, id) {
-    result = confirm(message);
-    if (result) {
-        $('#' + id).submit();
-    }
-}
-
 
 var holder = document.querySelector("[dir]");
 var prev_section = "overlapTS";
@@ -57,6 +50,23 @@ function tmslotToggle(new_section) {
     holder.setAttribute('dir', new_section);
     document.getElementById(new_section).classList.remove('folder_unactive');
     document.getElementById(new_section).classList.add('folder_active');
+    console.log("test")
     prev_section = new_section;
 }
 
+
+// Source: https://www.tutorialrepublic.com/codelab.php?topic=bootstrap&file=accordion-with-plus-minus-icon
+
+$(document).ready(function(){
+    // Add minus icon for collapse element which is open by default
+    $(".collapse.show").each(function(){
+        $(this).prev(".card-header").find(".fa").addClass("fa-minus").removeClass("fa-plus");
+    });
+    
+    // Toggle plus minus icon on show hide of collapse element
+    $(".collapse").on('show.bs.collapse', function(){
+        $(this).prev(".card-header").find(".fa").removeClass("fa-plus").addClass("fa-minus");
+    }).on('hide.bs.collapse', function(){
+        $(this).prev(".card-header").find(".fa").removeClass("fa-minus").addClass("fa-plus");
+    });
+});

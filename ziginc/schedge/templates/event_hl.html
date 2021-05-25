@@ -1,9 +1,10 @@
 <!-- INVITE -->
-<div class="card">
-    <div class="card-header" id="headingInvite">
+<div class="card card-accordion">
+    <div class="card-header card-accordion" id="headingInvite">
         <h2 class="mb-0">
-            <button type="button" class="btn-accordion" data-toggle="collapse" data-target="#collapseInvite"
+            <button type="button" class="btn-accordion txt_reset" data-toggle="collapse" data-target="#collapseInvite"
                 id="show_invite">
+                <i class="fas fa-plus fa"></i>
                 Invite someone to the event
             </button>
         </h2>
@@ -12,43 +13,45 @@
         <div class="row">
 
             <div class="col">
-                <div class="card-header txt_center">
+                <div class="card-accordion txt_center txt_bold txt_cursive">
                     Invite a friend
                 </div>
-                <div class="card-body txt_center">
+                <div class="txt_center">
                     <form action="{% url 'event_invite' event_id=event.id%}" method="post"
                         enctype="multipart/form-data">
                         {% csrf_token %}
-                        <p>
-                            <label>Invite:</label>
-                            {{inviteform.invitee}}
-                        </p>
-                        <input type="submit" class="btn btn-light" value="Submit" id="invite-submit">
+                        <div>
+
+                            <span class="invitefriend-field">
+                                {{inviteform.invitee}}
+                            </span>
+                            <input type="submit" class="btn btn-dark txt_small" value="Send" id="invite-submit">
+                        </div>
                     </form>
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col justify-content-center">
-                <div class="card-header txt_center">
-                    Or invite someone else
-                </div>
-                <div class="card-body txt_center ">
-                    <form class="card card-sm" id="friendadd" action="{% url 'event_invite' event_id=event.id %}"
+                <div class="card card-accordion txt_center ">
+                    <div class="card-accordion txt_center m_top_small txt_bold txt_cursive">
+                        Or invite someone else
+                    </div>
+                    <form class="card card-accordion card-sm silent-form" id="friendadd" action="{% url 'event_invite' event_id=event.id %}"
                         method="POST" enctype="multipart/form-data">
                         {% csrf_token %}
-                        <div class="card-body row no-gutters align-items-center">
+                        <div class="p_card row no-gutters align-items-center">
                             <div class="col-auto">
-                                <i class="fas fa-search h4 text-body" style="position:relative; top:3px;"></i>
+                                <i class="fas fa-search fa-lg"></i>
                             </div>
                             <!--end of col-->
-                            <div class="col">
-                                <input class="form-control form-control-lg form-control-borderless" name="username"
+                            <div class="col p_card">
+                                <input class="form-control form-control-borderless" name="username"
                                     type="search" placeholder="Username">
                             </div>
                             <!--end of col-->
-                            <div class="col-auto">
-                                <button class="btn btn-lg btn-dark" type="submit"><i class="fas fa-user-plus"
+                            <div class="col-auto p_card">
+                                <button class="btn btn-dark " type="submit"><i class="fas fa-user-plus "
                                         aria-hidden="true"></i>
 
                                 </button>
@@ -65,10 +68,11 @@
 
 <!-- PENDING INVITATIONS -->
 {%if invites%}
-<div class="card">
-    <div class="card-header" id="headingPending">
+<div class="card card-accordion">
+    <div class="card-header card-accordion" id="headingPending">
         <h2 class="mb-0">
-            <button type="button" class="btn-accordion collapsed" data-toggle="collapse" data-target="#collapsePending">
+            <button type="button" class="btn-accordion txt_reset collapsed" data-toggle="collapse" data-target="#collapsePending">
+                <i class="fas fa-plus fa"></i>
                 Pending invitations
             </button>
         </h2>

@@ -1,0 +1,76 @@
+<!-- for loop -->
+<!-- <div class="col-sm-4"> -->
+
+<div class="card card-event">
+    <!-- <img class="card-img-top" src="img_avatar1.png" alt="Card image" style="width:100%"> -->
+    {% if event.image.url != "/media/default.jpg" %}
+
+    <img class="card-img-top card-image" src="{{event.image.url}}" alt="Card image">
+    {% endif %}
+    <div class="card-body">
+        <h4 class="card-title">{{event.title}}</h4>
+        <p class="card-text">
+        <div class="row justify-content-center">
+
+        
+        <div class="col-auto">
+
+            {% if user != event.host %}
+             <div class="row p_card">
+            <i class="fas fa-user m_right_small"></i>
+            {{event.host.first_name}} {{event.host.last_name}}
+            </div>
+            {% endif%}
+            <div class="row p_card ">
+                <i class="fas fa-map-marker-alt m_right_small"></i>
+                {{event.location}}
+            </div>
+            {%if event.status == "C" %}
+            <div class="row p_card ">
+                <i class="fas fa-calendar-alt"></i> &nbsp;
+                <i class="far fa-clock m_right_small"></i>
+                {{event.chosen_time}}
+            </div>
+            {%else%}
+            <div class="row p_card">
+                <i class="fas fa-calendar-alt m_right_small"></i>
+                {%if event.startdate == event.enddate%}
+                {{event.startdate}}
+                {%else%}
+                {{event.startdate}} - {{event.enddate}}
+                {%endif%}
+            </div>
+            {%endif%}
+        </div>
+    </div>
+        <div class="row p_card m_card_top txt_left desc_card">
+            {{event.description}}
+
+        </div>
+
+        {%if event.status == "U" %}
+        {%if user != event.host%}
+        <div class="txt_center m_top_small">
+            <i>
+                Remember to add your time slots.
+            </i>
+        </div>
+        {%else%}
+        <div class="txt_center m_top_small">
+            <i>
+                Remember to set the date.
+            </i>
+        </div>
+        {%endif%}
+        {%endif%}
+        </p>
+        <div class="row justify-content-center">
+
+            <a href="{% url 'event' event_id=event.id %}" class="btn btn-secondary stretched-link">See event</a>
+        </div>
+    </div>
+</div>
+
+<!-- </div> -->
+
+<!-- <i class="fas fa-plus fa"></i> -->

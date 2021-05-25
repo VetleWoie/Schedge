@@ -11,21 +11,13 @@
 
 
 <div class="container-fluid">
-    <div class="row txt_ls_med m_top_small">
-        <div class="col logo txt_large p_side_m">
-            <a href="{% url 'home' %}" class="simple_link">Schedge</a>
-        </div>
-        <div class="col txt_right txt_large p_side_m au_txt">
-            <a class="simple_link" href="#">about us</a>
-        </div>
-    </div>
-
+    {%include "startpage_header.html"%}
 
 
     <div class="row">
 
 
-        <div class="col-md-4 signup_box p_btm_med">
+        <div class="col p_btm_med">
             <div class="row justify-content-center">
                 <div class="col-10 d-flex justify-content-center sub_signup_title m_top_med m_btm_small">
                     {% block reg_title %}

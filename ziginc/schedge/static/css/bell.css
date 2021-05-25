@@ -1,9 +1,6 @@
 /* NOTIFICATION BELL */
 
 #bell_dropdown {
-    /* position: relative; */
-    /* margin-right: 40px; */
-    /* float: left; */
     padding-top: 5px;
     position: absolute;
     top:20px;
@@ -11,11 +8,6 @@
     z-index: 1000;
   }
 
-#notifimg {
-    /* width: 35px; */
-    /* position: absolute; */
-
-}
 
 .live_notify_list {
     text-align: center;
@@ -29,7 +21,6 @@
     padding-right: 15px;
     padding-top: 15px;
     padding-bottom: 15px;
-    /* padding: 15px 15px 15px 30px; */
     top: 100%;
     right: -0px;
     min-width: 200px;
@@ -39,7 +30,6 @@
 
 .live_notify_list li {
     color:black;
-    /* margin:0 20px 20px 0; */
     vertical-align:middle;
     list-style-type: none;
 }
@@ -77,7 +67,6 @@
 }
 
 #busybell {
-    /* width: 35px; */
     height: 35px;
     cursor: pointer;
 }

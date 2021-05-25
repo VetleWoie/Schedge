@@ -6,10 +6,13 @@ name = "pypi"
 [packages]
 django = "*"
 django-notifications-hq = "*"
+django_extensions = "*"
 pillow = "*"
 
 [dev-packages]
 selenium = "*"
+coverage = "*"
+docstr_coverage = "*"
 
 [requires]
 python_version = "3.8"

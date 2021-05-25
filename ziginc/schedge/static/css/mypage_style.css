@@ -21,7 +21,6 @@ html, body, main{
 .nav_btn {
     border: none;
     background: none;
-    /* margin-bottom: 50px; */
     padding: 15px 0px;
     font-size: 20px;
     letter-spacing: 5px;
@@ -30,10 +29,8 @@ html, body, main{
 }
 
 .nav_btn_selected {
-    /* background: #343a40; */
-    color: black;
+    color: #16161d;
     font-weight: bolder;
-    /* outline: none; */
 }
 
 .nav_btn_selected:focus{
@@ -48,7 +45,7 @@ html, body, main{
 
 
 .so {
-    color: black;
+    color: #16161d;
     padding-bottom: 50px;
     font-size: 20px;
     text-align: center;
@@ -57,15 +54,11 @@ html, body, main{
 .dash {
  font-size: 25px;
  text-transform: capitalize;
- border-bottom: 1px solid black;
+ border-bottom: 1px solid #16161d;
 }
 
 .ce_btn {
-    /* border-radius: 10px !important; */
     text-transform: capitalize;
-    /* padding-left: 2.5px; */
-    /* letter-spacing: 2.5px; */
-    /* font-weight: bold; */
 }
 
 .plus {
@@ -81,19 +74,12 @@ html, body, main{
 }
 
 
-.displayright {
-    /* background-image: linear-gradient(120deg, #58E1E0, #FF874A); */
-}
-
-
 .welcome_message {
     text-align: center;
     letter-spacing: 5px;
     padding-left: 5px;
-    font-size: 50px;
-    margin-bottom: 40px;
+    font-size: 2em;
     text-shadow: 1px 1px 0px white;
-    color: #343a40;
 }
 
 .sub_title {
@@ -122,14 +108,6 @@ html, body, main{
     margin-bottom: 20px;
 }
 
-.nothing {
-    text-align: center;
-    color: 848484;
-    font-style: italic;
-    font-size: 15px;
-    margin-bottom: 40px;
-    margin-top: -10px;
-}
 
 .form-card textarea {
     max-height: 300px;
@@ -146,3 +124,54 @@ html, body, main{
     outline: none;
     box-shadow: none;
 }
+
+.card-image {
+    margin-left: auto;
+    margin-right: auto;
+    width: 80% !important;
+    margin-top: 2.5em;
+    border-radius-top: .5rem;
+
+}
+
+
+
+input[name="hostradio"]:checked ~ .host_event {
+    display: none;
+}
+.hostradio_txt {
+    font-size: 1.25em;
+    text-transform: capitalize;
+}
+.host_event {
+    margin-top: 1.5em;
+}
+
+.part_event {
+    margin-top: 1.5em;
+}
+
+input[value="all-h"]:checked ~ #all-host {
+    display: block;
+}
+input[value="tbd-h"]:checked ~ #tbd-host {
+    display: block;
+}
+input[value="set-h"]:checked ~ #set-host {
+    display: block;
+}
+
+input[name="partradio"]:checked ~ .part_event {
+    display: none;
+}
+
+input[value="all-p"]:checked ~ #all-part {
+    display: block;
+}
+input[value="tbd-p"]:checked ~ #tbd-part {
+    display: block;
+}
+input[value="set-p"]:checked ~ #set-part {
+    display: block;
+}
+

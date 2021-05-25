@@ -75,6 +75,7 @@ class EventForm(forms.ModelForm):
             "enddate": "End Date",
             "starttime": "Start Time",
             "endtime": "End Time"
+            
         }
 
         today = dt.datetime.today().strftime("%Y-%m-%d")
@@ -110,7 +111,7 @@ class TimeSlotForm(forms.ModelForm):
 
         widgets = {"start_time": TimeInput(), "end_time": TimeInput(), "date": DateInput()}
     def __init__(self, *args, **kwargs):
-        self.duration = kwargs.pop("duration", None)
+        self.event = kwargs.pop("event", None)
         super().__init__(*args, **kwargs)
 
     def set_limits(self, event):
@@ -124,12 +125,59 @@ class TimeSlotForm(forms.ModelForm):
 
     def clean(self):
         """Validates the time inputs"""
-        start = dt.datetime.combine(self.cleaned_data.get("date"), self.cleaned_data.get("start_time"))
-        end = dt.datetime.combine(self.cleaned_data.get("date"), self.cleaned_data.get("end_time"))
-        if end < start: # is rollover timeslot
-            end += dt.timedelta(1)
+        date = dt.date(2000, 1, 1)  # dummy date used for validation
 
-        if end - start < self.duration: # time slot is too short
+        # interval of the timeslot
+        start = dt.datetime.combine(date, self.cleaned_data.get("start_time"))
+        end = dt.datetime.combine(date, self.cleaned_data.get("end_time"))
+        
+        one_day = dt.timedelta(days=1)
+
+        # interval of the event
+        eventstart = dt.datetime.combine(date, self.event.starttime)
+        eventend = dt.datetime.combine(date, self.event.endtime)
+
+        # if the event start and end at the same time, all timeslots
+        # longer than duration are allowed
+        allday_event = eventstart == eventend
+
+        # check rollover event
+        # it goes past midnight
+        if eventend < eventstart or allday_event:
+            if start < eventend:
+                # start is after midnight
+                start += one_day
+            if end < start:
+                # ends after midnight
+                end += one_day
+            # since the event is rollover, the end is after midnight
+            eventend += one_day
+
+        if end < start and not allday_event:
+                raise forms.ValidationError(
+                {
+                    "start_time": ["The start time is after the end time"],
+                }
+            )
+
+        # the timeslot starts before the event
+        if start < eventstart and not allday_event:
+            raise forms.ValidationError(
+                {
+                    "start_time": ["Your timeslot starts before the event can start"],
+                }
+            )
+
+        # the timeslot ends after the event
+        if end > eventend and not allday_event:
+            raise forms.ValidationError(
+                {
+                    "end_time": ["Your timeslot ends after the event can end"],
+                }
+            )
+
+        # timeslot is too short
+        if end - start < self.event.duration: # time slot is too short
             raise forms.ValidationError(
                 {
                     "start_time": ["Time slot is too short"],

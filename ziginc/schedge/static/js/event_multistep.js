@@ -1,3 +1,5 @@
+//  Source: https://bbbootstrap.com/snippets/multi-step-form-wizard-30467045
+
 async function confirmform() {
 	const form = $("#msform")[0];
 
@@ -35,6 +37,9 @@ async function confirmform() {
 			return -1;  // -1 means we should not go to the final section
 		} else {
 			// 0 means the form was ok
+			var go2event_btn = document.getElementById("event_url")
+			go2event_btn.href = response.url
+		
 			return 0;
 		}
 	}));

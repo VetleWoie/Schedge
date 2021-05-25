@@ -8,6 +8,8 @@ from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 from django.db.models.signals import post_save
+from django.utils.timezone import get_current_timezone, now
+
 from .utils import time_add, time_diff
 
 class Profile(models.Model):
@@ -127,6 +129,18 @@ class Event(models.Model):
         """returns the number of users who have accepted this event
         we use a property so that it can be used in templates"""
         return self.participants.count()
+
+    def set_finished(self):
+        if self.status == "F":
+            return
+        if self.chosen_time is not None:
+            endtime = self.chosen_time + self.duration
+        else:
+            tz = get_current_timezone()
+            endtime = dt.datetime.combine(self.enddate, self.endtime, tzinfo=tz)
+        if endtime < now():
+            self.status = "F"
+            self.save()
 
     def __str__(self):
         return f"Event(id={self.id}, title={self.title}, ...)"
