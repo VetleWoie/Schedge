@@ -25,7 +25,7 @@ import re
 from .model_utils import riise_hofsøy, create_time_slot
 from .utils import time_diff
 
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.db.models.signals import post_save
 from notifications.signals import notify
 from notifications.models import Notification
@@ -210,7 +210,10 @@ def event(request, event_id):
     # set status to F if event is in the past
     this_event.set_finished()  # set status to F is event is in the past
 
-    potentialtimeslots = PotentialTimeSlot.objects.filter(event=this_event)
+    pts_unsorted = PotentialTimeSlot.objects.filter(event=this_event)
+    # sort potential  time slots by number of participants
+    potentialtimeslots = pts_unsorted.annotate(n=Count('participants')).order_by('-n')
+
     your_timeslots = TimeSlot.objects.filter(event=this_event, creator=request.user)
     # new time slot form with this event's start date and end date
     timeslotform = TimeSlotForm()
