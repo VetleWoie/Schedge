@@ -15,6 +15,17 @@ Event scheduler - Finds the time for what you want!!
 ```$ ./manage.py runserver```
 
 ## Web application user manual
+### Existing users in database
+
+Username - Name - Password
+1. AlexaM - Alexa Merge - hei123
+2. JohnH - John Heap - hei123
+3. SiriR - Siri Radix - hei123
+4. MarkB - Mark Bucket - hei123
+5. admin - admin - hei123
+
+Log in to AlexaM or MarkB to get the most complete experience.
+
 ### Creating a user
 1. Press _Create an account_ on the landing page
 2. Enter credentials
