@@ -211,6 +211,7 @@ def event(request, event_id):
     this_event.set_finished()  # set status to F is event is in the past
 
     pts_unsorted = PotentialTimeSlot.objects.filter(event=this_event)
+    # sort potential  time slots by number of participants
     potentialtimeslots = pts_unsorted.annotate(n=Count('participants')).order_by('-n')
 
     your_timeslots = TimeSlot.objects.filter(event=this_event, creator=request.user)
