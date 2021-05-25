@@ -14,10 +14,11 @@ from django.contrib.auth.decorators import login_required
 from django.template import loader
 from django.urls import reverse_lazy, reverse
 from django.views import generic
+from django.db.models import Q
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.models import User
-from django.utils.timezone import get_current_timezone
+from django.utils.timezone import get_current_timezone, now
 from collections import namedtuple
 import re
 
@@ -31,6 +32,23 @@ from notifications.models import Notification
 
 
 def home(request):
+    """Displays the homepage for schedge.
+
+    Uses the 'request' argument passed to know is user is logged in.
+
+    Parameters
+    ----------
+    request : WSGI object
+        A WSGI object containing the user who sent the request,
+        which HTTP method, potential files.
+
+    Returns
+    -------
+        Return a HttpResponse whose content is filled with the result
+        of calling django.template.loader.render_to_string() with 'context' containing homepage 
+        and number of user in the database.
+        Or return an HttpResponseRedirect to the mypage/dashboard if a user is logged in.
+    """
     user_count = User.objects.count()
     context = {"user_count": user_count}
     if request.user.is_authenticated:
@@ -41,13 +59,44 @@ def home(request):
 
 @login_required(login_url="/login/")
 def mypage(request):
+    """Displays the dashboard/mypage for a spesific user.
+
+    Uses the 'request' argument passed to know what user to show dashboard for.
+
+    Parameters
+    ----------
+    request : WSGI object
+        A WSGI object containing the user who sent the request,
+        which HTTP method, potential files.
+
+    Returns
+    -------
+        Return a HttpResponse whose content is filled with the result
+        of calling django.template.loader.render_to_string() with 'context'
+        or return an HttpResponseRedirect to the login page if user is not  already logged in.
+    """
     user = request.user
+
+    yesterday = now() - dt.timedelta(days=1)
+    # set status of finished events
+    finished_events = Event.objects.filter(
+        Q(chosen_time__lte=yesterday)
+        | Q(enddate__lte=yesterday.date()) & ~Q(status="F"),
+        Q(host=user) | Q(participants=user),
+    )
+    for event in finished_events:
+        event.status = "F"
+        event.save()
+
     host_undecided = Event.objects.filter(host=user, status="U")
     host_decided = Event.objects.filter(host=user, status="C")
     host_all = Event.objects.filter(Q(host=user, status="U") | Q(host=user, status="C"))
-    participant_as_guest = Event.objects.filter(Q(participants=user, status="U") | Q(participants=user, status="C")).exclude(host=user)
+    # all guest you are a partipant of, which is not finished and youre not the host of
+    participant_as_guest = Event.objects.filter(~Q(status="F"), participants=user).exclude(host=user)
     participant_as_guest_undecided = Event.objects.filter(participants=user, status="U").exclude(host=user)
     participant_as_guest_decided = Event.objects.filter(participants=user, status="C").exclude(host=user)
+
+
     invites = Invite.objects.filter(invitee=user)
 
     friends = request.user.profile.friends.all()
@@ -55,7 +104,7 @@ def mypage(request):
     # Get events that will happen in between today and within the next seven days
     today = dt.date.today()
     in_seven_days = today + dt.timedelta(days=7)
-    this_weeks_events = Event.objects.filter(participants=user, status="C", startdate__gte=today, enddate__lte=in_seven_days)
+    this_weeks_events = Event.objects.filter(~Q(status="F"), participants=user, startdate__gte=today, enddate__lte=in_seven_days)
 
     pending_friend_requests = FriendRequest.objects.filter(from_user=user)
     incoming_friend_requests = FriendRequest.objects.filter(to_user=user)
@@ -110,7 +159,6 @@ def create_event(request):
             return redirect(event, newevent.id)
         else:
             return HttpResponse(form.errors.as_json(), status=400)
-            return render(request, "createevent.html", {"form": form}, status=400)
 
     # GET
     form = EventForm()  # empty form
@@ -144,23 +192,24 @@ def event(request, event_id):
         this_event = Event.objects.get(id=event_id)
     except Event.DoesNotExist:
         raise Http404("404: not valid event id")
-
     if request.method == "POST":
-        timeslotform = TimeSlotForm(request.POST, duration=this_event.duration)
+        timeslotform = TimeSlotForm(request.POST, event=this_event)
         creator = request.user
         if timeslotform.is_valid() and creator.is_authenticated:
             timeslotdata = timeslotform.cleaned_data
             create_time_slot(this_event, creator, timeslotdata)
 
         else:
-            # TODO: rewrite maybe.
-            # shouldn't be possible through the website though. only through manual post
-            return HttpResponseBadRequest("Invalid Form!")
+            return HttpResponseBadRequest(timeslotform.errors.as_text())
 
 
     participating = this_event.participants.filter(id=request.user.id).exists()
     if not participating:
         return HttpResponse('Unauthorized', status=401)
+
+    # set status to F if event is in the past
+    this_event.set_finished()  # set status to F is event is in the past
+
     potentialtimeslots = PotentialTimeSlot.objects.filter(event=this_event)
     your_timeslots = TimeSlot.objects.filter(event=this_event, creator=request.user)
     # new time slot form with this event's start date and end date
@@ -362,7 +411,7 @@ def eventedit(request, event_id):
         "starttime": this_event.starttime.strftime("%H:%M"),
         "endtime": this_event.endtime.strftime("%H:%M"),
         # [days, hours, minutes]
-        "duration": [seconds // 86400, (seconds // 3600) % 24, (seconds // 60) % 60],
+        "duration": [(seconds // 3600) % 24, (seconds // 60) % 60],
     }
 
     form = EventForm(instance=this_event, initial=initial_times)

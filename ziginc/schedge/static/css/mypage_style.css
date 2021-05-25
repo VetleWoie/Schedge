@@ -108,15 +108,6 @@ html, body, main{
     margin-bottom: 20px;
 }
 
-.nothing {
-    text-align: center;
-    color: 848484;
-    font-style: italic;
-    font-size: 15px;
-    margin-bottom: 40px;
-    margin-top: -10px;
-
-}
 
 .form-card textarea {
     max-height: 300px;

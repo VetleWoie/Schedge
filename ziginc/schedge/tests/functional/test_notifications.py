@@ -180,7 +180,6 @@ class NotificationTest(TestCase):
         self.assertEqual(len(notifications), 1)
         self.assertTrue(notifications.exists())
 
-    # @skip("TODO: Redo! Uses old functionality which didn't take the duration into consideration")
     def test_gets_notification_on_time_selected(self):
         """ Test notification when the host decides the time for an event"""
 

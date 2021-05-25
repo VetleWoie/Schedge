@@ -78,7 +78,7 @@
 
                     <!-- SECTION 2: INBOX/INVITES -->
                     <div class="row">
-                        <div class="col sub_title  m_btm_small txt_large txt_center">invites</div>
+                        <div class="col sub_title  m_btm_small txt_bold txt_large txt_center">invites</div>
                     </div>
 
                     {%if invites%}
@@ -156,13 +156,13 @@
 
                     <!-- SECTION 3: THIS WEEK'S EVENTS -->
                     <div class="row">
-                        <div class="col sub_title m_top_med m_btm_small txt_large txt_center">this week's events</div>
+                        <div class="col sub_title m_top_med txt_bold m_btm_small txt_large txt_center">this week's events</div>
                     </div>
 
 
 
                     {%if this_week%}
-                    <div class="row">
+                    <div class="card-columns txt_center">
                         {% for event in this_week%}
                         {% include "event_card.html" %}
                         {%endfor%}
@@ -180,7 +180,7 @@
                 <div class="hostTxt">
                     <div class="row justify-content-center">
                         <div class="col-auto m_top_med txt_large welcome_message txt_center">
-                            <div class="txt_large">Your Events</div>
+                            <div class="txt_large">My Events</div>
                         </div>
                     </div>
                     <div class="row justify-content-center">
@@ -201,12 +201,12 @@
                                     <input type="radio" name="hostradio" value="tbd-h">
                                     <span class="hostradio_txt m_right_small">
 
-                                        To be determined
+                                        To be schedged
                                     </span>
 
                                     <input type="radio" name="hostradio" value="set-h">
                                     <span class="hostradio_txt ">
-                                        Time set
+                                        Schedged Events
                                     </span>
 
 
@@ -222,7 +222,7 @@
 
                                         {% else %}
                                         <div class="row justify-content-center nothing">You do not host any
-                                            upcoming events
+                                             events
                                         </div>
                                         {% endif %}
                                     </div>
@@ -234,8 +234,7 @@
                                             {%endfor%}
                                         </div>
                                         {% else %}
-                                        <div class="row justify-content-center nothing">You do not host any
-                                            upcoming events
+                                        <div class="row justify-content-center nothing">You do not have any events where you need to determine the date.
                                         </div>
                                         {% endif %}
                                     </div>
@@ -247,8 +246,8 @@
                                             {%endfor%}
                                         </div>
                                         {% else %}
-                                        <div class="row justify-content-center nothing">You do not host any
-                                            upcoming events
+                                        <div class="row justify-content-center nothing">You do not have any events where the date is set.
+                                           
                                         </div>
                                         {% endif %}
                                     </div>
@@ -265,7 +264,7 @@
                 <div class="partiTxt">
                     <div class="row justify-content-center">
                         <div class="col-auto m_top_med txt_large welcome_message txt_center">
-                            <div class=" txt_large">Events you are a part of</div>
+                            <div class=" txt_large">Events I'm attending</div>
                         </div>
                     </div>
                     <div class="row justify-content-center">
@@ -286,12 +285,12 @@
                                     <input type="radio" name="partradio" value="tbd-p">
                                     <span class="hostradio_txt m_right_small">
 
-                                        To be determined
+                                        To be schedged
                                     </span>
 
                                     <input type="radio" name="partradio" value="set-p">
                                     <span class="hostradio_txt ">
-                                        Time set
+                                        schedged
                                     </span>
 
 
@@ -317,7 +316,7 @@
                                         </div>
                                         {% else %}
                                         <div class="row justify-content-center nothing">You do not participate in any
-                                            upcoming events
+                                             events where the date is not determined.
                                         </div>
                                         {% endif %}
                                     </div>
@@ -329,8 +328,9 @@
                                             {%endfor%}
                                         </div>
                                         {% else %}
-                                        <div class="row justify-content-center nothing">You do not participate in any
-                                            upcoming events
+                                        <div class="row justify-content-center nothing">
+                                            You do not participate in any
+                                             events where the date is determined.
                                         </div>
                                         {% endif %}
                                     </div>
@@ -445,7 +445,7 @@
                         {%endfor%}
                     </div>
                     {% else %}
-                    <div class="row justify-content-center nothing">haha you don't have any friends
+                    <div class="row justify-content-center nothing"> You don't have any friends
                     </div>
                     {% endif %}
 

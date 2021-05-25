@@ -186,10 +186,17 @@ html, body, main{
     text-decoration: underline;
 }
 
-.simple_link_no_:hover {
-    /* color: inherit; */
+.simple_link_no {
+    color: #16161d;
+    text-decoration: none;
+    padding: 10px 10px !important;
+}
+
+.simple_link_no:hover {
+    color: #16161d;
     text-decoration: none;
 }
+
 
 .txt_white {
     color: white;
@@ -207,6 +214,17 @@ html, body, main{
     font-size: 15px;
 }
 
+
+.nothing {
+    text-align: center;
+    color: 848484;
+    font-style: italic;
+    font-size: 15px;
+    margin-bottom: 40px;
+    margin-top: -10px;
+
+}
+
 .full_width {
     width: 100%;
 }
@@ -220,10 +238,12 @@ html, body, main{
 .folder_active {
     background-image: linear-gradient(120deg, rgba(88, 225, 224, 0.75), rgba(255, 135, 74, 0.75));  
     border: 1px solid lightgrey;
+    font-weight: 900;
 }
 
 .folder_unactive {
     border: 1px solid lightgrey;
+    font-weight: none;
 }
 
 
@@ -262,3 +282,13 @@ html, body, main{
     display: flex;
     align-items: center;
  }
+
+ .btn-or {
+    background: #ff7733;
+    color: white;
+}
+
+.btn-or:hover {
+    background: #ff6b21;
+    color: white;
+}

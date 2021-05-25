@@ -39,13 +39,6 @@ function errorCallBack(error) {
     loc_errmsg.innerHTML = "Enable location services to use this feature"
 }
 
-function validateSubmit(message, id) {
-    result = confirm(message);
-    if (result) {
-        $('#' + id).submit();
-    }
-}
-
 
 var holder = document.querySelector("[dir]");
 var prev_section = "overlapTS";
@@ -57,6 +50,7 @@ function tmslotToggle(new_section) {
     holder.setAttribute('dir', new_section);
     document.getElementById(new_section).classList.remove('folder_unactive');
     document.getElementById(new_section).classList.add('folder_active');
+    console.log("test")
     prev_section = new_section;
 }
 

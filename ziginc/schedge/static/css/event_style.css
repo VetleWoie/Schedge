@@ -3,8 +3,8 @@ html, body, main{
 }
 
 
-[dir="overlapTS"] > :not(.overlapTS_txt),
-[dir="ownTS"] > :not(.ownTS_txt){
+[dir="overlapTS"] > :not(.overlapts-txt),
+[dir="ownTS"] > :not(.ownts-txt){
   display: none;
 
 }

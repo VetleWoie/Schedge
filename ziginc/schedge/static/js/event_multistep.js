@@ -1,3 +1,5 @@
+//  Source: https://bbbootstrap.com/snippets/multi-step-form-wizard-30467045
+
 async function confirmform() {
 	const form = $("#msform")[0];
 

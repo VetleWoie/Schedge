@@ -85,7 +85,7 @@ class CreateEventSeleniumTest(StaticLiveServerTestCase):
 
         # find all three duration forms
         duration_inputs = self.driver.find_elements_by_class_name("duration-form")
-        for field, num in zip(duration_inputs, [0, 1, 0]):
+        for field, num in zip(duration_inputs, [1, 0]):
             field.send_keys(str(num))
         # location_field.send_keys("Test Location")
 
@@ -101,7 +101,7 @@ class CreateEventSeleniumTest(StaticLiveServerTestCase):
         # submit form
         submit_btn = self.driver.find_element_by_id("event_url")
         submit_btn.click()
-
+    
         # wait for new site to load
         sleep(1)
 

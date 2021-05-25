@@ -14,13 +14,13 @@
       
             <div class="col">
 
-                <div class="row">
+                <div class="row m_top_med">
                     <div class="col txt_center logo_style"><img src="{%static 'icons/logo.svg'%}" alt="Schedge"
                             width="auto"></div>
                 </div>
 
                 <div class="row justify-content-center">
-                    <div class="col txt_center sub_txt m_top_small txt_ls_small">
+                    <div class="col txt_center desc_txt m_top_small txt_ls_small">
                         Find the time that works for <span class="txt_large txt_cursive txt_bold">all</span> of you<br>
                         Do the same as <span class="txt_large txt_cursive txt_bold">{{user_count}}</span> other
                         {%if user_count == 1%}
@@ -35,7 +35,7 @@
 
                 <div class="row justify-content-center m_top_med">
                     <a href="{% url 'login' %}" id="sign-in">
-                        <button type="button" class="btn btn-dark btn-register p_side_m txt_large">Sign in</button>
+                        <button type="button" class="btn btn-lg btn-dark btn-register p_side_m txt_large">Sign in</button>
                     </a>
                 </div>
 

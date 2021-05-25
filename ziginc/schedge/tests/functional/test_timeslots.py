@@ -16,8 +16,8 @@ class TimeSlotFunctionalTest(TestCase):
             "title": "golfing",
             "location": "golf course",
             "description": ":)",
-            "starttime": dt.time(00,00,00),
-            "endtime": dt.time(00,00,00),
+            "starttime": dt.time(0,0,0),
+            "endtime": dt.time(0, 0, 0),
             "startdate": dt.datetime.now(),
             "enddate": dt.datetime.now() + dt.timedelta(days=7),
             "duration": dt.timedelta(hours=2),
@@ -88,7 +88,7 @@ class TimeSlotFunctionalTest(TestCase):
             "date": dt.datetime.now(),
         }
         
-        form = TimeSlotForm(duration=self.testevent.duration,data=t1)
+        form = TimeSlotForm(event=self.testevent,data=t1)
         #Check errors in start time
         with self.assertRaises(KeyError,msg="Expected no errors but got error(s) in starttime."):
             print("\nExpected no errors in start time but got %d \n Errors: \n %s" % (len(form.errors["start_time"]),form.errors["start_time"]))
@@ -104,7 +104,7 @@ class TimeSlotFunctionalTest(TestCase):
             "date": dt.datetime.now(),
         }
         
-        form = TimeSlotForm(duration=self.testevent.duration,data=t1)
+        form = TimeSlotForm(event=self.testevent,data=t1)
         try:
             #Check errors in start time
             self.assertEqual(len(form.errors["start_time"]), 1, msg="Expected 1 error in start time got %d" % len(form.errors["start_time"]))            
@@ -112,6 +112,168 @@ class TimeSlotFunctionalTest(TestCase):
             self.assertEqual(len(form.errors["end_time"]), 1, msg="Expected 1 error in end_time got %d" % len(form.errors["end_time"]))    
         except Exception as e:
             self.fail("Got exeption: %s" % e)
+
+
+    def test_normal_timeslot_inside_rollover_event(self):
+        shortevent_model = self.example_event_model.copy()
+        shortevent_model["starttime"] = dt.time(20)
+        shortevent_model["endtime"] = dt.time(5)
+
+        event = Event.objects.create(**shortevent_model)
+        t1 = {
+            "start_time": dt.time(21,00,00),
+            "end_time": dt.time(23,30,00),
+            "date": dt.datetime.now(),
+        }
+        form = TimeSlotForm(event=event,data=t1)
+        self.assertNotIn("start_time", form.errors)
+        self.assertNotIn("end_time", form.errors)
+
+        t2 = {
+            "start_time": dt.time(1,00,00),
+            "end_time": dt.time(4,00,00),
+            "date": dt.datetime.now(),
+        }
+        form = TimeSlotForm(event=event,data=t2)
+        self.assertNotIn("start_time", form.errors)
+        self.assertNotIn("end_time", form.errors)
+        
+    def test_rollover_timeslot_inside_rollover_event(self):
+        shortevent_model = self.example_event_model.copy()
+        shortevent_model["starttime"] = dt.time(20)
+        shortevent_model["endtime"] = dt.time(5)
+        event = Event.objects.create(**shortevent_model)
+        t1 = {
+            "start_time": dt.time(22,00,00),
+            "end_time": dt.time(3,00,00),
+            "date": dt.datetime.now(),
+        }
+        form = TimeSlotForm(event=event,data=t1)
+        self.assertNotIn("start_time", form.errors)
+        self.assertNotIn("end_time", form.errors)
+        
+    def test_normal_timeslot_outside_normal_event(self):
+        shortevent_model = self.example_event_model.copy()
+        shortevent_model["starttime"] = dt.time(13)
+        shortevent_model["endtime"] = dt.time(17)
+
+        event = Event.objects.create(**shortevent_model)
+        t1 = {
+            "start_time": dt.time(12,00,00),
+            "end_time": dt.time(14,00,00),
+            "date": dt.datetime.now(),
+        }
+        form = TimeSlotForm(event=event,data=t1)
+        self.assertIn("start_time", form.errors)
+        self.assertNotIn("end_time", form.errors)
+
+        t2 = {
+            "start_time": dt.time(14,00,00),
+            "end_time": dt.time(19,00,00),
+            "date": dt.datetime.now(),
+        }
+        form = TimeSlotForm(event=event,data=t2)
+        self.assertNotIn("start_time", form.errors)
+        self.assertIn("end_time", form.errors)
+    
+    def test_normal_timeslot_outside_rollover_event(self):
+        shortevent_model = self.example_event_model.copy()
+        shortevent_model["starttime"] = dt.time(20)
+        shortevent_model["endtime"] = dt.time(5)
+
+        event = Event.objects.create(**shortevent_model)
+        t1 = {
+            "start_time": dt.time(19,00,00),
+            "end_time": dt.time(23,30,00),
+            "date": dt.datetime.now(),
+        }
+        form = TimeSlotForm(event=event,data=t1)
+        self.assertIn("start_time", form.errors)
+        self.assertNotIn("end_time", form.errors)
+
+        t2 = {
+            "start_time": dt.time(1,00,00),
+            "end_time": dt.time(6,00,00),
+            "date": dt.datetime.now(),
+        }
+        form = TimeSlotForm(event=event,data=t2)
+        self.assertNotIn("start_time", form.errors)
+        self.assertIn("end_time", form.errors)
+        
+    def test_rollover_timeslot_outside_rollover_event(self):
+        shortevent_model = self.example_event_model.copy()
+        shortevent_model["starttime"] = dt.time(20)
+        shortevent_model["endtime"] = dt.time(5)
+
+        event = Event.objects.create(**shortevent_model)
+        t1 = {
+            "start_time": dt.time(19,00,00),
+            "end_time": dt.time(4,0,00),
+            "date": dt.datetime.now(),
+        }
+        form = TimeSlotForm(event=event,data=t1)
+        self.assertIn("start_time", form.errors)
+        self.assertNotIn("end_time", form.errors)
+
+    def test_rollover_timeslot_allday_event(self):
+        shortevent_model = self.example_event_model.copy()
+        shortevent_model["starttime"] = dt.time(20)
+        shortevent_model["endtime"] = dt.time(20)
+
+        event = Event.objects.create(**shortevent_model)
+        t1 = {
+            "start_time": dt.time(20,00,00),
+            "end_time": dt.time(4,0,00),
+            "date": dt.datetime.now(),
+        }
+        form = TimeSlotForm(event=event,data=t1)
+        self.assertNotIn("start_time", form.errors)
+        self.assertNotIn("end_time", form.errors)
+
+    
+    def test_rollover_timeslot_on_rollover_event(self):
+        shortevent_model = self.example_event_model.copy()
+        shortevent_model["starttime"] = dt.time(20)
+        shortevent_model["endtime"] = dt.time(5)
+
+        event = Event.objects.create(**shortevent_model)
+        t1 = {
+            "start_time": dt.time(20,00,00),
+            "end_time": dt.time(5,0,00),
+            "date": dt.datetime.now(),
+        }
+        form = TimeSlotForm(event=event,data=t1)
+        self.assertNotIn("start_time", form.errors)
+        self.assertNotIn("end_time", form.errors)
+
+    
+    def test_normal_timeslot_completely_outside_rollover_event(self):
+        shortevent_model = self.example_event_model.copy()
+        shortevent_model["starttime"] = dt.time(20)
+        shortevent_model["endtime"] = dt.time(5)
+
+        event = Event.objects.create(**shortevent_model)
+        t1 = {
+            "start_time": dt.time(10,00,00),
+            "end_time": dt.time(15,0,00),
+            "date": dt.datetime.now(),
+        }
+        form = TimeSlotForm(event=event,data=t1)
+        self.assertIn("start_time", form.errors)
+
+    def test_rollover_timeslot_completely_outside_normal_event(self):
+        shortevent_model = self.example_event_model.copy()
+        shortevent_model["starttime"] = dt.time(13)
+        shortevent_model["endtime"] = dt.time(17)
+
+        event = Event.objects.create(**shortevent_model)
+        t1 = {
+            "start_time": dt.time(20,00,00),
+            "end_time": dt.time(10,0,00),
+            "date": dt.datetime.now(),
+        }
+        form = TimeSlotForm(event=event,data=t1)
+        self.assertIn("start_time", form.errors)
 
     def test_create_timeslot(self):
         response = self.client.post(f"/event/{self.testevent.id}/", self.example_timeslot)
@@ -159,25 +321,3 @@ class TimeSlotFunctionalTest(TestCase):
         self.assertEqual(response.status_code, 404)
         timeslots = TimeSlot.objects.all()
         self.assertEqual(len(timeslots), 1)
-
-    @skip("need better form validation on the timeslots")
-    def test_create_timeslot_outside_range(self):
-        # even't time interval is 8:30 am to 11:45 am
-        # posting timeslot at 13:00 should fail
-        timeslot = {
-            "date": self.tomorrow,
-            "start_time": "13:00",
-            "end_time": "15:00",
-        }
-        response = self.client.post(f"/event/{self.testevent.id}/", timeslot)
-        self.assertEqual(response.status_code, 400)
-
-        # enddate is in one week. try posting timeslot in two weeks
-        in_two_weeks = (dt.datetime.now() + dt.timedelta(days=14)).strftime("%Y-%m-%d")
-        timeslot = {
-            "date": in_two_weeks,
-            "start_time": "09:10",
-            "end_time": "13:00",
-        }
-        response = self.client.post(f"/event/{self.testevent.id}/", timeslot)
-        self.assertEqual(response.status_code, 400)

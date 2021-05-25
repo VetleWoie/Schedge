@@ -23,7 +23,8 @@
         <div class="col displayright" id="grad1">
             <div class="row m_left_small m_top_small">
                 <span class="return"></span>
-                <a class="simple_link" href="{% url 'event' event_id=event.id%}"><i class="fas fa-angle-double-left fa-2x fa"></i></a>
+                <a class="simple_link" href="{% url 'event' event_id=event.id%}"><i
+                        class="fas fa-angle-double-left fa-2x fa"></i></a>
                 <!-- <button class="nav_btn m_top_med" onclick="toggle('home')">My page</button> -->
             </div>
             <div class="row justify-content-center m_top_small">
@@ -32,6 +33,7 @@
 
 
                 <!-- MultiStep Form -->
+                <!-- Source: https://bbbootstrap.com/snippets/multi-step-form-wizard-30467045 -->
 
                 <div class="col-11 col-sm-9 col-md-7 col-lg-6 text-center p-0 mt-3 mb-2">
                     <h2><strong>Edit Event</strong></h2>
@@ -72,7 +74,7 @@
                                                 <div class="row justify-content-center" id="loc-div">
 
                                                     <button onclick="getLocation()" type="button" id="curlocbutton"
-                                                        class="btn p_side_s">Use Your Current Location</button>
+                                                        class="btn btn-or p_side_s">Use Your Current Location</button>
                                                     <span class="invis" id="loc-err-msg"></span>
                                                 </div>
                                             </td>
@@ -83,11 +85,10 @@
                                     </fieldset>
                                     <fieldset>
                                         <div class="form-card">
-                                            <h2 class="fs-title">Possible Dates *</h2>
-                                            <div class="explanation">Between which two dates will the event take place?
-                                                (Including those
-                                                dates)</div><br>
-                                            <div>Start date:</div>
+                                            <h2 class="fs-title">Dates</h2>
+                                            <div class="explanation">Between which two dates can the event take place?
+                                            </div><br>
+                                            <div>Earliest possible date:</div>
                                             {% if form.startdate.errors %}
                                             <td class="errormsg">
                                                 <p class="invalid">{{ form.startdate }}</p>
@@ -96,7 +97,7 @@
                                             {%else%}
                                             <td>{{ form.startdate }}</td>
                                             {% endif %}
-                                            <div class="">End date:</div>
+                                            <div class="">Latest possible date:</div>
                                             {{ form.enddate }}
                                         </div> <input type="button" name="previous"
                                             class="previous action-button-previous" value="Previous" id="previous3" />
@@ -120,9 +121,9 @@
                                             <h2 class="fs-title">Time of Day</h2>
                                             <div class="explanation">Between what times can the event take place?</div>
                                             <br>
-                                            <div>Start time:</div>
+                                            <div>Earliest possible time:</div>
                                             {{ form.starttime }}
-                                            <div>End time:</div>
+                                            <div>Latest possible time:</div>
                                             {{ form.endtime }}
                                         </div> <input type="button" name="previous"
                                             class="previous action-button-previous" value="Previous" id="previous5" />
@@ -144,10 +145,9 @@
                                             </div>
                                             <div class="row justify-content-center">
                                                 <div class="col-7 text-center">
-                                                    <a href="" id="event_url" class="submit action-button">Go to the
+                                                    <a href="" id="event_url" class="submit simple_link_no action-button">Go to the
                                                         event</a>
-                                                    <!-- <input type="submit" name="submitform" class="submit action-button"
-                                                        value="Go to the event" id="confirmbtn" /> -->
+                                                    
                                                 </div>
                                             </div>
                                         </div>

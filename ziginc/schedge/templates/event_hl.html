@@ -37,7 +37,7 @@
                     <div class="card-accordion txt_center m_top_small txt_bold txt_cursive">
                         Or invite someone else
                     </div>
-                    <form class="" id="friendadd" action="{% url 'event_invite' event_id=event.id %}"
+                    <form class="card card-accordion card-sm silent-form" id="friendadd" action="{% url 'event_invite' event_id=event.id %}"
                         method="POST" enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class="p_card row no-gutters align-items-center">

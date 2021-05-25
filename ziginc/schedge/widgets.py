@@ -9,7 +9,6 @@ class SplitDurationWidget(forms.MultiWidget):
 
     def __init__(self, attrs={"min": 0, "class": "duration-form"}):
         widgets = (
-          
             forms.NumberInput(attrs=attrs),
             forms.NumberInput(attrs=attrs),
         )
