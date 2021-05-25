@@ -25,6 +25,7 @@ import re
 from .model_utils import riise_hofsøy, create_time_slot
 from .utils import time_diff
 
+from django.db.models import Q
 from django.db.models.signals import post_save
 from notifications.signals import notify
 from notifications.models import Notification
@@ -89,9 +90,12 @@ def mypage(request):
 
     host_undecided = Event.objects.filter(host=user, status="U")
     host_decided = Event.objects.filter(host=user, status="C")
-
+    host_all = Event.objects.filter(Q(host=user, status="U") | Q(host=user, status="C"))
     # all guest you are a partipant of, which is not finished and youre not the host of
     participant_as_guest = Event.objects.filter(~Q(status="F"), participants=user).exclude(host=user)
+    participant_as_guest_undecided = Event.objects.filter(participants=user, status="U").exclude(host=user)
+    participant_as_guest_decided = Event.objects.filter(participants=user, status="C").exclude(host=user)
+
 
     invites = Invite.objects.filter(invitee=user)
 
@@ -100,7 +104,7 @@ def mypage(request):
     # Get events that will happen in between today and within the next seven days
     today = dt.date.today()
     in_seven_days = today + dt.timedelta(days=7)
-    this_weeks_events = Event.objects.filter(participants=user, status="C", startdate__gte=today, enddate__lte=in_seven_days)
+    this_weeks_events = Event.objects.filter(~Q(status="F"), participants=user, startdate__gte=today, enddate__lte=in_seven_days)
 
     pending_friend_requests = FriendRequest.objects.filter(from_user=user)
     incoming_friend_requests = FriendRequest.objects.filter(to_user=user)
@@ -108,7 +112,10 @@ def mypage(request):
     context = {
         "host_undecided": host_undecided,
         "host_decided": host_decided,
+        "host_all": host_all,
         "participant_as_guest": participant_as_guest,
+        "participant_undecided": participant_as_guest_undecided,
+        "participant_decided": participant_as_guest_decided,
         "invites": invites,
         "this_week": this_weeks_events,
         "friends": friends,

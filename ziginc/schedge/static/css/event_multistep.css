@@ -1,3 +1,5 @@
+/* Source: https://bbbootstrap.com/snippets/multi-step-form-wizard-30467045  */
+
 * {
     margin: 0;
     padding: 0
@@ -7,9 +9,9 @@ html {
     height: 100%
 }
 
+
 #grad1 {
-    background-color:  #58E1E0;
-    background-image: linear-gradient(120deg, #58E1E0, #FF874A);
+    background-image: linear-gradient(120deg, rgba(88, 225, 224, 0.75), rgba(255, 135, 74, 0.75));  
 }
 
 #msform {
@@ -22,7 +24,6 @@ html {
     background: white;
     border: 0 none;
     border-radius: 0px;
-    /* box-shadow: 0 2px 2px 2px rgba(0, 0, 0, 0.2); */
     padding: 20px 40px 30px 40px;
     box-sizing: border-box;
     width: 94%;
@@ -77,13 +78,14 @@ html {
     outline-width: 0
 }
 
+
 #msform .action-button {
     width: 150px;
-    background: #58E1E0;
+    background: rgba(88, 225, 224, 0.75);
     font-weight: bold;
-    color: white;
+
     border: 0 none;
-    border-radius: 0px;
+    border-radius: 1em;
     cursor: pointer;
     padding: 10px 5px;
     margin: 10px 5px
@@ -100,7 +102,7 @@ html {
     font-weight: bold;
     color: white;
     border: 0 none;
-    border-radius: 0px;
+    border-radius: 1em;
     cursor: pointer;
     padding: 10px 5px;
     margin: 10px 5px
@@ -157,27 +159,32 @@ select.list-dt:focus {
 }
 
 #progressbar #event_det:before {
-    font-family: FontAwesome;
+    font-family: "Font Awesome 5 Free";
+    font-weight:900;
     content: "\f128"
 }
 
 #progressbar #location:before {
-    font-family: FontAwesome;
-    content: "\f041"
+    font-family: "Font Awesome 5 Free";
+    font-weight:900;
+    content: "\f3c5"
 }
 
 #progressbar #calender:before {
-    font-family: FontAwesome;
+    font-family: "Font Awesome 5 Free";
+    font-weight:900;
     content: "\f073"
 }
 
 #progressbar #durtimer:before {
-    font-family: FontAwesome;
+    font-family: "Font Awesome 5 Free";
+    font-weight:900;
     content: "\f252"
 }
 
 #progressbar #clock:before {
-    font-family: FontAwesome;
+    font-family: "Font Awesome 5 Free";
+    font-weight:900;
     content: "\f017"
 }
 
@@ -209,6 +216,10 @@ select.list-dt:focus {
 #progressbar li.active:after {
     background: #FF874A
 }
+
+
+
+
 
 .radio-group {
     position: relative;

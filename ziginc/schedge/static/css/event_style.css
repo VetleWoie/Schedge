@@ -3,67 +3,41 @@ html, body, main{
 }
 
 
-[dir="overlapTS"] > :not(.overlapTS_txt),
-[dir="ownTS"] > :not(.ownTS_txt){
+[dir="overlapTS"] > :not(.overlapts-txt),
+[dir="ownTS"] > :not(.ownts-txt){
   display: none;
 
 }
 
 
-img {
-    /* border-radius: 8px; */
+.event-img {
     margin-left: auto;
     margin-right: auto;
-    display: block;
-    max-height: 20em;
-    max-width: 100%; 
+    max-width: 80%;
     object-fit:contain;
-    margin-top: 2%;
-    /* border: 1px solid transparent; */
-    /* width: 100%; */
-    /* float: right !important; */
-    /* text-align: right; */
-    
-    /* border-radius: 12px;
-    border: 2.5px solid #8d8d8d;
+    border-radius: .5rem;
 }
 
-
-.img_test {
-    float: right;
-}
-
-.event_info_wrap {
-    /* border-bottom: 1px solid black; */
+.event-img-wrap {
+    padding: 0 !important;
 }
 
 
 
-
-
-.event_tit {
+.event-title {
     font-size: 2em;
-    letter-spacing: 5px;
-    padding-left: 5pxmål;
-    /* color: red; */
 }
 
-.event_txt {
+.event-txt {
     padding-right: 40px;
 }
 
 
-.event_inf_text {
-    text-transform: uppercase;
+
+.event-desc {
+    font-size: 1.25em;
 }
 
-.event_desc {
-    font-size: 1em;
-}
-
-.white_txt {
-    color: black;
-}
 
 .people td{
     text-align: center;
@@ -81,62 +55,92 @@ img {
 }
 
 
-
-
-
 .left-section {
     background-color: lightgray;
-    background-image: linear-gradient(120deg, rgba(88, 225, 224, 0.75), rgba(255, 135, 74, 0.75));
-    /* height: 100%; */
-  
+    background-image: linear-gradient(120deg, rgba(88, 225, 224, 0.75), rgba(255, 135, 74, 0.75));  
 }
 
 
-.folder_row {
-    border-bottom: 1px solid black;
-    border-top: 1px solid black;
-}
 
-.folder_active {
-    /* border: 1px solid black;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    border-bottom: 1px solid transparent !important;
-    border-left: none;
-    border-right: none;
-    padding-top: 2px;
-    background-color: white; */
-    background-image: linear-gradient(120deg, rgba(88, 225, 224, 0.75), rgba(255, 135, 74, 0.75));
-    border: 1px solid lightgrey;
-}
-
-.folder_unactive {
-    /* border: 1px solid black;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    background-color: lightgrey; */
-    /* background: blue; */
-    border: 1px solid lightgrey;
-}
-
-
-/* ACCORDION STUFF DOWN HERE */
+/* ACCORDION */
 #eventAccordion {
     width: 100%;
 }
 
-.card-header, .card {
-    background-color: transparent !important;
-    border: none !important;
+.accordion .fa{
+    margin-right: 0.5rem;
 }
 
-.btn-accordion {
-    border: none;
-    background-color: transparent;
-    outline: none;
-    font-size: 20px;
-}
-.btn-accordion:focus {
 
-    outline: none;
+
+/* TIME SLOT STUFF */
+/* SOURCE: https://www.w3schools.com/howto/howto_js_form_steps.asp*/
+/* Hide all steps by default: */
+.tab {
+    display: none;
 }
+
+/* Make circles that indicate the steps of the form: */
+.step {
+height: 15px;
+width: 15px;
+margin: 0 2px;
+background-color: white;
+border: none;  
+border-radius: 50%;
+display: inline-block;
+opacity: 1  ;
+}
+
+.step.active {
+    background-color: #FF874A;
+opacity: 1;
+}
+
+/* Mark the steps that are finished and valid: */
+.step.finish {
+background-color: #FF874A;
+opacity: 0.5;
+}
+
+
+
+input[type=radio] {
+visibility: hidden;
+width: 0;
+padding: 0;
+margin: 0;
+}
+
+input[type=radio]:checked ~ label{
+    /* Or `#a1:checked+label` if you only want it for that input */
+    background-color: rgb(205, 252, 166) !important;
+}
+.tmp label {
+    /* Or `#a1:checked+label` if you only want it for that input */
+    background-color: rgb(238, 159, 145) !important;
+}
+
+
+.final-time {
+    font-size: 1.5em;
+}
+
+.invitefriend-field {
+    width: 80%;
+}
+
+#id_invitee {
+    font-size: 1.25em;
+    width: 50%;
+}
+
+.ts-txt {
+    font-size: 1.25em;
+    padding-bottom: 1em;
+}
+
+.ts-field {
+    width: 100%;
+}
+

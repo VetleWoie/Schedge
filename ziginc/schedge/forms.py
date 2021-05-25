@@ -75,6 +75,7 @@ class EventForm(forms.ModelForm):
             "enddate": "End Date",
             "starttime": "Start Time",
             "endtime": "End Time"
+            
         }
 
         today = dt.datetime.today().strftime("%Y-%m-%d")
