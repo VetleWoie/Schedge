@@ -14,6 +14,7 @@ Event scheduler - Finds the time for what you want!!
 5. Run the server  
 ```$ ./manage.py runserver```
 
+
 ## Web application user manual
 ### Existing users in database
 
@@ -22,7 +23,7 @@ Username - Name - Password
 2. JohnH - John Heap - hei123
 3. SiriR - Siri Radix - hei123
 4. MarkB - Mark Bucket - hei123
-5. admin - admin - hei123
+5. admin - admin - hei123 (superuser)
 
 Log in to AlexaM or MarkB to get the most complete experience.
 
@@ -102,4 +103,9 @@ elsewise you will be taken back to step 2.
 0. Be navigated to one of your event's pages that you are hosting
 1. Press _Attendees_
 2. Press the bin next to the user you want to remove
+
+
+## View Documentation
+
+Go to ```/admin/doc``` and sign in as a superuser to view the documentation.
 
